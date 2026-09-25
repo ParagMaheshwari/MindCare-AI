@@ -1,4 +1,4 @@
-﻿services:
+services:
   - type: web
     name: mindcare-ai-backend
     runtime: python
@@ -15,9 +15,9 @@
       - key: SECRET_KEY
         generateValue: true
       - key: ALLOWED_ORIGINS
-        value: "*"
+        value: "https://mindcare-ai-app.vercel.app,http://localhost:5500,http://127.0.0.1:5500"
       - key: FRONTEND_URL
-        value: "http://localhost:5500"
+        value: "https://mindcare-ai-app.vercel.app"
       - key: ADMIN_EMAIL
         value: admin@mindcare.ai
       - key: ADMIN_PASSWORD
