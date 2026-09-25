@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mental Health Assessment — MindCare AI</title>
+<link rel="stylesheet" href="css/style.css" />
+<script>
+  (function() {
+    const t = localStorage.getItem("mindcare_theme") || "dark";
+    document.documentElement.setAttribute("data-theme", t);
+  })();
+</script>
+</head>
+<body data-page="assessment">
+
+<div id="app-shell-mount"></div>
+
+<div id="page-content">
+  <div class="assessment-shell">
+
+    <div id="mc-form-shell">
+      <div class="page-head" style="margin-bottom:20px;">
+        <h1>Mental Health Assessment</h1>
+        <p>A structured, 4-step evaluation analyzed by our trained machine-learning model.</p>
+      </div>
+
+      <div class="stepper-track">
+        <div class="seg"></div>
+        <div class="seg"></div>
+        <div class="seg"></div>
+        <div class="seg"></div>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:10px;">
+        <div class="step-label" id="mc-step-label" style="margin-bottom:0;">Step 1 of 4: Personal Information</div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <span id="mc-draft-notice" style="font-size:0.8rem; color:var(--moss-dark); font-weight:600;"></span>
+          <button type="button" id="mc-clear-form-btn" style="display:none; background:none; border:none; color:var(--ink-faint); font-size:0.76rem; text-decoration:underline; cursor:pointer; padding:0;">Reset to blank</button>
+        </div>
+      </div>
+
+      <div class="alert-banner error" id="mc-assessment-error"></div>
+
+      <div class="card-elevated">
+        <form id="assessment-form" novalidate>
+
+          <!-- STEP 1: Personal Information -->
+          <div class="step-panel active" data-step="1">
+            <h2>Personal Information</h2>
+            <p class="step-desc">Tell us basic demographic information.</p>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="age">Age</label>
+                <input type="number" id="age" name="age" min="10" max="100" required placeholder="e.g. 21" />
+                <div class="error-text">Enter an age between 10 and 100.</div>
+              </div>
+              <div class="field">
+                <label for="gender">Gender</label>
+                <select id="gender" name="gender" required>
+                  <option value="" disabled selected>Select</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+                <div class="error-text">Please select an option.</div>
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="country">Country</label>
+                <select id="country" name="country" required>
+                  <option value="" disabled selected>Select your country</option>
+                  <option value="India">India</option>
+                  <option value="USA">USA</option>
+                  <option value="Canada">Canada</option>
+                  <option value="Australia">Australia</option>
+                  <option value="UK">UK</option>
+                  <option value="Germany">Germany</option>
+                  <option value="Mexico">Mexico</option>
+                  <option value="Turkey">Turkey</option>
+                  <option value="France">France</option>
+                  <option value="Other">Other</option>
+                </select>
+                <div class="error-text">Please select a country.</div>
+              </div>
+              <div class="field">
+                <label for="academic_level">Academic Level</label>
+                <select id="academic_level" name="academic_level" required>
+                  <option value="" disabled selected>Select</option>
+                  <option value="Undergraduate">Undergraduate</option>
+                  <option value="Graduate">Graduate</option>
+                  <option value="High School">High School</option>
+                </select>
+                <div class="error-text">Please select an option.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 2: Social Media Usage -->
+          <div class="step-panel" data-step="2">
+            <h2>Social Media Usage</h2>
+            <p class="step-desc">Help us understand your screen time and digital habits.</p>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="most_used_platform">Most Used Platform</label>
+                <select id="most_used_platform" name="most_used_platform" required>
+                  <option value="" disabled selected>Select platform</option>
+                  <option value="Facebook">Facebook</option>
+                  <option value="LinkedIn">LinkedIn</option>
+                  <option value="Instagram">Instagram</option>
+                  <option value="Snapchat">Snapchat</option>
+                  <option value="Twitter">Twitter / X</option>
+                  <option value="YouTube">YouTube</option>
+                  <option value="TikTok">TikTok</option>
+                  <option value="LINE">LINE</option>
+                  <option value="KakaoTalk">KakaoTalk</option>
+                  <option value="VKontakte">VKontakte</option>
+                  <option value="WhatsApp">WhatsApp</option>
+                  <option value="WeChat">WeChat</option>
+                </select>
+                <div class="error-text">Please select an option.</div>
+              </div>
+
+              <div class="field">
+                <label for="purpose_of_use">Primary Purpose of Use</label>
+                <select id="purpose_of_use" name="purpose_of_use" required>
+                  <option value="" disabled selected>Select purpose</option>
+                  <option value="Networking">Networking</option>
+                  <option value="Education">Education</option>
+                  <option value="Entertainment">Entertainment</option>
+                  <option value="News">News</option>
+                </select>
+                <div class="error-text">Please select an option.</div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="avg_daily_usage_hours">Average Daily Social Usage (Hours)</label>
+              <div class="range-row">
+                <input type="range" id="avg_daily_usage_hours" name="avg_daily_usage_hours" min="0" max="24" step="0.5" value="3" data-suffix="h" required />
+                <span class="range-value" id="avg_daily_usage_hours-value">3h</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="daily_unlocks">Daily Phone Unlocks</label>
+              <input type="number" id="daily_unlocks" name="daily_unlocks" min="0" required placeholder="e.g. 55" />
+              <div class="error-text">Enter your approximate daily unlocks.</div>
+            </div>
+          </div>
+
+          <!-- STEP 3: Lifestyle -->
+          <div class="step-panel" data-step="3">
+            <h2>Lifestyle & Daily Habits</h2>
+            <p class="step-desc">How you spend your time outside of social apps.</p>
+
+            <div class="field">
+              <label for="study_hours">Study Hours per Day</label>
+              <div class="range-row">
+                <input type="range" id="study_hours" name="study_hours" min="0" max="24" step="0.5" value="4" data-suffix="h" required />
+                <span class="range-value" id="study_hours-value">4h</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="physical_activity_hours">Physical Activity per Day (Hours)</label>
+              <div class="range-row">
+                <input type="range" id="physical_activity_hours" name="physical_activity_hours" min="0" max="24" step="0.5" value="1" data-suffix="h" required />
+                <span class="range-value" id="physical_activity_hours-value">1h</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="sleep_hours_per_night">Nightly Sleep (Hours)</label>
+              <div class="range-row">
+                <input type="range" id="sleep_hours_per_night" name="sleep_hours_per_night" min="0" max="24" step="0.5" value="7" data-suffix="h" required />
+                <span class="range-value" id="sleep_hours_per_night-value">7h</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 4: Mental Wellness -->
+          <div class="step-panel" data-step="4">
+            <h2>Mental Wellness & Stress</h2>
+            <p class="step-desc">Self-reported overall stress and wellbeing level.</p>
+
+            <div class="field">
+              <label for="stress_level">Current Overall Stress Level</label>
+              <select id="stress_level" name="stress_level" required>
+                <option value="" disabled selected>Select your current stress level</option>
+                <option value="Low">Low — Feeling balanced, minimal academic worry</option>
+                <option value="Medium">Medium — Moderate study or social pressure</option>
+                <option value="High">High — Frequent tension, fatigue, or exam anxiety</option>
+                <option value="Very High">Very High — Overwhelmed, heavy strain</option>
+              </select>
+              <div class="error-text">Please select your stress level.</div>
+            </div>
+          </div>
+
+          <div class="assessment-actions">
+            <button type="button" class="btn btn-ghost" id="mc-back-btn">← Back</button>
+            <button type="button" class="btn btn-primary" id="mc-next-btn">Continue</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Multi-Stage Loading Indicator -->
+    <div id="mc-loading-shell" class="assessment-loading card-elevated" style="display:none; text-align:center; padding:60px 30px; margin-top:20px;">
+      <div class="spinner" style="margin-bottom:24px;"></div>
+      <h2 style="font-size:1.4rem; margin-bottom:12px;">Analyzing Your Mental Wellness...</h2>
+      <p id="mc-loading-step" style="font-weight:600; color:var(--moss-dark); margin-bottom:10px;">1. Normalizing inputs & encoding categories...</p>
+      <p style="font-size:0.88rem; color:var(--ink-faint); max-width:44ch; margin:0 auto;">Running real inference through our trained Random Forest Regressor pipeline. Scores are calculated objectively without shortcuts.</p>
+    </div>
+
+  </div>
+</div>
+
+<script src="js/auth.js?v=2.5"></script>
+<script src="js/storage.js?v=2.5"></script>
+<script src="js/theme.js?v=2.5"></script>
+<script src="js/config.js"></script>
+<script src="js/api.js?v=2.5"></script>
+<script src="js/results.js?v=2.5"></script>
+<script src="js/app-shell.js?v=2.5"></script>
+<script src="js/chatbot.js?v=2.5"></script>
+<script src="js/assessment.js?v=2.5"></script>
+</body>
+</html>

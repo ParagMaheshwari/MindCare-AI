@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Profile & Settings — MindCare AI</title>
+<link rel="stylesheet" href="css/style.css" />
+<script>
+  (function() {
+    const t = localStorage.getItem("mindcare_theme") || "dark";
+    document.documentElement.setAttribute("data-theme", t);
+  })();
+</script>
+</head>
+<body data-page="profile">
+
+<div id="app-shell-mount"></div>
+
+<div id="page-content">
+  <div class="page-head">
+    <h1>Account Profile & Settings</h1>
+    <p>Manage your student profile, customize wellness goals, and control your private data.</p>
+  </div>
+
+  <!-- Profile Header Card -->
+  <div class="card-elevated section-gap">
+    <div class="profile-header">
+      <div class="profile-avatar" id="mc-profile-avatar"></div>
+      <div>
+        <h2 style="margin-bottom:4px;" id="mc-profile-display-name">—</h2>
+        <p style="color:var(--ink-faint); margin:0;" id="mc-profile-display-email">—</p>
+      </div>
+    </div>
+
+    <div class="profile-stats">
+      <div class="stat-card">
+        <div class="label">Total Assessments</div>
+        <div class="value" id="mc-stat-total">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Latest ML Score</div>
+        <div class="value" id="mc-stat-latest-score">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Mood Streak</div>
+        <div class="value" id="mc-stat-streak">0 Days</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Edit Form -->
+  <div class="card section-gap">
+    <h2 style="font-size:1.2rem; margin-bottom:16px;">Student Profile Information</h2>
+    <form id="mc-profile-form">
+      <div class="field-row">
+        <div class="field">
+          <label for="prof-name">Full Name</label>
+          <input type="text" id="prof-name" required />
+        </div>
+        <div class="field">
+          <label for="prof-email">Email Address</label>
+          <input type="email" id="prof-email" disabled style="opacity:0.7; cursor:not-allowed;" />
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="prof-age">Age</label>
+          <input type="number" id="prof-age" min="14" max="99" placeholder="e.g. 20" />
+        </div>
+        <div class="field">
+          <label for="prof-country">Country</label>
+          <select id="prof-country">
+            <option value="">Select country...</option>
+            <option value="United States">United States</option>
+            <option value="United Kingdom">United Kingdom</option>
+            <option value="Canada">Canada</option>
+            <option value="Australia">Australia</option>
+            <option value="Germany">Germany</option>
+            <option value="India">India</option>
+            <option value="Japan">Japan</option>
+            <option value="South Korea">South Korea</option>
+            <option value="France">France</option>
+            <option value="Brazil">Brazil</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="prof-academic">Academic Level</label>
+          <select id="prof-academic">
+            <option value="">Select level...</option>
+            <option value="High School">High School</option>
+            <option value="Undergraduate">Undergraduate</option>
+            <option value="Graduate">Graduate</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="prof-platform">Preferred Social Platform</label>
+          <select id="prof-platform">
+            <option value="">Select platform...</option>
+            <option value="Instagram">Instagram</option>
+            <option value="YouTube">YouTube</option>
+            <option value="TikTok">TikTok</option>
+            <option value="Twitter">Twitter / X</option>
+            <option value="LinkedIn">LinkedIn</option>
+            <option value="WhatsApp">WhatsApp</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+        <span id="mc-profile-save-status" style="font-size:0.86rem; color:var(--moss-dark); font-weight:600;"></span>
+        <button type="submit" class="btn btn-primary btn-sm">Save Profile Changes</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Wellness Goals Manager -->
+  <div class="card section-gap" id="goals">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <h2 style="font-size:1.2rem; margin:0;">Wellness Goals</h2>
+      <span id="mc-goals-rate" style="font-size:0.85rem; font-weight:600; color:var(--moss-dark);"></span>
+    </div>
+
+    <!-- Add Goal Form -->
+    <div style="display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap;">
+      <input type="text" id="mc-new-goal-title" placeholder="New goal (e.g., Sleep before 11 PM)..." style="flex:2; min-width:220px;" />
+      <select id="mc-new-goal-cat" style="flex:1; min-width:140px;">
+        <option value="General">General</option>
+        <option value="Sleep">Sleep</option>
+        <option value="Movement">Movement</option>
+        <option value="Study">Study</option>
+        <option value="Mindfulness">Mindfulness</option>
+      </select>
+      <button type="button" class="btn btn-secondary btn-sm" id="mc-add-goal-btn">Add Goal</button>
+    </div>
+
+    <div class="goal-list" id="mc-profile-goals-list"></div>
+  </div>
+
+  <!-- Wellness Reminders Manager -->
+  <div class="card section-gap">
+    <h2 style="font-size:1.2rem; margin-bottom:16px;">Wellness Reminders</h2>
+    <div style="display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap;">
+      <input type="text" id="mc-new-rem-title" placeholder="Reminder title (e.g. Take a study break)..." style="flex:2; min-width:220px;" />
+      <input type="time" id="mc-new-rem-time" value="15:00" style="flex:1; min-width:110px;" />
+      <button type="button" class="btn btn-secondary btn-sm" id="mc-add-rem-btn">Add Reminder</button>
+    </div>
+    <div class="reminder-list" id="mc-reminders-list"></div>
+  </div>
+
+  <!-- Appearance & Theme Section -->
+  <div class="card section-gap">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+      <div>
+        <h2 style="font-size:1.2rem; margin:0 0 4px 0;">Appearance & Theme</h2>
+        <p style="font-size:0.88rem; color:var(--ink-soft); margin:0;">Choose between calming light mode or eye-friendly dark mode.</p>
+      </div>
+      <div style="display:flex; gap:10px;" id="mc-theme-choices">
+        <button type="button" class="btn btn-secondary btn-sm" id="mc-btn-theme-light" style="padding:8px 16px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          Light Mode
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm" id="mc-btn-theme-dark" style="padding:8px 16px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          Dark Mode
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Privacy Controls Section -->
+  <div class="card section-gap" style="border-color:#F0C4B8; background:var(--surface);">
+    <h2 style="font-size:1.2rem; color:var(--brick); margin-bottom:6px;">Privacy Controls & Data Management</h2>
+    <p style="font-size:0.88rem; color:var(--ink-soft); margin-bottom:20px;">
+      MindCare AI stores your assessment history, journal reflections, and mood check-ins privately in your local browser storage. You can delete individual categories or completely reset your data at any time.
+    </p>
+
+    <div style="display:flex; flex-direction:column; gap:14px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border);">
+        <div>
+          <strong style="font-size:0.92rem;">Clear Assessment History</strong>
+          <div style="font-size:0.8rem; color:var(--ink-faint);">Deletes all past machine-learning prediction scores and input responses.</div>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" id="mc-del-assessments-btn" style="color:var(--brick);">Delete Assessments</button>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border);">
+        <div>
+          <strong style="font-size:0.92rem;">Clear Journal Entries & AI Reflections</strong>
+          <div style="font-size:0.8rem; color:var(--ink-faint);">Permanently removes all written journal thoughts and AI companion reflections.</div>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" id="mc-del-journals-btn" style="color:var(--brick);">Delete Journals</button>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border);">
+        <div>
+          <strong style="font-size:0.92rem;">Clear Mood History</strong>
+          <div style="font-size:0.8rem; color:var(--ink-faint);">Removes all daily mood check-ins and resets your mood streak.</div>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" id="mc-del-moods-btn" style="color:var(--brick);">Delete Moods</button>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border);">
+        <div>
+          <strong style="font-size:0.92rem;">Clear Chatbot Session</strong>
+          <div style="font-size:0.8rem; color:var(--ink-faint);">Clears current and cached AI conversation history.</div>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" id="mc-del-chat-btn">Clear Chat History</button>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0;">
+        <div>
+          <strong style="font-size:0.92rem; color:var(--brick);">Delete All Local Account Data</strong>
+          <div style="font-size:0.8rem; color:var(--ink-faint);">Completely wipes all assessments, journals, moods, and profile settings for this account.</div>
+        </div>
+        <button type="button" class="btn btn-danger btn-sm" id="mc-reset-account-btn">Wipe All Data</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/results.js"></script>
+<script src="js/app-shell.js"></script>
+<script src="js/chatbot.js"></script>
+<script src="js/profile.js"></script>
+</body>
+</html>

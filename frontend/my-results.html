@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>My Results — MindCare AI</title>
+<link rel="stylesheet" href="css/style.css" />
+<script>
+  (function() {
+    const t = localStorage.getItem("mindcare_theme") || "dark";
+    document.documentElement.setAttribute("data-theme", t);
+  })();
+</script>
+</head>
+<body data-page="results">
+
+<div id="app-shell-mount"></div>
+
+<div id="page-content">
+  <div class="page-head">
+    <h1>My Results</h1>
+    <p>Every assessment you've taken, most recent first.</p>
+  </div>
+
+  <div id="mc-history-wrap"></div>
+</div>
+
+<script src="js/auth.js?v=2.5"></script>
+<script src="js/storage.js?v=2.5"></script>
+<script src="js/theme.js?v=2.5"></script>
+<script src="js/config.js"></script>
+<script src="js/api.js?v=2.5"></script>
+<script src="js/results.js?v=2.5"></script>
+<script src="js/app-shell.js?v=2.5"></script>
+<script src="js/chatbot.js?v=2.5"></script>
+<script src="js/my-results-page.js?v=2.5"></script>
+</body>
+</html>

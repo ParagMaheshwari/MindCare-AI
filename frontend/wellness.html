@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Wellness Tips — MindCare AI</title>
+<link rel="stylesheet" href="css/style.css" />
+<script>
+  (function() {
+    const t = localStorage.getItem("mindcare_theme") || "dark";
+    document.documentElement.setAttribute("data-theme", t);
+  })();
+</script>
+</head>
+<body data-page="wellness">
+
+<div id="app-shell-mount"></div>
+
+<div id="page-content">
+  <div class="page-head">
+    <h1>Wellness Tips</h1>
+    <p>General, educational guidance — not a treatment plan or medical advice.</p>
+  </div>
+
+  <div class="tips-grid">
+    <div class="tip-card">
+      <div class="icon-wrap" data-icon="moon"></div>
+      <h3>Better Sleep</h3>
+      <p>Try keeping a consistent sleep and wake time, even on weekends, and wind down screens before bed to help your body settle into rest.</p>
+    </div>
+    <div class="tip-card">
+      <div class="icon-wrap" data-icon="phone"></div>
+      <h3>Digital Wellbeing</h3>
+      <p>Set app time limits, turn off non-essential notifications, and build in regular screen-free breaks during the day.</p>
+    </div>
+    <div class="tip-card">
+      <div class="icon-wrap" data-icon="spark"></div>
+      <h3>Stress Management</h3>
+      <p>Short breathing exercises, brief walks, and scheduled breaks can help you reset during stressful periods. Talk to someone you trust if stress feels hard to manage.</p>
+    </div>
+    <div class="tip-card">
+      <div class="icon-wrap" data-icon="book"></div>
+      <h3>Study-Life Balance</h3>
+      <p>Try Pomodoro-style sessions — focused study blocks followed by short breaks — to stay productive without burning out.</p>
+    </div>
+    <div class="tip-card">
+      <div class="icon-wrap" data-icon="activity"></div>
+      <h3>Physical Activity</h3>
+      <p>Regular movement — walking, stretching, or sports — supports both physical and mental wellbeing, even in short daily sessions.</p>
+    </div>
+    <div class="tip-card">
+      <div class="icon-wrap" data-icon="user"></div>
+      <h3>Social Connection</h3>
+      <p>Make time for the people who support you. Real conversations and shared activities can be as restorative as rest itself.</p>
+    </div>
+  </div>
+
+  <div class="disclaimer-box" style="margin-top:28px;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:2px;"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.01"/></svg>
+    <span>These tips are general and educational. They are not medical advice and do not replace guidance from a qualified professional.</span>
+  </div>
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/results.js"></script>
+<script src="js/app-shell.js"></script>
+<script src="js/chatbot.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const user = mcInitAppShell();
+    if (!user) return;
+    mcInitChatbot(user);
+  });
+</script>
+</body>
+</html>

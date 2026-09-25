@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Private Journal — MindCare AI</title>
+<link rel="stylesheet" href="css/style.css" />
+<script>
+  (function() {
+    const t = localStorage.getItem("mindcare_theme") || "dark";
+    document.documentElement.setAttribute("data-theme", t);
+  })();
+</script>
+</head>
+<body data-page="journal">
+
+<div id="app-shell-mount"></div>
+
+<div id="page-content">
+  <div class="page-head" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
+    <div>
+      <h1>Private Wellness Journal</h1>
+      <p>Express your feelings safely. Your entries remain strictly confidential on your local device.</p>
+    </div>
+    <button type="button" class="btn btn-primary" id="mc-new-entry-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      New Journal Entry
+    </button>
+  </div>
+
+  <div class="journal-layout">
+    <!-- Sidebar / Past Entries List -->
+    <aside class="journal-sidebar">
+      <div style="position:relative;">
+        <input type="text" id="mc-journal-search" placeholder="Search entries..." style="padding:10px 14px; font-size:0.86rem;" />
+      </div>
+      <div id="mc-journal-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+    </aside>
+
+    <!-- Main Editor & Reflection Area -->
+    <main class="card-elevated">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+        <span id="mc-entry-timestamp" style="font-size:0.8rem; font-weight:600; color:var(--ink-faint);">New Entry</span>
+        <div style="display:flex; gap:8px;">
+          <button type="button" class="btn btn-ghost btn-sm" id="mc-delete-entry-btn" style="color:var(--brick); display:none;">Delete</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="mc-journal-title">Entry Title</label>
+        <input type="text" id="mc-journal-title" placeholder="Give your entry a title..." />
+      </div>
+
+      <div class="field">
+        <label for="mc-journal-content">What's on your mind?</label>
+        <textarea id="mc-journal-content" rows="10" placeholder="Write freely about your feelings, worries, accomplishments, or daily events..." style="width:100%; padding:14px; border:1.5px solid var(--border-strong); border-radius:var(--radius-sm); font-family:inherit; font-size:0.95rem; line-height:1.6;"></textarea>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-top:20px; padding-top:16px; border-top:1px solid var(--border);">
+        <button type="button" class="btn btn-secondary" id="mc-ai-reflect-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+          Get AI Reflection
+        </button>
+        <button type="button" class="btn btn-primary" id="mc-save-entry-btn">Save Entry</button>
+      </div>
+
+      <!-- AI Reflection Display Card -->
+      <div id="mc-ai-reflection-box" class="ai-reflection-box" style="display:none;">
+        <div class="reflection-header">
+          <div class="badge-ai">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+            MindCare AI Reflection
+          </div>
+          <span style="font-size:0.75rem; color:var(--ink-faint);">Non-Diagnostic Companion</span>
+        </div>
+        <h4>Emotional Reflection</h4>
+        <p id="mc-reflect-emotion">—</p>
+
+        <h4>Compassionate Observations</h4>
+        <p id="mc-reflect-obs">—</p>
+
+        <h4>Healthy Coping Suggestions</h4>
+        <ul id="mc-reflect-coping"></ul>
+
+        <h4>Practical Next Steps</h4>
+        <ul id="mc-reflect-steps"></ul>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/app-shell.js"></script>
+<script src="js/chatbot.js"></script>
+<script src="js/journal-page.js"></script>
+</body>
+</html>

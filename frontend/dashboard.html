@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard — MindCare AI</title>
+<link rel="stylesheet" href="css/style.css" />
+<script>
+  (function() {
+    const t = localStorage.getItem("mindcare_theme") || "dark";
+    document.documentElement.setAttribute("data-theme", t);
+  })();
+</script>
+</head>
+<body data-page="dashboard">
+
+<div id="app-shell-mount"></div>
+
+<div id="page-content">
+  <div class="page-head" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
+    <div>
+      <h1>Welcome back, <span id="mc-welcome-name">there</span> 👋</h1>
+      <p>Here's a holistic look at your mental wellness, habits, and progress.</p>
+    </div>
+    <div style="display:flex; gap:10px;">
+      <a href="assessment.html" class="btn btn-primary btn-sm">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Assessment
+      </a>
+    </div>
+  </div>
+
+  <!-- Streaks System -->
+  <div class="streaks-row" id="mc-dash-streaks"></div>
+
+  <!-- ML Prediction Score Hero -->
+  <div id="mc-score-section" class="card-elevated section-gap"></div>
+
+  <!-- Predictive Early-Warning & Wellness Forecast Card -->
+  <div id="mc-forecast-section" class="card-elevated section-gap"></div>
+
+  <!-- Score Trend & Progress Tracking Chart -->
+  <div id="mc-progress-section" class="card section-gap"></div>
+
+  <!-- Mood & Goals Row -->
+  <div class="grid-2 section-gap">
+    <!-- Today's Mood Widget -->
+    <div class="card" id="mc-dash-mood"></div>
+
+    <!-- Goals Widget -->
+    <div class="card" id="mc-dash-goals"></div>
+  </div>
+
+  <!-- Quick Actions Grid -->
+  <div class="section-gap">
+    <h2 style="font-size:1.2rem; margin-bottom:16px;">Quick Actions</h2>
+    <div class="quick-actions" style="grid-template-columns: repeat(5, 1fr);">
+      <a href="assessment.html" class="action-card">
+        <div class="icon-wrap" data-icon="clipboard"></div>
+        <h3>Take Assessment</h3>
+        <p>Run ML wellness analysis.</p>
+      </a>
+      <a href="mood.html" class="action-card">
+        <div class="icon-wrap" data-icon="mood"></div>
+        <h3>Mood Check-in</h3>
+        <p>Track how you feel today.</p>
+      </a>
+      <a href="journal.html" class="action-card">
+        <div class="icon-wrap" data-icon="journal"></div>
+        <h3>Write Journal</h3>
+        <p>Reflect with AI support.</p>
+      </a>
+      <a href="breathing.html" class="action-card">
+        <div class="icon-wrap" data-icon="breathing"></div>
+        <h3>Breathing Pause</h3>
+        <p>Guided box breathing.</p>
+      </a>
+      <a href="#" class="action-card" id="mc-talk-to-ai">
+        <div class="icon-wrap" data-icon="chat"></div>
+        <h3>Chat with AI</h3>
+        <p>Empathetic companion.</p>
+      </a>
+    </div>
+  </div>
+
+  <!-- Behavioral Indicators & Recommendations Preview -->
+  <div id="mc-overview-section"></div>
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/sentiment.js"></script>
+<script src="js/forecast-engine.js"></script>
+<script src="js/results.js"></script>
+<script src="js/app-shell.js"></script>
+<script src="js/chatbot.js"></script>
+<script src="js/dashboard.js"></script>
+<script>
+  document.getElementById("mc-talk-to-ai")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    document.getElementById("mc-chat-fab")?.click();
+  });
+</script>
+</body>
+</html>

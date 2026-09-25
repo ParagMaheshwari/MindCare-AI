@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Wellness Resources & Crisis Support — MindCare AI</title>
+<link rel="stylesheet" href="css/style.css?v=3.0" />
+<script>
+  (function() {
+    const t = localStorage.getItem("mindcare_theme") || "dark";
+    document.documentElement.setAttribute("data-theme", t);
+  })();
+</script>
+</head>
+<body data-page="resources">
+
+<div id="app-shell-mount"></div>
+
+<div id="page-content">
+  <div class="page-head">
+    <h1>Mental Wellness Resources & Guides</h1>
+    <p>Evidence-grounded lifestyle guidance for students, plus direct access to verified crisis resources.</p>
+  </div>
+
+  <!-- "Need Help Now?" Crisis Support Section (Country-Aware & Compact) -->
+  <section class="crisis-banner" id="crisis-support" aria-label="Immediate Crisis Support">
+    <div class="crisis-banner-top">
+      <div class="crisis-banner-title-group">
+        <div class="crisis-banner-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+        </div>
+        <div>
+          <h3>Need Immediate Support?</h3>
+          <div style="font-size:0.84rem; color:var(--ink-soft); margin-top:2px;">Free, confidential support is available 24/7. AI cannot provide medical or emergency care.</div>
+        </div>
+      </div>
+      <div class="crisis-banner-badge">
+        <span class="live-dot" aria-hidden="true"></span> 24/7 Crisis Support
+      </div>
+    </div>
+
+    <!-- Country Selector Tabs -->
+    <div class="crisis-country-bar" role="tablist" aria-label="Crisis Helplines by Region">
+      <span class="crisis-country-label">Region:</span>
+      <button type="button" class="crisis-country-pill active" data-country="usa" role="tab" aria-selected="true">🇺🇸 USA & Canada</button>
+      <button type="button" class="crisis-country-pill" data-country="india" role="tab" aria-selected="false">🇮🇳 India</button>
+      <button type="button" class="crisis-country-pill" data-country="uk" role="tab" aria-selected="false">🇬🇧 UK</button>
+      <button type="button" class="crisis-country-pill" data-country="australia" role="tab" aria-selected="false">🇦🇺 Australia</button>
+      <button type="button" class="crisis-country-pill" data-country="europe" role="tab" aria-selected="false">🇪🇺 Europe</button>
+      <button type="button" class="crisis-country-pill" data-country="intl" role="tab" aria-selected="false">🌐 International</button>
+    </div>
+
+    <!-- Crisis Cards Container -->
+    <div class="crisis-cards-container" id="crisis-cards-grid">
+      <!-- Default: USA & Canada (populated on load or via JS) -->
+      <div class="crisis-card-compact">
+        <div>
+          <div class="crisis-card-compact-head">
+            <span class="crisis-card-compact-title">988 Suicide & Crisis Lifeline</span>
+            <span class="crisis-card-badge">24/7 Free</span>
+          </div>
+          <div class="crisis-card-number">988</div>
+          <div class="crisis-card-desc">Call or text 988. Free, confidential support across USA & Canada from trained specialists in English & Spanish.</div>
+        </div>
+        <div class="crisis-card-actions">
+          <a href="tel:988" class="crisis-act-btn call" aria-label="Call 988 Lifeline">📞 Call 988</a>
+          <a href="sms:988" class="crisis-act-btn text" aria-label="Text 988 Lifeline">💬 Text 988</a>
+        </div>
+      </div>
+
+      <div class="crisis-card-compact">
+        <div>
+          <div class="crisis-card-compact-head">
+            <span class="crisis-card-compact-title">Crisis Text Line</span>
+            <span class="crisis-card-badge">24/7 Text</span>
+          </div>
+          <div class="crisis-card-number">HOME to 741741</div>
+          <div class="crisis-card-desc">Text HOME to 741741 to connect with a volunteer crisis counselor anytime day or night.</div>
+        </div>
+        <div class="crisis-card-actions">
+          <a href="sms:741741?body=HOME" class="crisis-act-btn text" style="flex:1;" aria-label="Text HOME to 741741">💬 Text HOME</a>
+          <a href="https://www.crisistextline.org" target="_blank" rel="noopener noreferrer" class="crisis-act-btn web" aria-label="Visit Crisis Text Line">🌐 Web</a>
+        </div>
+      </div>
+
+      <div class="crisis-card-compact">
+        <div>
+          <div class="crisis-card-compact-head">
+            <span class="crisis-card-compact-title">Emergency Services</span>
+            <span class="crisis-card-badge">Immediate Danger</span>
+          </div>
+          <div class="crisis-card-number">911</div>
+          <div class="crisis-card-desc">For acute medical emergencies, active self-harm danger, or immediate life-threatening situations.</div>
+        </div>
+        <div class="crisis-card-actions">
+          <a href="tel:911" class="crisis-act-btn call" style="flex:1;" aria-label="Call 911 Emergency">🚨 Call 911</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Safety Disclaimer -->
+    <div class="crisis-banner-footer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span>If you or someone you know is in immediate physical danger, contact emergency services (911/112/999) or proceed to the nearest emergency room.</span>
+    </div>
+  </section>
+
+  <!-- Guided Exercise Callout (High Contrast, Responsive & Modern) -->
+  <div class="breathing-callout" role="region" aria-label="Guided Breathing Exercise">
+    <div class="breathing-callout-main">
+      <div class="breathing-icon-glyph" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/>
+        </svg>
+      </div>
+      <div>
+        <h3>Feeling tense or overwhelmed right now?</h3>
+        <p>Try our interactive 1-minute box breathing exercise (4-4-4-4) to quickly down-regulate physiological stress and restore mental clarity.</p>
+        <span class="breathing-pill-tag">⏱️ 1–5 Minutes • Guided Rhythmic Pacer</span>
+      </div>
+    </div>
+    <a href="breathing.html" class="btn-breathing-cta">
+      <span>Start Breathing Exercise</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+  </div>
+
+  <!-- Educational Resources Header & Category Filters -->
+  <div class="resource-header-row">
+    <div>
+      <h2>Educational Wellness Guides</h2>
+      <p>Practical, evidence-grounded coping strategies curated for academic, physical, and digital wellness.</p>
+    </div>
+  </div>
+
+  <div class="resource-filter-bar" role="tablist" aria-label="Filter Guides by Category">
+    <button type="button" class="resource-filter-btn active" data-filter="all">All Guides (8)</button>
+    <button type="button" class="resource-filter-btn" data-filter="stress">Stress & Study</button>
+    <button type="button" class="resource-filter-btn" data-filter="sleep">Sleep & Rest</button>
+    <button type="button" class="resource-filter-btn" data-filter="digital">Digital Habits</button>
+    <button type="button" class="resource-filter-btn" data-filter="grounding">Grounding & Body</button>
+    <button type="button" class="resource-filter-btn" data-filter="campus">Campus & Social</button>
+  </div>
+
+  <!-- Compact 2–3 Column Responsive Grid -->
+  <div class="tips-grid" id="tips-grid">
+    <!-- Card 1: Stress Management -->
+    <div class="tip-card" data-category="stress">
+      <div>
+        <div class="tip-card-head">
+          <div class="icon-wrap" data-icon="spark"></div>
+          <div class="tip-card-meta">
+            <span class="tip-badge">Focus</span>
+            <span class="tip-time">3 min read</span>
+          </div>
+        </div>
+        <div class="tip-card-body">
+          <h3>Stress Management</h3>
+          <p>Identify triggers early. Use the "Brain Dump" technique to get swirling worries onto paper, and break large assignments into 25-minute single-focus blocks.</p>
+        </div>
+      </div>
+      <div class="tip-takeaway">
+        <span class="tip-takeaway-label">💡 Technique:</span>
+        <span>25-min single-focus study sprints</span>
+      </div>
+    </div>
+
+    <!-- Card 2: Sleep Hygiene -->
+    <div class="tip-card" data-category="sleep">
+      <div>
+        <div class="tip-card-head">
+          <div class="icon-wrap" data-icon="moon"></div>
+          <div class="tip-card-meta">
+            <span class="tip-badge">Sleep</span>
+            <span class="tip-time">2 min read</span>
+          </div>
+        </div>
+        <div class="tip-card-body">
+          <h3>Sleep Hygiene</h3>
+          <p>Maintain consistent sleep and wake times, keep your bedroom cool and dark, and put phones away at least 30 minutes before sleep to allow melatonin release.</p>
+        </div>
+      </div>
+      <div class="tip-takeaway">
+        <span class="tip-takeaway-label">🌙 Routine:</span>
+        <span>30-min pre-sleep screen blackout</span>
+      </div>
+    </div>
+
+    <!-- Card 3: Study-Life Balance -->
+    <div class="tip-card" data-category="stress">
+      <div>
+        <div class="tip-card-head">
+          <div class="icon-wrap" data-icon="book"></div>
+          <div class="tip-card-meta">
+            <span class="tip-badge">Study</span>
+            <span class="tip-time">3 min read</span>
+          </div>
+        </div>
+        <div class="tip-card-body">
+          <h3>Study-Life Balance</h3>
+          <p>Adopt the Pomodoro technique (50 min focus / 10 min break). Remember that rest is not a reward you earn; it is a biological requirement for memory retention.</p>
+        </div>
+      </div>
+      <div class="tip-takeaway">
+        <span class="tip-takeaway-label">⏱️ Method:</span>
+        <span>50 min deep work / 10 min break</span>
+      </div>
+    </div>
+
+    <!-- Card 4: Digital Wellness -->
+    <div class="tip-card" data-category="digital">
+      <div>
+        <div class="tip-card-head">
+          <div class="icon-wrap" data-icon="phone"></div>
+          <div class="tip-card-meta">
+            <span class="tip-badge">Digital</span>
+            <span class="tip-time">2 min read</span>
+          </div>
+        </div>
+        <div class="tip-card-body">
+          <h3>Digital Wellness</h3>
+          <p>Social media feeds are engineered for intermittent dopamine spikes. Set daily limits for feeds, turn off badge notifications, and create phone-free meal times.</p>
+        </div>
+      </div>
+      <div class="tip-takeaway">
+        <span class="tip-takeaway-label">📵 Boundary:</span>
+        <span>Silent badge alerts & app limits</span>
+      </div>
+    </div>
+
+    <!-- Card 5: Relaxation & Grounding -->
+    <div class="tip-card" data-category="grounding">
+      <div>
+        <div class="tip-card-head">
+          <div class="icon-wrap" data-icon="breathing"></div>
+          <div class="tip-card-meta">
+            <span class="tip-badge">Grounding</span>
+            <span class="tip-time">Quick reset</span>
+          </div>
+        </div>
+        <div class="tip-card-body">
+          <h3>Relaxation & Grounding</h3>
+          <p>Use the 5-4-3-2-1 sensory technique when feeling anxious: notice 5 things you see, 4 you can touch, 3 you hear, 2 you smell, and 1 you can taste.</p>
+        </div>
+      </div>
+      <div class="tip-takeaway">
+        <span class="tip-takeaway-label">👁️ Reset:</span>
+        <span>5-4-3-2-1 sensory countdown</span>
+      </div>
+    </div>
+
+    <!-- Card 6: Physical Movement -->
+    <div class="tip-card" data-category="grounding">
+      <div>
+        <div class="tip-card-head">
+          <div class="icon-wrap" data-icon="activity"></div>
+          <div class="tip-card-meta">
+            <span class="tip-badge">Movement</span>
+            <span class="tip-time">Daily habit</span>
+          </div>
+        </div>
+        <div class="tip-card-body">
+          <h3>Physical Movement</h3>
+          <p>Just 20 minutes of daily physical movement—brisk walking, cycling, or yoga—releases endorphins and physically burns off excess cortisol and study stress.</p>
+        </div>
+      </div>
+      <div class="tip-takeaway">
+        <span class="tip-takeaway-label">🏃 Habit:</span>
+        <span>20 min daily aerobic movement</span>
+      </div>
+    </div>
+
+    <!-- Card 7: Social Connection -->
+    <div class="tip-card" data-category="campus">
+      <div>
+        <div class="tip-card-head">
+          <div class="icon-wrap" data-icon="user"></div>
+          <div class="tip-card-meta">
+            <span class="tip-badge">Social</span>
+            <span class="tip-time">Support</span>
+          </div>
+        </div>
+        <div class="tip-card-body">
+          <h3>Social Connection</h3>
+          <p>Schedule regular phone calls or study dates with supportive friends or family. Sharing your worries out loud helps dismantle the feeling of isolation.</p>
+        </div>
+      </div>
+      <div class="tip-takeaway">
+        <span class="tip-takeaway-label">💬 Support:</span>
+        <span>Weekly intentional friend check-ins</span>
+      </div>
+    </div>
+
+    <!-- Card 8: Campus Counseling Centers -->
+    <div class="tip-card" data-category="campus">
+      <div>
+        <div class="tip-card-head">
+          <div class="icon-wrap" data-icon="clipboard"></div>
+          <div class="tip-card-meta">
+            <span class="tip-badge">Campus</span>
+            <span class="tip-time">Free access</span>
+          </div>
+        </div>
+        <div class="tip-card-body">
+          <h3>Campus Counseling Centers</h3>
+          <p>Most universities offer free or low-cost confidential counseling, peer support groups, and stress management workshops for students. Don't hesitate to book a session.</p>
+        </div>
+      </div>
+      <div class="tip-takeaway">
+        <span class="tip-takeaway-label">🎓 Access:</span>
+        <span>Free confidential campus visits</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="disclaimer-box" style="margin-top:32px;">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <span>These resources provide general educational information only. They are not medical advice and do not replace personalized care from licensed mental-health professionals.</span>
+  </div>
+</div>
+
+<script src="js/auth.js?v=3.0"></script>
+<script src="js/storage.js?v=3.0"></script>
+<script src="js/theme.js?v=3.0"></script>
+<script src="js/config.js"></script>
+<script src="js/api.js?v=3.0"></script>
+<script src="js/app-shell.js?v=3.0"></script>
+<script src="js/chatbot.js?v=3.0"></script>
+<script>
+  // Country-Aware Crisis Resources Database
+  const MC_CRISIS_DATA = {
+    usa: [
+      {
+        title: "988 Suicide & Crisis Lifeline",
+        badge: "24/7 Free",
+        number: "988",
+        desc: "Call or text 988. Free, confidential support across USA & Canada from trained crisis specialists in English & Spanish.",
+        actions: [
+          { type: "call", label: "📞 Call 988", href: "tel:988" },
+          { type: "text", label: "💬 Text 988", href: "sms:988" }
+        ]
+      },
+      {
+        title: "Crisis Text Line",
+        badge: "24/7 Text",
+        number: "HOME to 741741",
+        desc: "Free 24/7 crisis support via SMS. Connect with a trained, compassionate volunteer crisis counselor in minutes.",
+        actions: [
+          { type: "text", label: "💬 Text HOME", href: "sms:741741?body=HOME", flex: true },
+          { type: "web", label: "🌐 Web", href: "https://www.crisistextline.org", target: "_blank" }
+        ]
+      },
+      {
+        title: "Emergency Services",
+        badge: "Immediate Danger",
+        number: "911",
+        desc: "For acute medical emergencies, active self-harm risk, or situations requiring immediate dispatch of first responders.",
+        actions: [
+          { type: "call", label: "🚨 Call 911", href: "tel:911", flex: true }
+        ]
+      }
+    ],
+    india: [
+      {
+        title: "Tele-MANAS (Govt of India)",
+        badge: "24/7 Toll-Free",
+        number: "14416",
+        desc: "National Tele Mental Health Programme by Ministry of Health. Free, confidential psychological support in 20+ languages.",
+        actions: [
+          { type: "call", label: "📞 Call 14416", href: "tel:14416" },
+          { type: "call", label: "📞 1800-891-4416", href: "tel:18008914416" }
+        ]
+      },
+      {
+        title: "Vandrevala Foundation Helpline",
+        badge: "24/7 Free Counseling",
+        number: "9999 666 555",
+        desc: "Free 24/7 mental health counseling and suicide prevention service operated by trained mental health professionals.",
+        actions: [
+          { type: "call", label: "📞 Call +91 9999 666 555", href: "tel:+919999666555", flex: true }
+        ]
+      },
+      {
+        title: "National Emergency Service",
+        badge: "Immediate Danger",
+        number: "112",
+        desc: "Unified pan-India emergency response support system for police, medical, ambulance, and disaster assistance.",
+        actions: [
+          { type: "call", label: "🚨 Call 112", href: "tel:112", flex: true }
+        ]
+      }
+    ],
+    uk: [
+      {
+        title: "NHS 111 Mental Health",
+        badge: "24/7 NHS Care",
+        number: "111 (Option 2)",
+        desc: "Free 24/7 NHS mental health services. Connect with local mental health professionals for advice and assessment.",
+        actions: [
+          { type: "call", label: "📞 Call 111", href: "tel:111", flex: true },
+          { type: "web", label: "🌐 NHS 111 Online", href: "https://111.nhs.uk", target: "_blank" }
+        ]
+      },
+      {
+        title: "Samaritans UK Helpline",
+        badge: "24/7 Free & Confidential",
+        number: "116 123",
+        desc: "Free phone helpline open 24 hours a day, 365 days a year. Whatever you're going through, a Samaritan will face it with you.",
+        actions: [
+          { type: "call", label: "📞 Call 116 123", href: "tel:116123", flex: true }
+        ]
+      },
+      {
+        title: "Shout Crisis Text Line",
+        badge: "24/7 Free Text",
+        number: "SHOUT to 85258",
+        desc: "Free, confidential 24/7 text messaging support service for anyone struggling with anxiety, depression, or distress.",
+        actions: [
+          { type: "text", label: "💬 Text SHOUT", href: "sms:85258?body=SHOUT", flex: true }
+        ]
+      }
+    ],
+    australia: [
+      {
+        title: "Lifeline Australia",
+        badge: "24/7 Crisis Support",
+        number: "13 11 14",
+        desc: "National charity providing all Australians experiencing emotional distress with access to 24/7 crisis support and suicide prevention.",
+        actions: [
+          { type: "call", label: "📞 Call 13 11 14", href: "tel:131114" },
+          { type: "text", label: "💬 Text 0477 13 11 14", href: "sms:0477131114" }
+        ]
+      },
+      {
+        title: "Beyond Blue",
+        badge: "24/7 Counseling",
+        number: "1300 22 4636",
+        desc: "Free, confidential support with trained mental health professionals via phone, webchat, and online community forums.",
+        actions: [
+          { type: "call", label: "📞 Call 1300 22 4636", href: "tel:1300224636", flex: true }
+        ]
+      },
+      {
+        title: "Emergency Services",
+        badge: "Immediate Danger",
+        number: "000",
+        desc: "Australia's primary national emergency telephone number for police, ambulance, or fire service response.",
+        actions: [
+          { type: "call", label: "🚨 Call 000", href: "tel:000", flex: true }
+        ]
+      }
+    ],
+    europe: [
+      {
+        title: "Pan-European Mental Health",
+        badge: "Free Emotional Support",
+        number: "116 123",
+        desc: "Available across most EU member states. Free, confidential telephone emotional support for people facing crisis.",
+        actions: [
+          { type: "call", label: "📞 Call 116 123", href: "tel:116123", flex: true }
+        ]
+      },
+      {
+        title: "European Emergency Number",
+        badge: "Immediate Danger",
+        number: "112",
+        desc: "Free European emergency phone number reachable anywhere in the EU from landlines and mobile phones 24/7.",
+        actions: [
+          { type: "call", label: "🚨 Call 112", href: "tel:112", flex: true }
+        ]
+      },
+      {
+        title: "SOS Help & TelefonSeelsorge",
+        badge: "Verified Directories",
+        number: "soshelpline.org",
+        desc: "Access verified national crisis hotlines, multi-lingual listening services, and support directories across Europe.",
+        actions: [
+          { type: "web", label: "🌐 Find EU Directory", href: "https://www.soshelpline.org", target: "_blank", flex: true }
+        ]
+      }
+    ],
+    intl: [
+      {
+        title: "Befrienders Worldwide",
+        badge: "32+ Countries",
+        number: "befrienders.org",
+        desc: "A global network of 349 emotional support centres across 32 countries dedicated to suicide prevention and non-judgmental listening.",
+        actions: [
+          { type: "web", label: "🌐 Search Befrienders", href: "https://www.befrienders.org", target: "_blank", flex: true }
+        ]
+      },
+      {
+        title: "Find A Helpline (Global)",
+        badge: "130+ Countries",
+        number: "findahelpline.com",
+        desc: "Free, confidential crisis lines and text lines in over 130 countries. Filter by topic, age group, language, and country.",
+        actions: [
+          { type: "web", label: "🌐 Visit Directory", href: "https://findahelpline.com", target: "_blank", flex: true }
+        ]
+      },
+      {
+        title: "Local Emergency Dispatch",
+        badge: "Immediate Danger",
+        number: "Local Dispatch",
+        desc: "If in life-threatening or immediate physical danger, please call your local emergency dispatch or nearest public hospital.",
+        actions: [
+          { type: "call", label: "🚨 Call 112 / 911", href: "tel:112", flex: true }
+        ]
+      }
+    ]
+  };
+
+  function renderCrisisCards(countryKey) {
+    const container = document.getElementById("crisis-cards-grid");
+    if (!container) return;
+    const cards = MC_CRISIS_DATA[countryKey] || MC_CRISIS_DATA.usa;
+
+    container.innerHTML = cards.map(c => {
+      const actionsHtml = (c.actions || []).map(a => {
+        const style = a.flex ? 'style="flex:1;"' : '';
+        const target = a.target ? `target="${a.target}" rel="noopener noreferrer"` : '';
+        return `<a href="${a.href}" class="crisis-act-btn ${a.type}" ${style} ${target}>${a.label}</a>`;
+      }).join("");
+
+      return `
+        <div class="crisis-card-compact">
+          <div>
+            <div class="crisis-card-compact-head">
+              <span class="crisis-card-compact-title">${c.title}</span>
+              <span class="crisis-card-badge">${c.badge}</span>
+            </div>
+            <div class="crisis-card-number">${c.number}</div>
+            <div class="crisis-card-desc">${c.desc}</div>
+          </div>
+          <div class="crisis-card-actions">
+            ${actionsHtml}
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  function initCrisisCountrySwitcher() {
+    const pills = document.querySelectorAll(".crisis-country-pill");
+    if (!pills.length) return;
+
+    // Detect user country from latest assessment or profile
+    let defaultCountry = "usa";
+    try {
+      const latest = (typeof MindCareStore !== "undefined" && MindCareStore.getLatestAssessment) 
+        ? MindCareStore.getLatestAssessment() 
+        : null;
+      const user = (typeof MindCareAuth !== "undefined" && MindCareAuth.getCurrentUser)
+        ? MindCareAuth.getCurrentUser()
+        : null;
+      
+      const detected = (latest && latest.country) || (user && user.country) || "";
+      const lower = String(detected).toLowerCase();
+      if (lower.includes("india")) defaultCountry = "india";
+      else if (lower.includes("uk") || lower.includes("united kingdom")) defaultCountry = "uk";
+      else if (lower.includes("australia")) defaultCountry = "australia";
+      else if (lower.includes("germany") || lower.includes("france") || lower.includes("europe")) defaultCountry = "europe";
+      else if (lower.includes("usa") || lower.includes("united states") || lower.includes("canada")) defaultCountry = "usa";
+    } catch(e) {
+      console.warn("Country detection fallback:", e);
+    }
+
+    // Set initial active state
+    pills.forEach(pill => {
+      const isMatch = pill.dataset.country === defaultCountry;
+      pill.classList.toggle("active", isMatch);
+      pill.setAttribute("aria-selected", isMatch ? "true" : "false");
+    });
+    renderCrisisCards(defaultCountry);
+
+    // Pill click event listener
+    pills.forEach(pill => {
+      pill.addEventListener("click", () => {
+        pills.forEach(p => {
+          p.classList.remove("active");
+          p.setAttribute("aria-selected", "false");
+        });
+        pill.classList.add("active");
+        pill.setAttribute("aria-selected", "true");
+        renderCrisisCards(pill.dataset.country);
+      });
+    });
+  }
+
+  function initResourceFiltering() {
+    const filterBtns = document.querySelectorAll(".resource-filter-btn");
+    const cards = document.querySelectorAll("#tips-grid .tip-card");
+    if (!filterBtns.length || !cards.length) return;
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        filterBtns.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        const filter = btn.dataset.filter;
+        cards.forEach(card => {
+          if (filter === "all" || card.dataset.category === filter) {
+            card.style.display = "flex";
+            card.style.opacity = "1";
+          } else {
+            card.style.display = "none";
+            card.style.opacity = "0";
+          }
+        });
+      });
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const user = mcInitAppShell();
+    if (!user) return;
+    mcInitChatbot(user);
+
+    initCrisisCountrySwitcher();
+    initResourceFiltering();
+  });
+</script>
+</body>
+</html>

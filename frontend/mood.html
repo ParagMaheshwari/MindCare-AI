@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Daily Mood Tracker — MindCare AI</title>
+<link rel="stylesheet" href="css/style.css" />
+<script>
+  (function() {
+    const t = localStorage.getItem("mindcare_theme") || "dark";
+    document.documentElement.setAttribute("data-theme", t);
+  })();
+</script>
+</head>
+<body data-page="mood">
+
+<div id="app-shell-mount"></div>
+
+<div id="page-content">
+  <div class="page-head">
+    <h1>Daily Mood Tracker</h1>
+    <p>Check in with your emotional state today and track your wellness patterns over time.</p>
+  </div>
+
+  <div class="streaks-row" id="mc-mood-streaks"></div>
+
+  <!-- Mood Check-In Card -->
+  <div class="card-elevated section-gap">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <h2 style="font-size:1.25rem; margin:0;" id="mc-checkin-title">How are you feeling today?</h2>
+      <span style="font-size:0.82rem; font-weight:600; color:var(--ink-faint);" id="mc-today-date"></span>
+    </div>
+
+    <div class="mood-selector" id="mc-mood-selector">
+      <button type="button" class="mood-btn" data-mood="5">
+        <span class="emoji">😄</span>
+        <span class="label">Great</span>
+      </button>
+      <button type="button" class="mood-btn" data-mood="4">
+        <span class="emoji">🙂</span>
+        <span class="label">Good</span>
+      </button>
+      <button type="button" class="mood-btn" data-mood="3">
+        <span class="emoji">😐</span>
+        <span class="label">Okay</span>
+      </button>
+      <button type="button" class="mood-btn" data-mood="2">
+        <span class="emoji">😟</span>
+        <span class="label">Low</span>
+      </button>
+      <button type="button" class="mood-btn" data-mood="1">
+        <span class="emoji">😔</span>
+        <span class="label">Very Low</span>
+      </button>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px; margin-bottom:10px; flex-wrap:wrap; gap:10px;">
+      <label style="font-weight:700; font-size:0.92rem;">How would you like to reflect today?</label>
+      <div class="voice-mode-tabs">
+        <button type="button" class="voice-mode-tab active" id="mc-tab-type">
+          <span>✏️</span>
+          <span>Type Note</span>
+        </button>
+        <button type="button" class="voice-mode-tab" id="mc-tab-voice">
+          <span>🎙️</span>
+          <span>Voice Check-in</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Type Note Section -->
+    <div id="mc-type-section" class="field" style="margin-top:4px;">
+      <label for="mc-mood-note">Journal Note (What contributed to this mood?)</label>
+      <textarea id="mc-mood-note" rows="3" style="width:100%; padding:12px 14px; border:1.5px solid var(--border-strong); border-radius:var(--radius-sm); font-family:inherit; font-size:0.9rem;" placeholder="e.g. Finished my assignments early, took a walk in the sun..."></textarea>
+    </div>
+
+    <!-- Voice Check-in Section -->
+    <div id="mc-voice-section" class="voice-checkin-container" style="display:none;">
+      <!-- Microphone & Timer Controls -->
+      <div class="voice-record-stage">
+        <div class="voice-mic-wrap">
+          <button type="button" class="voice-mic-btn" id="mc-voice-rec-btn" title="Click to record your voice mood check-in">
+            <svg id="mc-mic-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+              <line x1="12" y1="19" x2="12" y2="23"/>
+              <line x1="8" y1="23" x2="16" y2="23"/>
+            </svg>
+          </button>
+          <div class="voice-pulse-ring"></div>
+        </div>
+
+        <div class="voice-timer-pill" id="mc-voice-timer-pill" style="display:none;">
+          <span class="recording-dot"></span>
+          <span id="mc-voice-time-display">00:00 / 01:00</span>
+        </div>
+
+        <div style="font-size:0.88rem; color:var(--ink-soft); font-weight:600;" id="mc-voice-instructions">
+          Tap the microphone to speak how you feel today (max 60s).
+        </div>
+
+        <!-- Live Waveform Canvas -->
+        <canvas id="mc-voice-waveform" class="voice-waveform-canvas" width="480" height="64"></canvas>
+
+        <div class="voice-privacy-notice">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          <span>Your voice is analyzed locally on your device and audio is never saved or transmitted.</span>
+        </div>
+      </div>
+
+      <!-- Fallback banner if microphone is denied or unsupported -->
+      <div id="mc-voice-fallback-msg" class="voice-fallback-banner" style="display:none;"></div>
+
+      <!-- Real-Time Transcript Preview -->
+      <div id="mc-voice-transcript-card" class="voice-transcript-card" style="display:none;">
+        <div class="card-head">
+          <span class="card-title">Live Transcript Preview</span>
+          <span id="mc-voice-word-count" style="font-size:0.75rem; color:var(--ink-faint); font-weight:600;">0 words</span>
+        </div>
+        <div id="mc-voice-transcript-text" class="voice-transcript-text">Listening for speech...</div>
+      </div>
+
+      <!-- Combined Signal Breakdown Card (Words vs. Tone) -->
+      <div id="mc-voice-breakdown-card" class="voice-breakdown-card" style="display:none;">
+        <div class="voice-blend-banner">
+          <div class="blend-title" id="mc-voice-blend-title">Voice Mood Analysis Complete</div>
+          <div class="blend-action">Emoji auto-selected below ↓</div>
+        </div>
+
+        <div class="voice-signal-grid">
+          <!-- Text Sentiment Signal -->
+          <div class="voice-signal-col">
+            <div class="col-label">🗣️ What the words say</div>
+            <div class="col-value">
+              <span id="mc-sentiment-score-badge">4.0 / 5</span>
+              <span id="mc-sentiment-label-badge" class="badge badge-higher" style="font-size:0.75rem;">Positive</span>
+            </div>
+            <div class="col-desc" id="mc-sentiment-desc">Emotional valence evaluated from your transcript text.</div>
+          </div>
+
+          <!-- Vocal Tone Signal -->
+          <div class="voice-signal-col">
+            <div class="col-label">🎵 How it sounded</div>
+            <div class="col-value">
+              <span id="mc-vocal-score-badge">3.8 / 5</span>
+              <span id="mc-vocal-label-badge" class="badge badge-moderate" style="font-size:0.75rem;">Animated</span>
+            </div>
+            <div class="col-desc" id="mc-vocal-desc">Acoustic pitch variance, cadence, and volume energy.</div>
+          </div>
+        </div>
+
+        <!-- Detailed Acoustic Metrics -->
+        <div class="voice-metrics-pills" id="mc-vocal-metrics-pills"></div>
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:18px;">
+      <span id="mc-mood-status-msg" style="font-size:0.85rem; color:var(--moss-dark); font-weight:600;"></span>
+      <button type="button" class="btn btn-primary" id="mc-save-mood-btn">Save Today's Mood</button>
+    </div>
+  </div>
+
+  <!-- Mood Analytics Section -->
+  <div class="grid-2 section-gap">
+    <div class="card">
+      <h3 style="font-size:1.15rem; margin-bottom:6px;">This Week's Mood Trend</h3>
+      <p style="font-size:0.86rem; color:var(--ink-soft); margin-bottom:18px;">Your daily emotional check-ins across the last 7 days.</p>
+      <div class="mood-week-track" id="mc-week-track"></div>
+    </div>
+
+    <div class="card">
+      <h3 style="font-size:1.15rem; margin-bottom:6px;">Mood Distribution</h3>
+      <p style="font-size:0.86rem; color:var(--ink-soft); margin-bottom:18px;">Breakdown of all recorded moods in your history.</p>
+      <div class="mood-bar-chart" id="mc-mood-distribution"></div>
+    </div>
+  </div>
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/sentiment.js"></script>
+<script src="js/voice-analyzer.js"></script>
+<script src="js/app-shell.js"></script>
+<script src="js/chatbot.js"></script>
+<script src="js/mood-page.js"></script>
+</body>
+</html>

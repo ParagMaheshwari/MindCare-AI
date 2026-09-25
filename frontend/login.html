@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Log In — MindCare AI</title>
+<link rel="stylesheet" href="css/style.css" />
+<script>
+  (function() {
+    const t = localStorage.getItem("mindcare_theme") || "dark";
+    document.documentElement.setAttribute("data-theme", t);
+  })();
+</script>
+</head>
+<body>
+
+<div class="auth-shell">
+  <header class="auth-header" role="banner">
+    <div class="auth-header-inner">
+      <div class="auth-header-spacer" aria-hidden="true"></div>
+      <a href="index.html" class="brand auth-brand" aria-label="MindCare AI Home">
+        <span class="mark">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20c9 0 14-5 14-14 0 0-13-2-14 9-.4 3 0 5 0 5Z"/><path d="M5 20c0-6 3-9 8-11"/></svg>
+        </span>
+        <span class="brand-text">MindCare AI</span>
+      </a>
+      <button type="button" class="theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme between light and dark mode">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="auth-main">
+    <div class="auth-card card-elevated" id="mc-login-card">
+      <!-- Ambient Calming Breathing Aura -->
+      <div class="auth-ambient-wrapper" aria-hidden="true">
+        <div class="auth-breathing-aura">
+          <span class="breathing-dot"></span>
+          <span>Take a mindful breath &bull; Welcome back</span>
+        </div>
+      </div>
+
+      <h1>Welcome back</h1>
+      <p class="sub">Log in to continue your mental wellness journey.</p>
+
+      <!-- Global / Backend Error Banner -->
+      <div class="form-error-banner" id="mc-login-error" role="alert" aria-live="polite"></div>
+
+      <form id="login-form" novalidate>
+        <!-- Email Field -->
+        <div class="field" id="field-email">
+          <label for="email">Email address</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            autocomplete="email"
+            placeholder="you@example.com"
+            aria-describedby="email-error"
+            aria-invalid="false"
+          />
+          <div class="error-text" id="email-error" role="alert">Please enter a valid email address.</div>
+        </div>
+
+        <!-- Password Field -->
+        <div class="field" id="field-password">
+          <div class="field-header">
+            <label for="password">Password</label>
+            <a href="#forgot" id="mc-forgot-link" class="forgot-link" role="button" aria-haspopup="dialog">Forgot password?</a>
+          </div>
+          <div class="password-field">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+              autocomplete="current-password"
+              placeholder="Enter your password"
+              aria-describedby="password-error"
+              aria-invalid="false"
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              data-target="password"
+              aria-label="Show password"
+              title="Toggle password visibility"
+            ></button>
+          </div>
+          <div class="error-text" id="password-error" role="alert">Please enter your password.</div>
+        </div>
+
+        <!-- Remember Me Row -->
+        <div class="login-options-row">
+          <label class="checkbox-label" for="remember-me">
+            <input type="checkbox" id="remember-me" name="remember_me" />
+            <span>Remember me</span>
+          </label>
+        </div>
+
+        <!-- Submit Button with Loading Spinner -->
+        <button type="submit" class="btn btn-primary btn-block" id="login-submit">
+          <span class="btn-text">Login</span>
+        </button>
+      </form>
+
+      <!-- Trust and Privacy Signaling -->
+      <div class="auth-trust-note">
+        <span>🔒 Your mental health reflections are private and encrypted.</span>
+        <a href="#privacy" id="mc-privacy-link" role="button" aria-haspopup="dialog">Privacy Commitment</a>
+      </div>
+
+      <!-- Account Switch -->
+      <div class="auth-switch">
+        Don't have an account? <a href="register.html">Create Account</a>
+      </div>
+
+      <!-- Shared Device Guidance -->
+      <div class="auth-shared-device-note">
+        Using a shared device? Remember to uncheck "Remember me" and log out after your session.
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- =========================================================================
+     Modal: Forgot Password (Accessible Reset Flow Stub)
+     ========================================================================= -->
+<div class="mc-modal-backdrop" id="mc-forgot-modal" role="dialog" aria-modal="true" aria-labelledby="mc-forgot-title" style="display:none;">
+  <div class="mc-modal" style="max-width:440px;">
+    <div class="mc-modal-header" style="text-align:left;">
+      <div style="background:var(--moss-tint); color:var(--moss-dark); width:42px; height:42px; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; margin-bottom:14px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <h3 id="mc-forgot-title" style="font-size:1.25rem; margin:0 0 6px;">Reset Your Password</h3>
+      <p style="font-size:0.88rem; color:var(--ink-soft); margin:0 0 18px; line-height:1.45;">
+        Enter your registered email address. We'll send you a secure link to reset your account credentials safely.
+      </p>
+    </div>
+
+    <form id="forgot-form" novalidate>
+      <div class="field" id="field-forgot-email" style="margin-bottom:14px; text-align:left;">
+        <label for="forgot-email">Account Email</label>
+        <input type="email" id="forgot-email" required placeholder="you@example.com" autocomplete="email" />
+        <div class="error-text" id="forgot-email-error">Please enter a valid email address.</div>
+      </div>
+
+      <div id="forgot-feedback" style="display:none; font-size:0.86rem; padding:10px 14px; border-radius:var(--radius-sm); margin-bottom:16px; line-height:1.45;" role="status"></div>
+
+      <div class="mc-modal-actions" style="display:flex; justify-content:flex-end; gap:10px;">
+        <button type="button" class="btn btn-secondary btn-sm" id="mc-forgot-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary btn-sm" id="mc-forgot-submit">
+          <span class="forgot-btn-text">Send Reset Link</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- =========================================================================
+     Modal: Privacy Commitment
+     ========================================================================= -->
+<div class="mc-modal-backdrop" id="mc-privacy-modal" role="dialog" aria-modal="true" aria-labelledby="mc-privacy-title" style="display:none;">
+  <div class="mc-modal" style="max-width:480px; text-align:left;">
+    <div class="mc-modal-header">
+      <div style="background:var(--moss-tint); color:var(--moss-dark); width:42px; height:42px; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; margin-bottom:14px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <h3 id="mc-privacy-title" style="font-size:1.25rem; margin:0 0 6px;">Our Trust & Privacy Commitment</h3>
+      <p style="font-size:0.88rem; color:var(--ink-soft); margin:0 0 16px;">
+        MindCare AI is built as a private sanctuary for your mental well-being.
+      </p>
+    </div>
+
+    <div style="font-size:0.88rem; color:var(--ink); line-height:1.55; display:flex; flex-direction:column; gap:12px; margin-bottom:22px;">
+      <div style="display:flex; gap:12px; align-items:flex-start;">
+        <span style="font-size:1.2rem; line-height:1;">🔒</span>
+        <div>
+          <strong>Encrypted & Isolated:</strong> Your check-ins, journal reflections, and assessment responses are securely hashed and encrypted.
+        </div>
+      </div>
+      <div style="display:flex; gap:12px; align-items:flex-start;">
+        <span style="font-size:1.2rem; line-height:1;">🚫</span>
+        <div>
+          <strong>Never Sold or Monetized:</strong> We do not sell your personal reflections or psychological data to third-party ad networks or data brokers.
+        </div>
+      </div>
+      <div style="display:flex; gap:12px; align-items:flex-start;">
+        <span style="font-size:1.2rem; line-height:1;">🌱</span>
+        <div>
+          <strong>Client-Side Modeling:</strong> Early-warning trajectory models and acoustic mood analysis run locally on your device.
+        </div>
+      </div>
+    </div>
+
+    <div class="mc-modal-actions" style="display:flex; justify-content:flex-end;">
+      <button type="button" class="btn btn-primary btn-sm" id="mc-privacy-close">Understood</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/api.js?v=3.1"></script>
+<script src="js/auth.js?v=3.1"></script>
+<script src="js/theme.js"></script>
+<script>
+  // ---------------------------------------------------------------------------
+  // Password Visibility Toggle
+  // ---------------------------------------------------------------------------
+  document.querySelectorAll(".password-toggle").forEach((btn) => {
+    const input = document.getElementById(btn.dataset.target);
+    const eyeOpen = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`;
+    const eyeClosed = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M3 3l18 18"/><path d="M10.6 5.2A10.6 10.6 0 0 1 12 5c6.5 0 10 7 10 7a15.4 15.4 0 0 1-3.2 4.1M6.2 6.2C3.6 8 2 12 2 12s3.5 7 10 7a10 10 0 0 0 4.1-.9"/><path d="M9.5 9.5a3 3 0 0 0 4.2 4.2"/></svg>`;
+
+    btn.innerHTML = eyeOpen;
+    btn.addEventListener("click", () => {
+      const show = input.type === "password";
+      input.type = show ? "text" : "password";
+      btn.innerHTML = show ? eyeClosed : eyeOpen;
+      btn.setAttribute("aria-label", show ? "Hide password" : "Show password");
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // Elements & State
+  // ---------------------------------------------------------------------------
+  const form = document.getElementById("login-form");
+  const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
+  const rememberCheckbox = document.getElementById("remember-me");
+  const fieldEmail = document.getElementById("field-email");
+  const fieldPassword = document.getElementById("field-password");
+  const emailErrorText = document.getElementById("email-error");
+  const passwordErrorText = document.getElementById("password-error");
+  const errorBanner = document.getElementById("mc-login-error");
+  const submitBtn = document.getElementById("login-submit");
+
+  let emailDirty = false;
+  let passwordDirty = false;
+
+  // If already logged in, skip straight to the dashboard.
+  if (MindCareAuth.getCurrentUser()) {
+    window.location.href = "dashboard.html";
+  }
+
+  // ---------------------------------------------------------------------------
+  // Remember Me pre-fill & Initial Focus
+  // ---------------------------------------------------------------------------
+  const rememberedEmail = localStorage.getItem("mindcare_remembered_email");
+  if (rememberedEmail) {
+    emailInput.value = rememberedEmail;
+    rememberCheckbox.checked = true;
+    // Focus password directly since email is remembered
+    passwordInput.focus();
+  } else {
+    // Graceful initial focus on email without triggering premature error
+    emailInput.focus();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Inline Real-Time Field Validation
+  // ---------------------------------------------------------------------------
+  const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  let emailHasTyped = false;
+  let passwordHasTyped = false;
+  let hasSubmitted = false;
+
+  function validateEmail(isSubmit = false) {
+    const val = emailInput.value.trim();
+
+    if (!val) {
+      // Only show empty error if user submitted or previously typed and erased
+      if (isSubmit || (emailHasTyped && hasSubmitted) || (emailHasTyped && val === "")) {
+        fieldEmail.classList.add("has-error");
+        emailInput.setAttribute("aria-invalid", "true");
+        emailErrorText.textContent = "Please enter your email address.";
+        return false;
+      }
+      fieldEmail.classList.remove("has-error");
+      emailInput.setAttribute("aria-invalid", "false");
+      return false;
+    }
+
+    if (!EMAIL_REGEX.test(val)) {
+      if (emailHasTyped || isSubmit || hasSubmitted) {
+        fieldEmail.classList.add("has-error");
+        emailInput.setAttribute("aria-invalid", "true");
+        emailErrorText.textContent = "Please enter a valid email address (e.g. name@example.com).";
+        return false;
+      }
+      return false;
+    }
+
+    // Valid email
+    fieldEmail.classList.remove("has-error");
+    emailInput.setAttribute("aria-invalid", "false");
+    return true;
+  }
+
+  function validatePassword(isSubmit = false) {
+    const val = passwordInput.value;
+    if (!val) {
+      if (isSubmit || (passwordHasTyped && hasSubmitted) || (passwordHasTyped && val === "")) {
+        fieldPassword.classList.add("has-error");
+        passwordInput.setAttribute("aria-invalid", "true");
+        passwordErrorText.textContent = "Please enter your password.";
+        return false;
+      }
+      fieldPassword.classList.remove("has-error");
+      passwordInput.setAttribute("aria-invalid", "false");
+      return false;
+    }
+
+    fieldPassword.classList.remove("has-error");
+    passwordInput.setAttribute("aria-invalid", "false");
+    return true;
+  }
+
+  emailInput.addEventListener("blur", () => {
+    // Only validate on blur if user has interacted/typed or submitted
+    if (emailHasTyped || hasSubmitted) {
+      validateEmail(false);
+    }
+  });
+
+  emailInput.addEventListener("input", () => {
+    emailHasTyped = true;
+    errorBanner.classList.remove("visible");
+    // If error is currently displayed or valid, refresh state smoothly
+    if (fieldEmail.classList.contains("has-error") || EMAIL_REGEX.test(emailInput.value.trim())) {
+      validateEmail(false);
+    }
+  });
+
+  passwordInput.addEventListener("blur", () => {
+    if (passwordHasTyped || hasSubmitted) {
+      validatePassword(false);
+    }
+  });
+
+  passwordInput.addEventListener("input", () => {
+    passwordHasTyped = true;
+    errorBanner.classList.remove("visible");
+    if (fieldPassword.classList.contains("has-error")) {
+      validatePassword(false);
+    }
+  });
+
+  // Enter key navigation on email field
+  emailInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      emailHasTyped = true;
+      if (validateEmail(true)) {
+        e.preventDefault();
+        passwordInput.focus();
+      }
+    }
+  });
+
+  // ---------------------------------------------------------------------------
+  // Form Submission & Loading State
+  // ---------------------------------------------------------------------------
+  function triggerShake(element) {
+    element.classList.remove("mc-soft-shake");
+    void element.offsetWidth; // force reflow
+    element.classList.add("mc-soft-shake");
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    errorBanner.classList.remove("visible");
+
+    hasSubmitted = true;
+    emailHasTyped = true;
+    passwordHasTyped = true;
+
+    const isEmailValid = validateEmail(true);
+    const isPasswordValid = validatePassword(true);
+
+    if (!isEmailValid || !isPasswordValid) {
+      if (!isEmailValid) {
+        triggerShake(fieldEmail);
+        emailInput.focus();
+      } else {
+        triggerShake(fieldPassword);
+        passwordInput.focus();
+      }
+      return;
+    }
+
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+    const remember = rememberCheckbox.checked;
+
+    // Loading State
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `<span class="btn-spinner" aria-hidden="true"></span> <span>Logging in…</span>`;
+
+    // Persist or clean remembered email
+    if (remember) {
+      localStorage.setItem("mindcare_remembered_email", email);
+    } else {
+      localStorage.removeItem("mindcare_remembered_email");
+    }
+
+    try {
+      await MindCareAuth.loginUser({ email, password, remember });
+      window.location.href = "dashboard.html";
+    } catch (err) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = `<span class="btn-text">Login</span>`;
+
+      let msg = "Incorrect email or password. Please verify your credentials and try again.";
+      if (err && err.message === "network_error") {
+        msg = "Unable to connect to the backend server. Please verify FastAPI is running on port 8000.";
+      } else if (err && err.friendlyMessage) {
+        msg = err.friendlyMessage;
+      }
+
+      errorBanner.textContent = msg;
+      errorBanner.classList.add("visible");
+      triggerShake(errorBanner);
+
+      // Select password for swift re-entry
+      passwordInput.focus();
+      passwordInput.select();
+    }
+  });
+
+  // ---------------------------------------------------------------------------
+  // Modal: Forgot Password
+  // ---------------------------------------------------------------------------
+  const forgotModal = document.getElementById("mc-forgot-modal");
+  const forgotLink = document.getElementById("mc-forgot-link");
+  const forgotCancel = document.getElementById("mc-forgot-cancel");
+  const forgotForm = document.getElementById("forgot-form");
+  const forgotEmailInput = document.getElementById("forgot-email");
+  const forgotFeedback = document.getElementById("forgot-feedback");
+  const forgotSubmitBtn = document.getElementById("mc-forgot-submit");
+  const fieldForgotEmail = document.getElementById("field-forgot-email");
+
+  let resendCountdownTimer = null;
+  let resendCooldownSeconds = 0;
+
+  function stopResendCountdown() {
+    if (resendCountdownTimer) {
+      clearInterval(resendCountdownTimer);
+      resendCountdownTimer = null;
+    }
+  }
+
+  function startResendCountdown(durationSeconds = 45) {
+    stopResendCountdown();
+    resendCooldownSeconds = durationSeconds;
+    forgotSubmitBtn.disabled = true;
+    forgotSubmitBtn.innerHTML = `<span class="forgot-btn-text">Resend in ${resendCooldownSeconds}s</span>`;
+
+    resendCountdownTimer = setInterval(() => {
+      resendCooldownSeconds -= 1;
+      if (resendCooldownSeconds <= 0) {
+        stopResendCountdown();
+        forgotSubmitBtn.disabled = false;
+        forgotSubmitBtn.innerHTML = `<span class="forgot-btn-text">Resend Reset Email</span>`;
+      } else {
+        forgotSubmitBtn.innerHTML = `<span class="forgot-btn-text">Resend in ${resendCooldownSeconds}s</span>`;
+      }
+    }, 1000);
+  }
+
+  function openForgotModal() {
+    forgotModal.style.display = "flex";
+    forgotModal.classList.add("active");
+    if (!forgotEmailInput.value.trim() && emailInput.value.trim()) {
+      forgotEmailInput.value = emailInput.value.trim();
+    }
+    fieldForgotEmail.classList.remove("has-error");
+    if (resendCooldownSeconds <= 0) {
+      forgotFeedback.style.display = "none";
+      forgotSubmitBtn.disabled = false;
+      forgotSubmitBtn.innerHTML = `<span class="forgot-btn-text">Send Reset Link</span>`;
+    }
+    setTimeout(() => forgotEmailInput.focus(), 50);
+  }
+
+  function closeForgotModal() {
+    forgotModal.classList.remove("active");
+    forgotModal.style.display = "none";
+    forgotLink.focus();
+  }
+
+  forgotLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    openForgotModal();
+  });
+
+  forgotCancel.addEventListener("click", closeForgotModal);
+
+  forgotModal.addEventListener("click", (e) => {
+    if (e.target === forgotModal) closeForgotModal();
+  });
+
+  forgotForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (resendCooldownSeconds > 0) return;
+
+    const val = forgotEmailInput.value.trim();
+    if (!val || !EMAIL_REGEX.test(val)) {
+      fieldForgotEmail.classList.add("has-error");
+      forgotEmailInput.focus();
+      return;
+    }
+    fieldForgotEmail.classList.remove("has-error");
+
+    forgotSubmitBtn.disabled = true;
+    forgotSubmitBtn.innerHTML = `<span class="btn-spinner" aria-hidden="true"></span> <span>Sending…</span>`;
+    forgotFeedback.style.display = "none";
+
+    try {
+      const res = await MindCareAPI.forgotPassword(val);
+
+      // Successful dispatch verified by backend
+      forgotFeedback.style.display = "block";
+      forgotFeedback.style.background = "var(--leaf-tint)";
+      forgotFeedback.style.color = "var(--leaf)";
+      forgotFeedback.style.border = "1px solid rgba(63, 125, 92, 0.35)";
+      forgotFeedback.innerHTML = `
+        <div style="font-weight:600; margin-bottom:4px;">✉️ Password Reset Link Sent</div>
+        <div style="font-size:0.83rem; color:var(--ink-soft); line-height:1.5;">
+          If an account is associated with <strong>${mcEscapeHtml(val)}</strong>, an email with a secure 30-minute reset link has been dispatched.
+        </div>
+        <div style="font-size:0.78rem; color:var(--ink-muted); margin-top:8px; border-top:1px solid rgba(255,255,255,0.06); padding-top:6px;">
+          💡 <strong>Can't find it?</strong> Check your Spam, Junk, or Promotions tab, or wait for the cooldown to resend.
+        </div>
+      `;
+
+      // Start 45s cooldown to prevent abuse and provide resend functionality
+      startResendCountdown(45);
+    } catch (err) {
+      stopResendCountdown();
+      forgotFeedback.style.display = "block";
+      forgotFeedback.style.background = "var(--coral-tint, rgba(239, 68, 68, 0.12))";
+      forgotFeedback.style.color = "var(--coral, #EF4444)";
+      forgotFeedback.style.border = "1px solid rgba(239, 68, 68, 0.35)";
+      
+      const errorMsg = err.friendlyMessage || "We couldn't send the reset email right now. Please try again later.";
+      forgotFeedback.innerHTML = `
+        <div style="font-weight:600; margin-bottom:4px;">⚠️ Delivery Issue</div>
+        <div style="font-size:0.83rem; line-height:1.45;">${mcEscapeHtml(errorMsg)}</div>
+      `;
+
+      forgotSubmitBtn.disabled = false;
+      forgotSubmitBtn.innerHTML = `<span class="forgot-btn-text">Try Again</span>`;
+    }
+  });
+
+  // ---------------------------------------------------------------------------
+  // Modal: Privacy Commitment
+  // ---------------------------------------------------------------------------
+  const privacyModal = document.getElementById("mc-privacy-modal");
+  const privacyLink = document.getElementById("mc-privacy-link");
+  const privacyClose = document.getElementById("mc-privacy-close");
+
+  function openPrivacyModal() {
+    privacyModal.style.display = "flex";
+    privacyModal.classList.add("active");
+    privacyClose.focus();
+  }
+
+  function closePrivacyModal() {
+    privacyModal.classList.remove("active");
+    privacyModal.style.display = "none";
+    privacyLink.focus();
+  }
+
+  privacyLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    openPrivacyModal();
+  });
+
+  privacyClose.addEventListener("click", closePrivacyModal);
+
+  privacyModal.addEventListener("click", (e) => {
+    if (e.target === privacyModal) closePrivacyModal();
+  });
+
+  // Global Esc key modal dismiss
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      if (forgotModal.style.display === "flex") closeForgotModal();
+      if (privacyModal.style.display === "flex") closePrivacyModal();
+    }
+  });
+
+  function mcEscapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, (m) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[m]));
+  }
+</script>
+
+</body>
+</html>

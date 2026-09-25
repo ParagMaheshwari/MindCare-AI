@@ -1,0 +1,38 @@
+# Environment variables and secrets
+.env
+*.env
+backend/.env
+frontend/.env
+*.pem
+*.key
+*.cert
+*.crt
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.class
+*.so
+.venv/
+backend/.venv/
+env/
+venv/
+ENV/
+
+# Database files (local test db)
+*.db
+*.sqlite3
+backend/mindcare_fallback.db
+mindcare_fallback.db
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Testing, Scratch & Logs
+scratch/
+test_out.pdf
+*.log
+.system_generated/

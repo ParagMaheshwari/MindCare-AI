@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin Portal — MindCare AI</title>
+<link rel="stylesheet" href="css/style.css" />
+<style>
+  .admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--moss);
+  }
+  .stat-card.accent-horizon::before { background: var(--horizon); }
+  .stat-card.accent-amber::before { background: var(--amber); }
+  .stat-card.accent-brick::before { background: var(--brick); }
+  .stat-card.accent-leaf::before { background: var(--leaf); }
+
+  .stat-card-title {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .stat-card-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--ink);
+    font-family: var(--font-display);
+    line-height: 1;
+  }
+  .stat-card-sub {
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+  }
+
+  .admin-tabs {
+    display: flex;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+    overflow-x: auto;
+  }
+  .admin-tab-btn {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 10px 18px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--ink-faint);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .admin-tab-btn:hover {
+    color: var(--ink);
+  }
+  .admin-tab-btn.active {
+    color: var(--moss);
+    border-bottom-color: var(--moss);
+  }
+
+  .data-table-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+  }
+  .data-table-header {
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .table-search-input {
+    background: var(--canvas-dim);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    padding: 8px 16px;
+    font-size: 0.88rem;
+    color: var(--ink);
+    min-width: 240px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .table-search-input:focus {
+    border-color: var(--moss);
+  }
+  .admin-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+  }
+  .admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    text-align: left;
+  }
+  .admin-table th {
+    background: var(--canvas-dim);
+    color: var(--ink-soft);
+    font-weight: 700;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .admin-table td {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    color: var(--ink);
+    vertical-align: middle;
+  }
+  .admin-table tr:last-child td {
+    border-bottom: none;
+  }
+  .admin-table tr:hover td {
+    background: rgba(47, 93, 80, 0.03);
+  }
+
+  .badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: var(--radius-pill);
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  .badge-admin { background: var(--moss-tint); color: var(--moss); border: 1px solid var(--moss); }
+  .badge-user { background: var(--canvas-dim); color: var(--ink-soft); border: 1px solid var(--border); }
+  .badge-high { background: var(--brick-tint); color: var(--brick); }
+  .badge-mod { background: var(--amber-tint); color: var(--amber); }
+  .badge-low { background: var(--leaf-tint); color: var(--leaf); }
+
+  /* Modal overlay */
+  .admin-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    padding: 16px;
+  }
+  .admin-modal-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .admin-modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 800px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lift);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .modal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+  }
+  .modal-close-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--ink-faint);
+    padding: 4px;
+    border-radius: var(--radius-pill);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-close-btn:hover { color: var(--ink); }
+</style>
+<script>
+  (function() {
+    const t = localStorage.getItem("mindcare_theme") || "dark";
+    document.documentElement.setAttribute("data-theme", t);
+  })();
+</script>
+</head>
+<body data-page="admin">
+
+<div id="app-shell-mount"></div>
+
+<div id="page-content">
+  <div class="page-head" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px; margin-bottom:20px;">
+    <div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span class="badge-pill badge-admin" style="font-size:0.75rem;">ADMINISTRATOR SYSTEM</span>
+        <span id="mc-admin-db-indicator" style="font-size:0.78rem; color:var(--ink-faint);">Central Database Connected</span>
+      </div>
+      <h1 style="margin-top:6px;">Platform Control & Central Data Center</h1>
+      <p>Real-time telemetry, user management, predictive records, and secure audit database.</p>
+    </div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <button type="button" class="btn btn-secondary btn-sm" id="mc-admin-refresh-btn" style="display:inline-flex; align-items:center; gap:6px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+        Refresh Data
+      </button>
+      <button type="button" class="btn btn-primary btn-sm" id="mc-admin-export-users-btn" style="display:inline-flex; align-items:center; gap:6px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export Users (CSV)
+      </button>
+      <button type="button" class="btn btn-secondary btn-sm" id="mc-admin-export-assessments-btn" style="display:inline-flex; align-items:center; gap:6px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export Assessments (CSV)
+      </button>
+    </div>
+  </div>
+
+  <!-- KPI Overview Cards -->
+  <div class="admin-stats-grid" id="mc-admin-stats-container">
+    <div class="stat-card">
+      <div class="stat-card-title">Total Users</div>
+      <div class="stat-card-value" id="stat-total-users">—</div>
+      <div class="stat-card-sub" id="stat-sub-users">Registered in database</div>
+    </div>
+    <div class="stat-card accent-horizon">
+      <div class="stat-card-title">Completed Assessments</div>
+      <div class="stat-card-value" id="stat-total-assessments">—</div>
+      <div class="stat-card-sub">ML predictions stored</div>
+    </div>
+    <div class="stat-card accent-amber">
+      <div class="stat-card-title">Mood Logs</div>
+      <div class="stat-card-value" id="stat-total-moods">—</div>
+      <div class="stat-card-sub">Daily check-ins synced</div>
+    </div>
+    <div class="stat-card accent-leaf">
+      <div class="stat-card-title">Journal Entries</div>
+      <div class="stat-card-value" id="stat-total-journals">—</div>
+      <div class="stat-card-sub">Reflections saved</div>
+    </div>
+    <div class="stat-card accent-brick">
+      <div class="stat-card-title">Active (24 Hours)</div>
+      <div class="stat-card-value" id="stat-active-users">—</div>
+      <div class="stat-card-sub">Recent platform activity</div>
+    </div>
+  </div>
+
+  <!-- Admin Navigation Tabs -->
+  <div class="admin-tabs">
+    <button type="button" class="admin-tab-btn active" data-tab="users">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      User Management (<span id="tab-count-users">0</span>)
+    </button>
+    <button type="button" class="admin-tab-btn" data-tab="assessments">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="M9 11h6M9 15h6"/></svg>
+      Assessments Explorer (<span id="tab-count-assessments">0</span>)
+    </button>
+    <button type="button" class="admin-tab-btn" data-tab="security">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Database & Security Status
+    </button>
+  </div>
+
+  <!-- TAB 1: User Management -->
+  <div id="tab-pane-users" class="admin-tab-pane">
+    <div class="data-table-container">
+      <div class="data-table-header">
+        <div>
+          <h3 style="margin:0; font-size:1.05rem;">Registered Users Directory</h3>
+          <p style="margin:2px 0 0; font-size:0.8rem; color:var(--ink-faint);">View central account records, role privileges, and activity metrics.</p>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <input type="search" id="mc-user-search" class="table-search-input" placeholder="Search by name, email, or country..." />
+        </div>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>User</th>
+              <th>Role</th>
+              <th>Country</th>
+              <th>Joined Date</th>
+              <th>Assessments</th>
+              <th>Moods</th>
+              <th>Journals</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="mc-users-table-body">
+            <tr>
+              <td colspan="9" style="text-align:center; padding:32px; color:var(--ink-faint);">Loading users from database...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: Assessments Explorer -->
+  <div id="tab-pane-assessments" class="admin-tab-pane" style="display:none;">
+    <div class="data-table-container">
+      <div class="data-table-header">
+        <div>
+          <h3 style="margin:0; font-size:1.05rem;">Platform Assessment Records</h3>
+          <p style="margin:2px 0 0; font-size:0.8rem; color:var(--ink-faint);">ML model outputs, risk tiers, and submitted assessment data across all users.</p>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <input type="search" id="mc-assessment-search" class="table-search-input" placeholder="Search by user or prediction..." />
+        </div>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>User</th>
+              <th>Score (1-10)</th>
+              <th>Risk Tier</th>
+              <th>Academic Level</th>
+              <th>Platform</th>
+              <th>Demographics</th>
+            </tr>
+          </thead>
+          <tbody id="mc-assessments-table-body">
+            <tr>
+              <td colspan="7" style="text-align:center; padding:32px; color:var(--ink-faint);">Loading assessments...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: Database & Security Status -->
+  <div id="tab-pane-security" class="admin-tab-pane" style="display:none;">
+    <div class="card-elevated" style="margin-bottom:20px;">
+      <h3 style="margin-top:0; font-size:1.15rem; color:var(--moss);">Central Data Storage Architecture</h3>
+      <p style="color:var(--ink-soft); line-height:1.6; margin-bottom:16px;">
+        MindCare AI implements a zero-leakage, IDOR-protected relational backend storage layer. Every assessment submission, mood check-in, journal entry, and goal is securely persisted with user ownership validation.
+      </p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:16px;">
+        <div style="background:var(--canvas-dim); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border);">
+          <div style="font-weight:700; color:var(--ink); margin-bottom:6px;">🔒 Authentication & RBAC</div>
+          <div style="font-size:0.82rem; color:var(--ink-soft);">
+            Bcrypt password hashing (work factor 12). JWT token verification enforces role-based access control (User vs Administrator).
+          </div>
+        </div>
+        <div style="background:var(--canvas-dim); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border);">
+          <div style="font-weight:700; color:var(--ink); margin-bottom:6px;">🛡️ IDOR & Data Isolation</div>
+          <div style="font-size:0.82rem; color:var(--ink-soft);">
+            Direct object references are isolated per-user token claims. Non-admin users cannot query or mutate foreign account records.
+          </div>
+        </div>
+        <div style="background:var(--canvas-dim); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border);">
+          <div style="font-weight:700; color:var(--ink); margin-bottom:6px;">⚡ Cloud State Rehydration</div>
+          <div style="font-size:0.82rem; color:var(--ink-soft);">
+            Client localStorage acts as an instantaneous reactive UI cache. Clearing browser storage instantly rehydrates full state upon login.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- User Detail Slide-Over / Modal -->
+<div id="mc-user-detail-modal" class="admin-modal-backdrop">
+  <div class="admin-modal">
+    <div class="modal-head">
+      <div>
+        <h3 id="modal-user-name" style="margin:0; font-size:1.2rem;">User Data Profile</h3>
+        <span id="modal-user-email" style="font-size:0.85rem; color:var(--ink-faint);"></span>
+      </div>
+      <button type="button" class="modal-close-btn" id="modal-close-btn" aria-label="Close modal">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div id="modal-user-content" style="display:flex; flex-direction:column; gap:20px;">
+      <!-- Content populated dynamically -->
+    </div>
+  </div>
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/sentiment.js"></script>
+<script src="js/forecast-engine.js"></script>
+<script src="js/results.js"></script>
+<script src="js/app-shell.js"></script>
+<script src="js/chatbot.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
