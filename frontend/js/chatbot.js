@@ -97,6 +97,7 @@ const MindCareChat = (() => {
   let fab = null;
   let panel = null;
   let body = null;
+  let flow = null;
   let suggestionsWrap = null;
   let textarea = null;
   let sendBtn = null;
@@ -104,6 +105,8 @@ const MindCareChat = (() => {
   let closeBtn = null;
   let backBtn = null;
   let messages = [];
+  let historyPushed = false;
+  let savedScrollY = 0;
 
   function getStorageKey() {
     const emailKey = currentUser && currentUser.email ? currentUser.email : "guest";
@@ -128,9 +131,12 @@ const MindCareChat = (() => {
     if (!suggestionsWrap) return;
     if (messages.length > 0) {
       suggestionsWrap.style.display = "none";
+      suggestionsWrap.classList.add("is-hidden");
+      suggestionsWrap.innerHTML = "";
       return;
     }
     suggestionsWrap.style.display = "flex";
+    suggestionsWrap.classList.remove("is-hidden");
     suggestionsWrap.innerHTML = SUGGESTED_PROMPTS.map(
       (p) => `<button type="button" data-prompt="${mcEscape(p)}">${mcEscape(p)}</button>`
     ).join("");
@@ -145,8 +151,8 @@ const MindCareChat = (() => {
   }
 
   function renderMessages() {
-    if (!body) return;
-    body.innerHTML = "";
+    if (!flow) return;
+    flow.innerHTML = "";
     if (messages.length === 0) {
       const welcomeWrap = document.createElement("div");
       welcomeWrap.className = "chat-msg-row bot";
@@ -161,7 +167,7 @@ const MindCareChat = (() => {
           <div class="chat-time">${mcFormatTime()}</div>
         </div>
       `;
-      body.appendChild(welcomeWrap);
+      flow.appendChild(welcomeWrap);
     } else {
       messages.forEach((m) => {
         const row = document.createElement("div");
@@ -187,15 +193,16 @@ const MindCareChat = (() => {
             <div class="chat-time">${mcFormatTime(m.timestamp)}</div>
           </div>
         `;
-        body.appendChild(row);
+        flow.appendChild(row);
       });
     }
-    body.scrollTop = body.scrollHeight;
+    if (body) body.scrollTop = body.scrollHeight;
     renderSuggestions();
   }
 
   function showTyping() {
-    if (!body) return;
+    if (!flow) return;
+    hideTyping();
     const el = document.createElement("div");
     el.className = "chat-msg-row bot";
     el.id = "mc-typing-row";
@@ -205,8 +212,8 @@ const MindCareChat = (() => {
         <span></span><span></span><span></span>
       </div>
     `;
-    body.appendChild(el);
-    body.scrollTop = body.scrollHeight;
+    flow.appendChild(el);
+    if (body) body.scrollTop = body.scrollHeight;
   }
 
   function hideTyping() {
@@ -231,7 +238,7 @@ const MindCareChat = (() => {
     renderMessages();
 
     textarea.value = "";
-    textarea.style.height = "42px";
+    textarea.style.height = "44px";
     textarea.disabled = true;
     if (sendBtn) sendBtn.disabled = true;
     showTyping();
@@ -268,25 +275,76 @@ const MindCareChat = (() => {
     textarea.focus();
   }
 
+  function lockScroll() {
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    if (isMobile) {
+      savedScrollY = window.scrollY || document.documentElement.scrollTop || 0;
+      document.body.style.top = `-${savedScrollY}px`;
+      document.body.style.position = "fixed";
+      document.body.style.width = "100%";
+      document.body.style.overflow = "hidden";
+    }
+    document.body.classList.add("chat-open");
+  }
+
+  function unlockScroll() {
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    document.body.classList.remove("chat-open");
+    if (isMobile) {
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      document.body.style.overflow = "";
+      window.scrollTo(0, savedScrollY);
+    }
+  }
+
   function open() {
     if (!isMounted || !panel) {
       init();
     }
     if (!panel) return;
+    if (panel.classList.contains("open")) return;
+
     panel.classList.add("open");
-    document.body.classList.add("chat-open");
     if (fab) fab.setAttribute("aria-expanded", "true");
+    lockScroll();
+
+    try {
+      if (window.history && window.history.pushState && !historyPushed) {
+        history.pushState({ mcChatOpen: true }, "");
+        historyPushed = true;
+      }
+    } catch {}
+
     renderMessages();
     setTimeout(() => {
       textarea?.focus();
-    }, 100);
+      if (body) body.scrollTop = body.scrollHeight;
+    }, 150);
   }
 
-  function close() {
+  function close(fromPopState = false) {
     if (!panel) return;
+    if (!panel.classList.contains("open")) return;
+
     panel.classList.remove("open");
-    document.body.classList.remove("chat-open");
     if (fab) fab.setAttribute("aria-expanded", "false");
+    unlockScroll();
+
+    panel.style.height = "";
+    panel.style.top = "";
+
+    if (!fromPopState && historyPushed) {
+      historyPushed = false;
+      try {
+        if (window.history && window.history.state && window.history.state.mcChatOpen) {
+          window.history.back();
+        }
+      } catch {}
+    } else {
+      historyPushed = false;
+    }
   }
 
   function toggle() {
@@ -319,26 +377,28 @@ const MindCareChat = (() => {
       <button class="chat-fab" id="mc-chat-fab" aria-label="Open MindCare AI Assistant" aria-expanded="false" title="Chat with AI">
         ${MC_ICONS.chat}
       </button>
-      <div class="chat-panel" id="mc-chat-panel" role="dialog" aria-label="MindCare AI Chat">
+      <div class="chat-panel" id="mc-chat-panel" role="dialog" aria-modal="true" aria-label="MindCare AI Chat">
         <div class="chat-header">
-          <div class="id">
+          <div class="chat-header-main">
             <button type="button" class="chat-back-btn" id="mc-chat-back" title="Back to page" aria-label="Back to page">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
               <span>Back</span>
             </button>
             <div class="avatar-dot">${MC_ICONS.spark}</div>
-            <div>
+            <div class="chat-header-info">
               <h4>MindCare AI Assistant</h4>
-              <div class="status">Online · Supportive AI</div>
+              <div class="status"><span class="status-indicator"></span>Online · Supportive AI</div>
             </div>
           </div>
           <div class="chat-header-actions">
             <button type="button" id="mc-chat-clear" title="Clear conversation" aria-label="Clear conversation">${MC_ICONS.trash}</button>
-            <button type="button" id="mc-chat-close" title="Close chat" aria-label="Close chat">${MC_ICONS.close}</button>
+            <button type="button" class="chat-close-desktop-btn" id="mc-chat-close" title="Close chat" aria-label="Close chat">${MC_ICONS.close}</button>
           </div>
         </div>
-        <div class="chat-body" id="mc-chat-body"></div>
-        <div class="chat-suggestions" id="mc-chat-suggestions"></div>
+        <div class="chat-body" id="mc-chat-body">
+          <div class="chat-flow" id="mc-chat-flow"></div>
+          <div class="chat-suggestions" id="mc-chat-suggestions"></div>
+        </div>
         <div class="chat-input-row">
           <textarea id="mc-chat-input" placeholder="Ask about stress, sleep, focus, or study balance… (Enter to send)" rows="1"></textarea>
           <button class="chat-send-btn" id="mc-chat-send" title="Send message" aria-label="Send">${MC_ICONS.send}</button>
@@ -351,6 +411,7 @@ const MindCareChat = (() => {
     fab = document.getElementById("mc-chat-fab");
     panel = document.getElementById("mc-chat-panel");
     body = document.getElementById("mc-chat-body");
+    flow = document.getElementById("mc-chat-flow");
     suggestionsWrap = document.getElementById("mc-chat-suggestions");
     textarea = document.getElementById("mc-chat-input");
     sendBtn = document.getElementById("mc-chat-send");
@@ -405,6 +466,36 @@ const MindCareChat = (() => {
       open();
     }
   });
+
+  // Browser back button / hardware back navigation
+  window.addEventListener("popstate", () => {
+    if (isOpen()) {
+      close(true);
+    }
+  });
+
+  // Escape key closes modal
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && isOpen()) {
+      close();
+    }
+  });
+
+  // Responsive visualViewport resize listener for virtual keyboard on mobile
+  if (typeof window !== "undefined" && window.visualViewport) {
+    const handleViewport = () => {
+      if (panel && panel.classList.contains("open") && window.matchMedia("(max-width: 768px)").matches) {
+        panel.style.height = `${window.visualViewport.height}px`;
+        panel.style.top = `${window.visualViewport.offsetTop}px`;
+        if (body) body.scrollTop = body.scrollHeight;
+      } else if (panel) {
+        panel.style.height = "";
+        panel.style.top = "";
+      }
+    };
+    window.visualViewport.addEventListener("resize", handleViewport);
+    window.visualViewport.addEventListener("scroll", handleViewport);
+  }
 
   return { init, open, close, toggle, isOpen };
 })();
