@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Wellness Tips — MindCare AI</title>
-<link rel="stylesheet" href="css/style.css" />
+<title>Personalized Recommendations & Wellness Hub — MindCare AI</title>
+<link rel="stylesheet" href="css/style.css?v=2.5" />
 <script>
   (function() {
     const t = localStorage.getItem("mindcare_theme") || "dark";
@@ -16,48 +16,60 @@
 
 <div id="app-shell-mount"></div>
 
-<div id="page-content">
-  <div class="page-head">
-    <h1>Wellness Tips</h1>
-    <p>General, educational guidance — not a treatment plan or medical advice.</p>
+<div id="page-content" class="page-content-wrap" style="max-width: 1180px; margin: 0 auto; padding: 24px 20px 80px;">
+  <div class="page-head" style="margin-bottom: 28px;">
+    <div class="hero-eyebrow" style="margin-bottom: 8px;">EVIDENCE-BASED WELLBEING</div>
+    <h1 style="font-size: 2.1rem; margin-bottom: 10px;">Personalized Recommendations & Wellness Hub</h1>
+    <p style="font-size: 0.98rem; color: var(--ink-soft); max-width: 68ch; line-height: 1.55;">
+      Customized lifestyle habits and behavioral routines tailored to your academic schedule, sleep patterns, and daily screen time balance.
+    </p>
   </div>
 
-  <div class="tips-grid">
-    <div class="tip-card">
-      <div class="icon-wrap" data-icon="moon"></div>
-      <h3>Better Sleep</h3>
-      <p>Try keeping a consistent sleep and wake time, even on weekends, and wind down screens before bed to help your body settle into rest.</p>
-    </div>
-    <div class="tip-card">
-      <div class="icon-wrap" data-icon="phone"></div>
-      <h3>Digital Wellbeing</h3>
-      <p>Set app time limits, turn off non-essential notifications, and build in regular screen-free breaks during the day.</p>
-    </div>
-    <div class="tip-card">
-      <div class="icon-wrap" data-icon="spark"></div>
-      <h3>Stress Management</h3>
-      <p>Short breathing exercises, brief walks, and scheduled breaks can help you reset during stressful periods. Talk to someone you trust if stress feels hard to manage.</p>
-    </div>
-    <div class="tip-card">
-      <div class="icon-wrap" data-icon="book"></div>
-      <h3>Study-Life Balance</h3>
-      <p>Try Pomodoro-style sessions — focused study blocks followed by short breaks — to stay productive without burning out.</p>
-    </div>
-    <div class="tip-card">
-      <div class="icon-wrap" data-icon="activity"></div>
-      <h3>Physical Activity</h3>
-      <p>Regular movement — walking, stretching, or sports — supports both physical and mental wellbeing, even in short daily sessions.</p>
-    </div>
-    <div class="tip-card">
-      <div class="icon-wrap" data-icon="user"></div>
-      <h3>Social Connection</h3>
-      <p>Make time for the people who support you. Real conversations and shared activities can be as restorative as rest itself.</p>
+  <!-- Dynamic Personalized Recommendations Container -->
+  <div id="mc-personalized-container"></div>
+
+  <!-- Foundational Wellness Pillars Section -->
+  <div class="section-gap" style="margin-top: 36px;">
+    <h2 style="font-size: 1.35rem; color: var(--ink); margin-bottom: 8px;">Foundational Student Wellness Pillars</h2>
+    <p style="font-size: 0.9rem; color: var(--ink-soft); margin-bottom: 20px;">Daily sustainable habits to maintain clarity, reduce cognitive fatigue, and improve focus.</p>
+
+    <div class="tips-grid">
+      <div class="tip-card">
+        <div class="icon-wrap" data-icon="moon"></div>
+        <h3>Better Sleep</h3>
+        <p>Try keeping a consistent sleep and wake time, even on weekends, and wind down screens before bed to help your body settle into rest.</p>
+      </div>
+      <div class="tip-card">
+        <div class="icon-wrap" data-icon="phone"></div>
+        <h3>Digital Wellbeing</h3>
+        <p>Set app time limits, turn off non-essential notifications, and build in regular screen-free breaks during the day.</p>
+      </div>
+      <div class="tip-card">
+        <div class="icon-wrap" data-icon="spark"></div>
+        <h3>Stress Management</h3>
+        <p>Short breathing exercises, brief walks, and scheduled breaks can help you reset during stressful periods. Talk to someone you trust if stress feels hard to manage.</p>
+      </div>
+      <div class="tip-card">
+        <div class="icon-wrap" data-icon="book"></div>
+        <h3>Study-Life Balance</h3>
+        <p>Try Pomodoro-style sessions — focused study blocks followed by short breaks — to stay productive without burning out.</p>
+      </div>
+      <div class="tip-card">
+        <div class="icon-wrap" data-icon="activity"></div>
+        <h3>Physical Activity</h3>
+        <p>Regular movement — walking, stretching, or sports — supports both physical and mental wellbeing, even in short daily sessions.</p>
+      </div>
+      <div class="tip-card">
+        <div class="icon-wrap" data-icon="user"></div>
+        <h3>Social Connection</h3>
+        <p>Make time for the people who support you. Real conversations and shared activities can be as restorative as rest itself.</p>
+      </div>
     </div>
   </div>
 
-  <div class="disclaimer-box" style="margin-top:28px;">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:2px;"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.01"/></svg>
-    <span>These tips are general and educational. They are not medical advice and do not replace guidance from a qualified professional.</span>
+  <div class="disclaimer-box" style="margin-top:32px; padding:16px 20px; border-radius:var(--radius-sm); background:var(--canvas-dim); border-left:4px solid var(--moss-dark); display:flex; gap:14px; align-items:flex-start;">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:2px; color:var(--moss-dark);"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.01"/></svg>
+    <span style="font-size:0.88rem; color:var(--ink-soft); line-height:1.55;">These recommendations and tips provide general, evidence-based educational guidance. They do not constitute a clinical treatment plan or medical diagnosis. Always consult a qualified healthcare professional for medical concerns.</span>
   </div>
 </div>
 
@@ -71,10 +83,145 @@
 <script src="js/chatbot.js"></script>
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    const user = mcInitAppShell();
-    if (!user) return;
-    mcInitChatbot(user);
+    const user = typeof MindCareAuth !== "undefined" ? MindCareAuth.getCurrentUser() : null;
+    const mount = document.getElementById("app-shell-mount");
+
+    if (user) {
+      if (typeof mcInitAppShell === "function") {
+        try { mcInitAppShell(); } catch (e) {}
+      }
+      if (typeof mcInitChatbot === "function") {
+        try { mcInitChatbot(user); } catch (e) {}
+      }
+    } else {
+      // Clean guest header
+      if (mount && (!mount.children || mount.children.length === 0)) {
+        mount.innerHTML = `
+          <header class="top-nav" style="max-width:1180px; margin:0 auto; padding:16px 20px; display:flex; justify-content:space-between; align-items:center;">
+            <a href="index.html" class="brand" style="display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--ink); font-family:var(--font-display); font-size:1.2rem; font-weight:700;">
+              <span class="mark" style="width:32px; height:32px; border-radius:50%; background:var(--moss); display:flex; align-items:center; justify-content:center;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20c9 0 14-5 14-14 0 0-13-2-14 9-.4 3 0 5 0 5Z"/><path d="M5 20c0-6 3-9 8-11"/></svg>
+              </span>
+              <span>MindCare AI</span>
+            </a>
+            <div class="top-nav-actions" style="display:flex; align-items:center; gap:12px;">
+              <button type="button" class="theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme" style="width:36px; height:36px; border-radius:50%; border:1px solid var(--border); background:var(--surface); cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--ink);">
+                ${typeof MindCareTheme !== "undefined" && MindCareTheme.get() === "dark" ? MindCareTheme.ICONS.sun : "🌓"}
+              </button>
+              <a href="assessment.html" class="btn btn-secondary btn-sm">Assessment</a>
+              <a href="login.html" class="btn btn-primary btn-sm">Log In</a>
+            </div>
+          </header>
+        `;
+        if (typeof MindCareTheme !== "undefined") {
+          MindCareTheme.updateButtons();
+        }
+      }
+      if (typeof mcInitChatbot === "function") {
+        mcInitChatbot({ name: "Guest", email: "guest@mindcare.local" });
+      }
+    }
+
+    if (typeof mcFillIconPlaceholders === "function") {
+      mcFillIconPlaceholders();
+    }
+
+    // Check for existing assessment to render real personalized recommendations
+    renderPersonalizedSection(user);
   });
+
+  function renderPersonalizedSection(user) {
+    const container = document.getElementById("mc-personalized-container");
+    if (!container) return;
+
+    let record = null;
+    if (typeof MindCareStore !== "undefined" && MindCareStore.getLatestAssessment) {
+      record = MindCareStore.getLatestAssessment(user ? user.email : null);
+    }
+    if (!record) {
+      try {
+        const raw = localStorage.getItem("mindcare_latest_result") || sessionStorage.getItem("mindcare_latest_result");
+        if (raw) record = JSON.parse(raw);
+      } catch (e) {}
+    }
+
+    const icons = typeof MC_ICONS !== "undefined" ? MC_ICONS : {};
+    const esc = (s) => String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+    if (record && typeof generatePersonalizedWellnessPlan === "function") {
+      const formData = record.form_data || record;
+      const score = record.score !== undefined ? Number(record.score) : 7.0;
+      const plan = generatePersonalizedWellnessPlan(formData, score);
+      const suggestions = typeof generateWellnessSuggestions === "function" ? generateWellnessSuggestions(formData, score) : [];
+
+      container.innerHTML = `
+        <div class="card-elevated section-gap" style="padding: 28px 24px; border-radius: var(--radius-md); border-color: var(--moss); margin-bottom: 32px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:18px;">
+            <div>
+              <span class="badge badge-higher" style="margin-bottom:6px; display:inline-block;">Active Personalized Plan</span>
+              <h2 style="font-size:1.4rem; margin:0; color:var(--ink);">Tailored for Your Lifestyle</h2>
+            </div>
+            <a href="assessment.html" class="btn btn-secondary btn-sm">Retake Assessment</a>
+          </div>
+          <p style="font-size:0.92rem; color:var(--ink-soft); margin-bottom:20px; line-height:1.55;">
+            Based on your self-reported sleep (${esc(formData.sleep_hours || 7)} hrs), study load (${esc(formData.study_hours || 4)} hrs), and physical movement, here are your prioritized daily recommendations:
+          </p>
+
+          <div class="tips-grid" style="margin-bottom:24px;">
+            <div class="tip-card" style="border-left:3px solid var(--moss);">
+              <div class="icon-wrap" style="color:var(--moss-dark);">${icons[plan.sleep.icon] || icons.moon || "🌙"}</div>
+              <h3>${esc(plan.sleep.title)}</h3>
+              <p>${esc(plan.sleep.text)}</p>
+            </div>
+            <div class="tip-card" style="border-left:3px solid var(--moss);">
+              <div class="icon-wrap" style="color:var(--moss-dark);">${icons[plan.activity.icon] || icons.activity || "🏃"}</div>
+              <h3>${esc(plan.activity.title)}</h3>
+              <p>${esc(plan.activity.text)}</p>
+            </div>
+            <div class="tip-card" style="border-left:3px solid var(--moss);">
+              <div class="icon-wrap" style="color:var(--moss-dark);">${icons[plan.screenTime.icon] || icons.phone || "📱"}</div>
+              <h3>${esc(plan.screenTime.title)}</h3>
+              <p>${esc(plan.screenTime.text)}</p>
+            </div>
+            <div class="tip-card" style="border-left:3px solid var(--moss);">
+              <div class="icon-wrap" style="color:var(--moss-dark);">${icons[plan.studyWork.icon] || icons.book || "📖"}</div>
+              <h3>${esc(plan.studyWork.title)}</h3>
+              <p>${esc(plan.studyWork.text)}</p>
+            </div>
+          </div>
+
+          ${suggestions.length > 0 ? `
+            <div style="background:var(--canvas-dim); padding:16px 20px; border-radius:var(--radius-sm);">
+              <strong style="font-size:0.9rem; color:var(--ink); display:block; margin-bottom:8px;">Prioritized Micro-Habit Actions:</strong>
+              <ul style="margin:0; padding-left:18px; font-size:0.88rem; color:var(--ink-soft); line-height:1.6;">
+                ${suggestions.map(s => `<li><strong>${esc(s.tag)}:</strong> ${esc(s.text)}</li>`).join("")}
+              </ul>
+            </div>
+          ` : ""}
+        </div>
+      `;
+    } else {
+      // When no assessment has been taken yet
+      container.innerHTML = `
+        <div class="card-elevated section-gap" style="padding: 28px 24px; border-radius: var(--radius-md); background: linear-gradient(135deg, var(--surface) 0%, var(--canvas-dim) 100%); margin-bottom: 32px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px;">
+          <div style="max-width: 680px;">
+            <span class="badge badge-neutral" style="margin-bottom:8px; display:inline-block;">Unlock Personalized Insights</span>
+            <h2 style="font-size:1.35rem; color:var(--ink); margin-bottom:8px;">Want Tailored Recommendations?</h2>
+            <p style="font-size:0.92rem; color:var(--ink-soft); margin:0; line-height:1.55;">
+              Complete our structured 4-step assessment covering sleep duration, study hours, screen habits, and physical activity. MindCare AI calculates your score and generates tailored daily micro-habits.
+            </p>
+          </div>
+          <div>
+            <a href="assessment.html" class="btn btn-primary" style="white-space:nowrap;">Take 3-Min Assessment →</a>
+          </div>
+        </div>
+      `;
+    }
+
+    if (typeof mcFillIconPlaceholders === "function") {
+      mcFillIconPlaceholders();
+    }
+  }
 </script>
 </body>
 </html>

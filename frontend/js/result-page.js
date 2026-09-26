@@ -251,6 +251,34 @@ async function mcRunResultPage() {
       text: "Your score reflects your self-reported daily habits and stress levels as analyzed by the machine-learning model.",
     };
 
+    let previousRecord = null;
+    let allHistory = [];
+    if (typeof MindCareStore !== "undefined" && MindCareStore.getAssessments) {
+      allHistory = MindCareStore.getAssessments(user ? user.email : null) || [];
+    }
+    if (allHistory.length > 1) {
+      const curIdx = allHistory.findIndex((r) => String(r.id) === String(record.id));
+      if (curIdx >= 0 && curIdx + 1 < allHistory.length) {
+        previousRecord = allHistory[curIdx + 1];
+      } else if (curIdx !== 1) {
+        previousRecord = allHistory[1];
+      }
+    }
+    let trendHTML = "";
+    if (previousRecord) {
+      const prevScore100 = previousRecord.score_100 !== undefined
+        ? Number(previousRecord.score_100)
+        : Math.round(Number(previousRecord.score || 0) * 10);
+      const diff = score100 - prevScore100;
+      if (diff > 0) {
+        trendHTML = `<span class="badge badge-higher" style="margin-left:8px; font-size:0.82rem;">▲ +${diff} pts vs last</span>`;
+      } else if (diff < 0) {
+        trendHTML = `<span class="badge badge-low" style="margin-left:8px; font-size:0.82rem;">▼ ${diff} pts vs last</span>`;
+      } else {
+        trendHTML = `<span class="badge badge-subtle" style="margin-left:8px; font-size:0.82rem;">— Stable vs last</span>`;
+      }
+    }
+
     const formData = record.formData || {};
     const assessmentDate = record.date ? new Date(record.date) : new Date();
     const formattedDate = assessmentDate.toLocaleDateString("en-US", {
@@ -361,8 +389,9 @@ async function mcRunResultPage() {
             <span class="badge ${interp.badgeClass}">Prediction: ${esc(prediction)}</span>
             <span class="badge badge-subtle">Category: ${esc(category)}</span>
           </div>
-          <h2 style="font-size:1.85rem; margin:0 0 6px; color:var(--ink);">
+          <h2 style="font-size:1.85rem; margin:0 0 6px; color:var(--ink); display:flex; align-items:center; flex-wrap:wrap; gap:8px;">
             Mental Health Score: <span style="color:var(--moss-dark);">${score100} / 100</span>
+            ${trendHTML}
           </h2>
           <p style="color:var(--ink-soft); font-size:0.9rem; margin-bottom:14px;">
             Assessed on <strong>${formattedDateTime}</strong>
