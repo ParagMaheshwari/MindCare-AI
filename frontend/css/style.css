@@ -560,6 +560,13 @@ select {
   align-items: center;
   justify-content: space-between;
   padding: 22px 0;
+  gap: 16px;
+}
+
+.top-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .brand {
@@ -701,8 +708,15 @@ select {
 
 .steps-row {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
   gap: 22px;
+}
+
+.steps-row-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.steps-row-3 {
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .step-card {
@@ -1411,7 +1425,7 @@ select {
 
 .quick-actions {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 16px;
   margin: 28px 0;
 }
@@ -2618,17 +2632,21 @@ select {
   }
 
   .steps-row,
+  .steps-row-4,
+  .steps-row-3,
   .features-grid,
   .grid-3,
   .grid-4,
   .grid-5,
   .wellness-grid,
-  .tips-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .tips-grid,
+  .crisis-grid,
+  .crisis-cards-container {
+    grid-template-columns: repeat(2, 1fr) !important;
   }
 
   .quick-actions {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr) !important;
   }
 
   .grid-2,
@@ -2701,6 +2719,8 @@ select {
 
   .field-row,
   .steps-row,
+  .steps-row-4,
+  .steps-row-3,
   .features-grid,
   .grid-2,
   .grid-3,
@@ -2711,8 +2731,10 @@ select {
   .tips-grid,
   .suggestion-list,
   .result-hero,
-  .profile-stats {
-    grid-template-columns: 1fr;
+  .profile-stats,
+  .crisis-grid,
+  .crisis-cards-container {
+    grid-template-columns: 1fr !important;
   }
 
   .score-hero {
@@ -4437,10 +4459,12 @@ select {
    Comprehensive Mobile & Responsive Refinements (320px - 768px)
    ========================================================================== */
 
-/* Prevent horizontal page blowouts on all screen widths */
+/* Fluid container foundation without overflow shortcuts */
 html, body {
   max-width: 100%;
-  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  width: 100%;
 }
 
 *, *::before, *::after {
@@ -4453,6 +4477,12 @@ html, body {
     width: 100%;
     padding-left: 16px;
     padding-right: 16px;
+  }
+
+  .top-nav {
+    padding: 16px 0;
+    gap: 12px;
+    flex-wrap: wrap;
   }
 
   .dashboard-grid,
@@ -4472,6 +4502,96 @@ html, body {
 
   .admin-table {
     min-width: 600px;
+  }
+
+  .crisis-cards-container,
+  .crisis-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px;
+  }
+}
+
+/* Small Tablet & Mobile (max-width: 600px) */
+@media (max-width: 600px) {
+  .crisis-cards-container,
+  .crisis-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .crisis-banner-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .crisis-card-actions {
+    flex-wrap: wrap;
+  }
+
+  .crisis-act-btn {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  /* Admin components on mobile */
+  .data-table-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .table-search-input {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .admin-stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-modal {
+    width: 100% !important;
+    padding: 16px !important;
+    margin: 8px !important;
+  }
+
+  /* Breathing circle scaling */
+  .breathing-visual {
+    width: min(220px, 65vw) !important;
+    height: min(220px, 65vw) !important;
+    margin: 20px auto !important;
+  }
+
+  .breathing-circle-inner {
+    width: min(110px, 32vw) !important;
+    height: min(110px, 32vw) !important;
+  }
+
+  .breathing-controls {
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .breathing-controls .btn {
+    min-width: 100px;
+  }
+
+  /* Hero art scaling on small screens */
+  .hero-art {
+    order: -1;
+    transform: scale(0.72);
+    margin: -30px 0 -15px;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  /* Canvas responsiveness */
+  .voice-waveform-canvas {
+    max-width: 100%;
+    width: 100%;
+    height: auto;
   }
 }
 
@@ -4495,12 +4615,39 @@ html, body {
     padding: 16px 12px 90px;
   }
 
+  /* Top Navigation */
+  .top-nav {
+    padding: 12px 0;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .top-nav .brand {
+    font-size: 1.1rem;
+  }
+
+  .top-nav-actions {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .top-nav-actions .btn {
+    padding: 7px 12px;
+    font-size: 0.82rem;
+    min-height: 38px;
+  }
+
   .topbar {
     padding: 12px 14px;
   }
 
   .topbar .brand-text {
     font-size: 1.05rem;
+  }
+
+  .topbar-actions {
+    gap: 8px;
   }
 
   /* Typography scale on mobile */
@@ -4519,7 +4666,7 @@ html, body {
 
   /* Touch-friendly controls */
   .btn,
-  button:not(.btn-sm):not(.recording-dot):not(.legend-line),
+  button:not(.btn-sm):not(.recording-dot):not(.legend-line):not(.theme-toggle-btn),
   .form-control,
   .form-select,
   .input-field {
@@ -4535,6 +4682,14 @@ html, body {
   .voice-breakdown-card {
     padding: 16px !important;
     border-radius: var(--radius-md) !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .mc-modal {
+    width: min(420px, calc(100vw - 24px)) !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   /* Mood selector */
@@ -4600,18 +4755,6 @@ html, body {
     font-size: 0.9rem;
   }
 
-  /* Breathing circle */
-  .breathing-circle-wrap {
-    width: 200px;
-    height: 200px;
-    margin: 0 auto;
-  }
-
-  .breathing-circle {
-    width: 180px;
-    height: 180px;
-  }
-
   /* Assessment form buttons */
   .assessment-step-nav {
     flex-direction: column-reverse;
@@ -4650,9 +4793,46 @@ html, body {
     flex-direction: column;
     gap: 6px;
   }
+
+  .forecast-progress-track {
+    width: 100%;
+    max-width: 100%;
+  }
 }
 
-/* Compact Small Mobile (max-width: 360px - e.g. iPhone SE, Galaxy A series) */
+/* Compact Small Mobile (max-width: 400px - e.g. iPhone SE, Galaxy A series, 320px-390px) */
+@media (max-width: 400px) {
+  .top-nav {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .top-nav .brand {
+    justify-content: center;
+  }
+
+  .top-nav-actions {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .top-nav-actions .btn {
+    flex: 1;
+    text-align: center;
+    justify-content: center;
+    padding: 8px 8px;
+    font-size: 0.8rem;
+    min-height: 38px;
+  }
+
+  .hero-art {
+    transform: scale(0.6);
+    margin: -50px 0 -35px;
+  }
+}
+
+/* Extra Small Mobile (max-width: 360px - e.g. 320px to 360px) */
 @media (max-width: 360px) {
   .page-body {
     padding: 12px 8px 84px;
@@ -4691,6 +4871,11 @@ html, body {
   .btn-download-report {
     padding: 10px 14px;
     font-size: 0.9rem;
+  }
+
+  .top-nav-actions .btn {
+    font-size: 0.75rem;
+    padding: 6px 6px;
   }
 }
 

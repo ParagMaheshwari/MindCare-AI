@@ -30,14 +30,14 @@ async function mcRunResultPage() {
       const mount = document.getElementById("app-shell-mount");
       if (mount && (!mount.children || mount.children.length === 0)) {
         mount.innerHTML = `
-          <header class="top-nav" style="max-width:1180px; margin:0 auto; padding:20px 24px 10px; display:flex; justify-content:space-between; align-items:center;">
+          <header class="top-nav result-guest-nav" style="max-width:1180px; margin:0 auto; padding:16px 20px;">
             <a href="index.html" class="brand" style="display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--ink); font-family:var(--font-display); font-size:1.2rem; font-weight:700;">
               <span class="mark" style="width:32px; height:32px; border-radius:50%; background:var(--moss); display:flex; align-items:center; justify-content:center;">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20c9 0 14-5 14-14 0 0-13-2-14 9-.4 3 0 5 0 5Z"/><path d="M5 20c0-6 3-9 8-11"/></svg>
               </span>
               <span>MindCare AI</span>
             </a>
-            <div style="display:flex; align-items:center; gap:12px;">
+            <div class="top-nav-actions" id="mc-guest-nav-actions">
               <button type="button" class="theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme" style="width:36px; height:36px; border-radius:50%; border:1px solid var(--border); background:var(--surface); cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--ink);">
                 ${typeof MindCareTheme !== "undefined" && MindCareTheme.get() === "dark" ? MindCareTheme.ICONS.sun : (typeof MindCareTheme !== "undefined" ? MindCareTheme.ICONS.moon : "🌓")}
               </button>
