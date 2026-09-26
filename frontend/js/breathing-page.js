@@ -3,9 +3,65 @@
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-  const user = mcInitAppShell();
-  if (!user) return;
-  mcInitChatbot(user);
+  const user = typeof MindCareAuth !== "undefined" ? MindCareAuth.getCurrentUser() : null;
+  const mount = document.getElementById("app-shell-mount");
+
+  if (user) {
+    if (typeof mcInitAppShell === "function") {
+      try { mcInitAppShell(); } catch (e) {}
+    }
+    if (typeof mcInitChatbot === "function") {
+      try { mcInitChatbot(user); } catch (e) {}
+    }
+  } else {
+    // Graceful guest header
+    if (mount && (!mount.children || mount.children.length === 0)) {
+      mount.innerHTML = `
+        <header class="top-nav" style="max-width:1180px; margin:0 auto; padding:16px 20px; display:flex; justify-content:space-between; align-items:center;">
+          <a href="index.html" class="brand" style="display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--ink); font-family:var(--font-display); font-size:1.2rem; font-weight:700;">
+            <span class="mark" style="width:32px; height:32px; border-radius:50%; background:var(--moss); display:flex; align-items:center; justify-content:center;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20c9 0 14-5 14-14 0 0-13-2-14 9-.4 3 0 5 0 5Z"/><path d="M5 20c0-6 3-9 8-11"/></svg>
+            </span>
+            <span>MindCare AI</span>
+          </a>
+          <div class="top-nav-actions" style="display:flex; align-items:center; gap:12px;">
+            <button type="button" class="theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme" style="width:36px; height:36px; border-radius:50%; border:1px solid var(--border); background:var(--surface); cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--ink);">
+              ${typeof MindCareTheme !== "undefined" && MindCareTheme.get() === "dark" ? MindCareTheme.ICONS.sun : "🌓"}
+            </button>
+            <a href="wellness.html" class="btn btn-secondary btn-sm">Wellness Hub</a>
+            <a href="login.html" class="btn btn-primary btn-sm">Log In</a>
+          </div>
+        </header>
+      `;
+      if (typeof MindCareTheme !== "undefined") {
+        MindCareTheme.updateButtons();
+      }
+    }
+    if (typeof mcInitChatbot === "function") {
+      mcInitChatbot({ name: "Guest", email: "guest@mindcare.local" });
+    }
+  }
+
+  // Check URL params for back link
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const from = params.get("from");
+    const backNav = document.getElementById("breathing-back-nav");
+    const backBtn = document.getElementById("breathing-back-btn") || document.getElementById("breathing-back-link");
+    const backText = document.getElementById("breathing-back-text");
+    if (from && backNav && backBtn && backText) {
+      backNav.style.display = "block";
+      if (from.toLowerCase() === "resources") {
+        backBtn.href = "wellness.html";
+        backText.textContent = "Back to Wellness Pillars";
+      } else {
+        backBtn.href = "wellness.html";
+        backText.textContent = "Back to Wellness Pillars";
+      }
+    }
+  } catch (e) {
+    console.warn("Could not parse breathing navigation parameters:", e);
+  }
 
   let totalDuration = 60; // seconds
   let remainingTime = 60;

@@ -34,6 +34,7 @@
     <p style="font-size: 0.9rem; color: var(--ink-soft); margin-bottom: 20px;">Daily sustainable habits to maintain clarity, reduce cognitive fatigue, and improve focus.</p>
 
     <div class="tips-grid">
+      <!-- Card 1: Better Sleep -->
       <div class="tip-card pillar-card" id="pillar-sleep" role="button" tabindex="0" aria-expanded="false" aria-label="Better Sleep wind-down checklist">
         <div class="pillar-header">
           <div class="icon-wrap" data-icon="moon">
@@ -45,14 +46,26 @@
           </div>
         </div>
         <h3>Better Sleep</h3>
-        <p>Try keeping a consistent sleep and wake time, even on weekends, and wind down screens before bed to help your body settle into rest.</p>
+        <p>Try keeping a consistent sleep and wake time, and wind down screens before bed to help your body settle into rest.</p>
         <div class="pillar-action-hint">
-          <span>Wind-Down Checklist</span>
+          <span>Wind-Down Checklist & Bedtime</span>
           <span class="pillar-action-arrow">→</span>
         </div>
         <div class="pillar-drawer" id="sleep-drawer">
           <div class="pillar-drawer-inner">
             <div class="pillar-divider"></div>
+            
+            <!-- Target Bedtime Setup -->
+            <div style="background:var(--canvas-dim); padding:10px 12px; border-radius:8px; margin-bottom:12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <label for="sleep-bedtime-input" style="font-size:0.8rem; font-weight:700; color:var(--ink);">Target Bedtime</label>
+                <input type="time" id="sleep-bedtime-input" value="22:30" class="pillar-input" style="padding:2px 6px; font-size:0.8rem;" />
+              </div>
+              <div id="sleep-bedtime-display" style="font-size:0.82rem; font-weight:600; color:var(--moss);">Target bedtime: 10:30 PM</div>
+              <div id="sleep-winddown-status" style="font-size:0.76rem; color:var(--ink-soft); margin-top:3px;">Wind-down starts in 25 minutes</div>
+            </div>
+
+            <!-- Wind-down checklist -->
             <div class="checklist-header">
               <strong>Tonight's Wind-Down Checklist</strong>
               <span class="checklist-date" id="sleep-checklist-date">Tonight</span>
@@ -64,7 +77,7 @@
               </label>
               <label class="checklist-item">
                 <input type="checkbox" data-index="1" />
-                <span class="checklist-text">Room dark, quiet & cool</span>
+                <span class="checklist-text">Room dark/cool</span>
               </label>
               <label class="checklist-item">
                 <input type="checkbox" data-index="2" />
@@ -72,42 +85,262 @@
               </label>
               <label class="checklist-item">
                 <input type="checkbox" data-index="3" />
-                <span class="checklist-text">No caffeine after 4 PM</span>
+                <span class="checklist-text">No caffeine after selected time</span>
               </label>
             </div>
             <div class="checklist-footer">
               <span id="sleep-checklist-status">Select items as you complete them</span>
-              <button type="button" class="btn btn-ghost btn-sm" id="sleep-reset-btn" style="padding:2px 8px; font-size:0.75rem;">Reset</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="sleep-reset-btn" style="padding:2px 8px; font-size:0.75rem;">Reset Tonight</button>
             </div>
           </div>
         </div>
       </div>
-      <div class="tip-card">
-        <div class="icon-wrap" data-icon="phone"></div>
+
+      <!-- Card 2: Digital Wellbeing -->
+      <div class="tip-card pillar-card" id="pillar-digital" role="button" tabindex="0" aria-expanded="false" aria-label="Digital Wellbeing screen time check-in and timer">
+        <div class="pillar-header">
+          <div class="icon-wrap" data-icon="phone">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          </div>
+          <div class="pillar-header-meta">
+            <span class="pillar-badge" id="digital-progress-pill">Log today</span>
+            <span class="pillar-expand-icon" aria-hidden="true">▾</span>
+          </div>
+        </div>
         <h3>Digital Wellbeing</h3>
         <p>Set app time limits, turn off non-essential notifications, and build in regular screen-free breaks during the day.</p>
+        <div class="pillar-action-hint">
+          <span>Screen Time & Break Timer</span>
+          <span class="pillar-action-arrow">→</span>
+        </div>
+        <div class="pillar-drawer" id="digital-drawer">
+          <div class="pillar-drawer-inner">
+            <div class="pillar-divider"></div>
+            
+            <!-- Screen Time Check-in -->
+            <div style="font-size:0.84rem; font-weight:700; color:var(--ink); margin-bottom:8px;">Screen Time Check-in</div>
+            
+            <div style="background:var(--canvas-dim); padding:10px 12px; border-radius:8px; margin-bottom:12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <label for="digital-hours-input" style="font-size:0.78rem; color:var(--ink-soft);">Hours on phone today:</label>
+                <div style="display:flex; align-items:center; gap:4px;">
+                  <input type="number" id="digital-hours-input" min="0" max="24" step="0.5" value="4.5" class="pillar-input" style="width:68px; text-align:right;" />
+                  <span style="font-size:0.78rem; color:var(--ink-faint);">hrs</span>
+                </div>
+              </div>
+              <input type="range" id="digital-hours-slider" min="0" max="24" step="0.5" value="4.5" style="width:100%; accent-color:var(--moss); cursor:pointer;" />
+              
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+                <label for="digital-goal-input" style="font-size:0.78rem; color:var(--ink-soft);">Daily Goal:</label>
+                <div style="display:flex; align-items:center; gap:4px;">
+                  <input type="number" id="digital-goal-input" min="1" max="24" step="0.5" value="5.0" class="pillar-input" style="width:68px; text-align:right;" />
+                  <span style="font-size:0.78rem; color:var(--ink-faint);">hrs</span>
+                </div>
+              </div>
+
+              <!-- Progress bar -->
+              <div class="progress-bar-bg">
+                <div id="digital-progress-bar" class="progress-bar-fill" style="width: 90%;"></div>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:0.76rem; color:var(--ink-faint);">
+                <span>Today: <strong id="digital-preview-hours" style="color:var(--ink);">4.5 hrs</strong></span>
+                <span>Goal: <strong id="digital-preview-goal" style="color:var(--ink);">5.0 hrs</strong></span>
+                <span>Progress: <strong id="digital-progress-pct" style="color:var(--moss);">90%</strong></span>
+              </div>
+
+              <button type="button" class="btn btn-primary btn-sm btn-block" id="digital-save-btn" style="margin-top:10px; width:100%;">Save Today's Screen Time</button>
+            </div>
+
+            <!-- 7-Day History & Average -->
+            <div style="font-size:0.8rem; font-weight:700; color:var(--ink); margin-bottom:4px;">7-Day History</div>
+            <div id="digital-history-bars" class="pillar-history-bars">
+              <!-- Dynamically populated from actual saved entries -->
+            </div>
+            <div id="digital-average-text" style="font-size:0.78rem; color:var(--ink-soft);">Average: Calculating...</div>
+            <div id="digital-trend-message" class="pillar-trend-msg">Keep logging your screen time to see your weekly trend.</div>
+
+            <!-- Screen-Free Break Timer -->
+            <div style="margin-top:14px; border-top:1px dashed var(--border); padding-top:10px;">
+              <div style="font-size:0.84rem; font-weight:700; color:var(--ink); margin-bottom:4px;">Start Screen-Free Break</div>
+              <div class="btn-group-pill">
+                <button type="button" class="btn-pill-choice active" data-duration="15">15 min</button>
+                <button type="button" class="btn-pill-choice" data-duration="30">30 min</button>
+                <button type="button" class="btn-pill-choice" data-duration="60">60 min</button>
+              </div>
+              <div id="digital-timer-display" class="pillar-timer-display">Screen-free break: 15:00 remaining</div>
+              <div class="pillar-timer-controls">
+                <button type="button" class="btn btn-primary btn-sm" id="digital-break-start">Start</button>
+                <button type="button" class="btn btn-secondary btn-sm" id="digital-break-pause" style="display:none;">Pause</button>
+                <button type="button" class="btn btn-secondary btn-sm" id="digital-break-resume" style="display:none;">Resume</button>
+                <button type="button" class="btn btn-ghost btn-sm" id="digital-break-cancel" style="display:none;">Cancel</button>
+              </div>
+              <div id="digital-break-complete" class="pillar-completion-msg" style="display:none;">Break complete ✓</div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="tip-card">
-        <div class="icon-wrap" data-icon="spark"></div>
+
+      <!-- Card 3: Stress Management (Reusing breathing.html) -->
+      <a href="breathing.html?from=resources" class="tip-card pillar-card" id="pillar-stress" role="button" tabindex="0" style="text-decoration:none; color:inherit; display:flex; flex-direction:column;" aria-label="Stress Management open guided breathing exercise">
+        <div class="pillar-header">
+          <div class="icon-wrap" data-icon="spark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+          </div>
+          <div class="pillar-header-meta">
+            <span class="pillar-badge">Box-Breathing →</span>
+            <span class="pillar-action-arrow" style="font-size:1.1rem; color:var(--moss);">↗</span>
+          </div>
+        </div>
         <h3>Stress Management</h3>
-        <p>Short breathing exercises, brief walks, and scheduled breaks can help you reset during stressful periods. Talk to someone you trust if stress feels hard to manage.</p>
-      </div>
-      <div class="tip-card">
-        <div class="icon-wrap" data-icon="book"></div>
+        <p>Short breathing exercises, brief walks, and scheduled breaks can help you reset during stressful periods.</p>
+        <div class="pillar-action-hint" style="margin-top:auto;">
+          <span>Open Guided Breathing Exercise</span>
+          <span class="pillar-action-arrow">→</span>
+        </div>
+      </a>
+
+      <!-- Card 4: Study-Life Balance (Pomodoro Timer) -->
+      <div class="tip-card pillar-card" id="pillar-study" role="button" tabindex="0" aria-expanded="false" aria-label="Study-Life Balance Pomodoro timer">
+        <div class="pillar-header">
+          <div class="icon-wrap" data-icon="book">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          </div>
+          <div class="pillar-header-meta">
+            <span class="pillar-badge" id="study-progress-pill">Session 1 of 4</span>
+            <span class="pillar-expand-icon" aria-hidden="true">▾</span>
+          </div>
+        </div>
         <h3>Study-Life Balance</h3>
         <p>Try Pomodoro-style sessions — focused study blocks followed by short breaks — to stay productive without burning out.</p>
+        <div class="pillar-action-hint">
+          <span>Pomodoro Focus Timer</span>
+          <span class="pillar-action-arrow">→</span>
+        </div>
+        <div class="pillar-drawer" id="study-drawer">
+          <div class="pillar-drawer-inner">
+            <div class="pillar-divider"></div>
+            
+            <div style="text-align:center;">
+              <div id="study-phase-badge" class="pillar-phase-badge focus">FOCUS</div>
+              <div id="study-timer-display" class="pillar-large-timer">25:00</div>
+              <div id="study-session-count" style="font-size:0.82rem; color:var(--ink-soft); margin-bottom:12px;">Session 1 of 4</div>
+            </div>
+
+            <div class="pillar-timer-controls">
+              <button type="button" class="btn btn-primary btn-sm" id="study-start-btn" style="min-width:76px;">Start</button>
+              <button type="button" class="btn btn-secondary btn-sm" id="study-pause-btn" style="display:none; min-width:76px;">Pause</button>
+              <button type="button" class="btn btn-secondary btn-sm" id="study-resume-btn" style="display:none; min-width:76px;">Resume</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="study-reset-btn">Reset</button>
+            </div>
+
+            <div id="study-complete-msg" class="pillar-completion-msg" style="display:none;">4 sessions completed ✓</div>
+          </div>
+        </div>
       </div>
-      <div class="tip-card">
-        <div class="icon-wrap" data-icon="activity"></div>
+
+      <!-- Card 5: Physical Activity (Guided 2-Minute Movement Break) -->
+      <div class="tip-card pillar-card" id="pillar-activity" role="button" tabindex="0" aria-expanded="false" aria-label="Physical Activity 2-minute movement break">
+        <div class="pillar-header">
+          <div class="icon-wrap" data-icon="activity">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div class="pillar-header-meta">
+            <span class="pillar-badge" id="activity-progress-pill">Exercise 1 of 4</span>
+            <span class="pillar-expand-icon" aria-hidden="true">▾</span>
+          </div>
+        </div>
         <h3>Physical Activity</h3>
-        <p>Regular movement — walking, stretching, or sports — supports both physical and mental wellbeing, even in short daily sessions.</p>
+        <p>Regular movement — walking, stretching, or posture resets — supports both physical and mental wellbeing.</p>
+        <div class="pillar-action-hint">
+          <span>2-Min Movement Break</span>
+          <span class="pillar-action-arrow">→</span>
+        </div>
+        <div class="pillar-drawer" id="activity-drawer">
+          <div class="pillar-drawer-inner">
+            <div class="pillar-divider"></div>
+            
+            <div style="background:var(--canvas-dim); padding:10px 12px; border-radius:8px; margin-bottom:12px; text-align:center;">
+              <div id="activity-step-label" style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--moss);">Exercise 1 of 4</div>
+              <div id="activity-name" style="font-size:1.05rem; font-weight:700; color:var(--ink); margin:2px 0;">Neck Rolls</div>
+              <div id="activity-desc" style="font-size:0.78rem; color:var(--ink-soft); line-height:1.45; min-height:36px; display:flex; align-items:center; justify-content:center;">Roll your head gently in slow, wide circles to release cervical spine tension.</div>
+              <div id="activity-timer-display" class="pillar-large-timer">00:30</div>
+            </div>
+
+            <div class="pillar-timer-controls">
+              <button type="button" class="btn btn-primary btn-sm" id="activity-start-btn" style="min-width:76px;">Start</button>
+              <button type="button" class="btn btn-secondary btn-sm" id="activity-pause-btn" style="display:none; min-width:76px;">Pause</button>
+              <button type="button" class="btn btn-secondary btn-sm" id="activity-resume-btn" style="display:none; min-width:76px;">Resume</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="activity-reset-btn">Reset</button>
+            </div>
+
+            <div id="activity-complete-msg" class="pillar-completion-msg" style="display:none;">Movement break complete ✓</div>
+          </div>
+        </div>
       </div>
-      <div class="tip-card">
-        <div class="icon-wrap" data-icon="user"></div>
+
+      <!-- Card 6: Social Connection (Connection Check-in) -->
+      <div class="tip-card pillar-card" id="pillar-social" role="button" tabindex="0" aria-expanded="false" aria-label="Social Connection check-in">
+        <div class="pillar-header">
+          <div class="icon-wrap" data-icon="user">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div class="pillar-header-meta">
+            <span class="pillar-badge" id="social-week-pill">This week: 0</span>
+            <span class="pillar-expand-icon" aria-hidden="true">▾</span>
+          </div>
+        </div>
         <h3>Social Connection</h3>
         <p>Make time for the people who support you. Real conversations and shared activities can be as restorative as rest itself.</p>
+        <div class="pillar-action-hint">
+          <span>Connection Check-in</span>
+          <span class="pillar-action-arrow">→</span>
+        </div>
+        <div class="pillar-drawer" id="social-drawer">
+          <div class="pillar-drawer-inner">
+            <div class="pillar-divider"></div>
+
+            <div style="font-size:0.84rem; font-weight:700; color:var(--ink); margin-bottom:8px;">Connection Check-in</div>
+            
+            <div style="font-size:0.78rem; color:var(--ink-soft); margin-bottom:4px;">Who could you check in with today?</div>
+            <div class="pill-selector-group" id="social-person-group">
+              <button type="button" class="pill-option active" data-val="Friend">Friend</button>
+              <button type="button" class="pill-option" data-val="Family">Family</button>
+              <button type="button" class="pill-option" data-val="Classmate">Classmate</button>
+              <button type="button" class="pill-option" data-val="Other">Other</button>
+            </div>
+
+            <div style="font-size:0.78rem; color:var(--ink-soft); margin-top:6px; margin-bottom:4px;">How would you like to connect?</div>
+            <div class="pill-selector-group" id="social-method-group">
+              <button type="button" class="pill-option active" data-val="Call">Call</button>
+              <button type="button" class="pill-option" data-val="Message">Message</button>
+              <button type="button" class="pill-option" data-val="Meet">Meet</button>
+              <button type="button" class="pill-option" data-val="Video call">Video call</button>
+            </div>
+
+            <div style="font-size:0.78rem; color:var(--ink-soft); margin-top:6px; margin-bottom:4px;">How did it feel?</div>
+            <div class="pill-selector-group" id="social-feeling-group">
+              <button type="button" class="pill-option active" data-val="Connected">Connected</button>
+              <button type="button" class="pill-option" data-val="Supported">Supported</button>
+              <button type="button" class="pill-option" data-val="Better">Better</button>
+              <button type="button" class="pill-option" data-val="Neutral">Neutral</button>
+            </div>
+
+            <button type="button" class="btn btn-primary btn-sm btn-block" id="social-save-btn" style="margin-top:10px; width:100%;">Save Check-In</button>
+            <div id="social-feedback" style="display:none; font-size:0.78rem; color:var(--moss); margin-top:6px; font-weight:600; text-align:center;">Saved! Great job staying connected.</div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px; padding-top:8px; border-top:1px dashed var(--border); font-size:0.8rem;">
+              <strong id="social-weekly-summary" style="color:var(--ink);">This week: 0 connections</strong>
+              <button type="button" class="btn btn-ghost btn-sm" id="social-toggle-history-btn" style="padding:2px 8px; font-size:0.75rem;">View This Week</button>
+            </div>
+
+            <div id="social-history-list" class="social-history-list" style="display:none;">
+              <!-- Dynamically populated from actual saved entries -->
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+
   </div>
 
   <div class="disclaimer-box" style="margin-top:32px; padding:16px 20px; border-radius:var(--radius-sm); background:var(--canvas-dim); border-left:4px solid var(--moss-dark); display:flex; gap:14px; align-items:flex-start;">

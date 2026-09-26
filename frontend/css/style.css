@@ -2364,6 +2364,224 @@ body[data-page="home"] .container {
   color: var(--ink-faint);
 }
 
+/* Common Pillar Tools Styles */
+.pillar-input {
+  background: var(--canvas-dim);
+  border: 1px solid var(--border);
+  color: var(--ink);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  font-size: 0.82rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+.pillar-input:focus {
+  border-color: var(--moss);
+}
+
+.pillar-large-timer {
+  font-family: var(--font-mono, monospace);
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: var(--ink);
+  text-align: center;
+  margin: 6px 0 10px;
+  letter-spacing: 0.05em;
+}
+
+.pillar-phase-badge {
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 10px;
+  border-radius: 12px;
+  display: inline-block;
+  margin: 0 auto 6px;
+  letter-spacing: 0.05em;
+}
+.pillar-phase-badge.focus {
+  background: rgba(52, 211, 153, 0.15);
+  color: var(--moss);
+}
+.pillar-phase-badge.break {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+}
+
+.pillar-timer-controls {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.pillar-completion-msg {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--moss);
+  text-align: center;
+  padding: 8px;
+  background: rgba(52, 211, 153, 0.12);
+  border-radius: 6px;
+  margin-top: 10px;
+  border: 1px solid rgba(52, 211, 153, 0.25);
+}
+
+/* Digital Wellbeing: Screen time & break */
+.progress-bar-bg {
+  background: rgba(255, 255, 255, 0.08);
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  margin: 8px 0;
+}
+[data-theme="light"] .progress-bar-bg {
+  background: rgba(0, 0, 0, 0.08);
+}
+.progress-bar-fill {
+  background: var(--moss);
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.pillar-history-bars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 6px;
+  height: 60px;
+  padding: 6px 4px 0;
+  margin: 8px 0;
+  background: var(--canvas-dim);
+  border-radius: 6px;
+}
+.history-bar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  height: 100%;
+  justify-content: flex-end;
+}
+.history-bar-pillar {
+  width: 100%;
+  max-width: 16px;
+  background: var(--moss);
+  border-radius: 2px 2px 0 0;
+  min-height: 4px;
+  transition: height 0.3s ease;
+}
+.history-bar-day {
+  font-size: 0.65rem;
+  color: var(--ink-faint);
+  margin-top: 3px;
+}
+
+.pillar-trend-msg {
+  font-size: 0.76rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: rgba(52, 211, 153, 0.1);
+  color: var(--moss);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.btn-group-pill {
+  display: flex;
+  gap: 6px;
+  margin: 6px 0;
+}
+.btn-pill-choice {
+  flex: 1;
+  padding: 4px 8px;
+  font-size: 0.78rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--canvas-dim);
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-pill-choice.active {
+  background: var(--moss);
+  color: #06281E;
+  border-color: var(--moss);
+  font-weight: 700;
+}
+
+.pillar-timer-display {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 6px 10px;
+  background: var(--canvas-dim);
+  border-radius: 6px;
+  text-align: center;
+  margin: 8px 0;
+  color: var(--ink);
+}
+
+/* Social Connection Pill Selectors */
+.pill-selector-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 4px 0 8px;
+}
+.pill-option {
+  padding: 4px 10px;
+  font-size: 0.76rem;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--canvas-dim);
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.pill-option:hover {
+  border-color: var(--moss);
+}
+.pill-option.active {
+  border-color: var(--moss);
+  background: rgba(52, 211, 153, 0.16);
+  color: var(--moss);
+  font-weight: 700;
+}
+
+.social-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+  max-height: 140px;
+  overflow-y: auto;
+}
+.social-history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: var(--canvas-dim);
+  font-size: 0.78rem;
+  color: var(--ink);
+}
+.social-history-delete {
+  background: none;
+  border: none;
+  color: var(--ink-faint);
+  cursor: pointer;
+  padding: 2px 6px;
+  font-size: 0.85rem;
+  transition: color 0.15s ease;
+}
+.social-history-delete:hover {
+  color: #ef4444;
+}
+
 /* ==========================================================================
    My results (history) table
    ========================================================================== */
