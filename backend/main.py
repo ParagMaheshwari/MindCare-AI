@@ -1426,7 +1426,7 @@ def generate_pdf_report(payload: ReportRequest):
 # ---------------------------------------------------------------------------
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
-GEMINI_MODEL_NAME = os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")
+GEMINI_MODEL_NAME = os.environ.get("GEMINI_MODEL", "gemini-flash-lite-latest")
 
 SYSTEM_PROMPT = """You are MindCare AI, a compassionate, supportive student mental wellness companion.
 
