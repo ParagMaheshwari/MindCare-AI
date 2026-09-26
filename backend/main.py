@@ -1426,17 +1426,21 @@ def generate_pdf_report(payload: ReportRequest):
 # ---------------------------------------------------------------------------
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
-GEMINI_MODEL_NAME = os.environ.get("GEMINI_MODEL", "gemini-3.5-flash")
+GEMINI_MODEL_NAME = os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")
 
-SYSTEM_PROMPT = """You are a supportive, concise mental-wellness AI assistant.
+SYSTEM_PROMPT = """You are MindCare AI, a compassionate, supportive student mental wellness companion.
 
-STRICT RESPONSE GUIDELINES:
-1. POINT-TO-POINT ONLY: Always structure your core guidance as 3 to 4 short, clear bullet points. Do NOT write long paragraphs, essays, or walls of text.
-2. BRIEF & ACTIONABLE: Each bullet point must be 1 to 2 short sentences focusing on an immediate, practical step (e.g., breathwork, study pacing, screen boundary, sleep routine).
-3. WARM ACKNOWLEDGMENT: Begin with at most one short sentence acknowledging the user's feeling before the bullet points.
-4. WORD LIMIT: Keep the entire response under 120 words total so it is quick to read on mobile and web chat widgets.
-5. NON-DIAGNOSTIC: Never diagnose medical or psychiatric conditions or claim to replace a therapist or doctor.
-6. CRISIS SAFETY: If the user indicates immediate danger or intent to harm themselves, direct them to call or text 988 or emergency services immediately."""
+STRICT INSTRUCTIONS:
+1. TOPIC-SPECIFIC & RELEVANT: You must directly answer the user's specific question or concern.
+   - If the user asks about sleep, give concrete sleep hygiene and circadian rhythm advice.
+   - If the user asks about exam stress, give specific test-taking and study-pacing strategies.
+   - If the user asks about screen time, give practical digital detox and boundary tips.
+   - If the user asks about breathing or exercises, provide the actual step-by-step exercise.
+   - DO NOT repeat the same generic formula or bullet points across different topics.
+2. ACTIONABLE & CONCISE: Provide 3 to 4 clear, high-impact bullet points or steps tailored specifically to their issue. Keep the tone warm, empathetic, and encouraging.
+3. LENGTH: Keep responses concise (under 150 words) so they are easy to read and listen to on mobile devices.
+4. NON-DIAGNOSTIC: You provide educational, supportive wellness guidance. Do not diagnose conditions or prescribe medications.
+5. CRISIS SAFETY: If the user indicates immediate danger, self-harm, or severe crisis, immediately provide the 988 Suicide & Crisis Lifeline (call/text 988) or emergency services."""
 
 # Lightweight, backend-side safety net. This does not replace Gemini's own
 # judgement — it guarantees a caring, resource-forward reply even if the
@@ -1519,20 +1523,43 @@ def _build_context_note(context: Optional[ChatContext]) -> str:
 
 def _get_candidate_models() -> List[str]:
     """Return an ordered, deduplicated list of candidate Gemini models to try."""
-    configured = os.environ.get("GEMINI_MODEL")
+    configured = os.environ.get("GEMINI_MODEL", "").strip()
     candidates = [
         configured,
-        "gemini-2.5-flash",
-        "gemini-flash-latest",
         "gemini-flash-lite-latest",
-        "gemini-2.0-flash",
-        "gemini-1.5-flash",
+        "gemini-3.5-flash-lite",
+        "gemini-3.8-flash",
+        "gemini-3.7-flash",
+        "gemini-3.6-flash",
+        "gemini-3.5-flash",
     ]
     unique_models: List[str] = []
     for m in candidates:
         if m and m not in unique_models:
             unique_models.append(m)
     return unique_models
+
+
+def _sanitize_gemini_history(history_items: Optional[List[ChatMessageItem]]) -> List[dict]:
+    """Ensure history turns strictly alternate between 'user' and 'model' and start with 'user'."""
+    if not history_items:
+        return []
+    sanitized: List[dict] = []
+    for item in history_items:
+        role = "user" if item.role in ("user",) else "model"
+        content = (item.content or "").strip()
+        if not content:
+            continue
+        if sanitized and sanitized[-1]["role"] == role:
+            sanitized[-1]["parts"][0] += f"\n\n{content}"
+        else:
+            sanitized.append({"role": role, "parts": [content]})
+
+    while sanitized and sanitized[0]["role"] != "user":
+        sanitized.pop(0)
+    while sanitized and sanitized[-1]["role"] != "model":
+        sanitized.pop(-1)
+    return sanitized
 
 
 def _call_gemini_with_fallback(
@@ -1554,7 +1581,7 @@ def _call_gemini_with_fallback(
                 model_name=model_name,
                 system_instruction=system_instruction,
             )
-            req_opts = {"timeout": 15}
+            req_opts = {"timeout": 12}
             if history:
                 chat_session = gemini_model.start_chat(history=history)
                 result = chat_session.send_message(prompt, request_options=req_opts)
@@ -1608,12 +1635,8 @@ def chat(
 
         context_note = _build_context_note(payload.context)
 
-        # Build multi-turn history for Gemini
-        gemini_history = []
-        if payload.history:
-            for item in payload.history:
-                r = "user" if item.role == "user" else "model"
-                gemini_history.append({"role": r, "parts": [item.content]})
+        # Build clean multi-turn history for Gemini
+        gemini_history = _sanitize_gemini_history(payload.history)
 
         prompt = payload.message if not context_note else f"{context_note}\n\nUser: {payload.message}"
 
@@ -1627,13 +1650,10 @@ def chat(
         _record_chat_if_auth(db, auth_header, payload.message, text)
         return ChatResponse(response=text)
     except Exception as exc:
-        logger.warning("Gemini chat request failed (%s); serving structured wellness fallback.", exc)
+        logger.warning("Gemini chat request failed (%s); returning transparent error message.", exc)
         fallback_reply = (
-            "I hear what you're sharing, and small daily adjustments can make a big difference:\n\n"
-            "• **Take intentional pauses:** Try a 2-minute slow breathing pause to help ground your focus.\n"
-            "• **Protect your wind-down:** Give yourself 30 minutes away from active screens before resting.\n"
-            "• **Break tasks down:** Tackle one single task at a time with 5-minute movement breaks between study blocks.\n"
-            "• **Reach out:** Sharing how you feel with a friend or counselor is always a positive step."
+            "I'm temporarily having trouble connecting to my AI service. "
+            "Please check your internet connection and try again in a moment."
         )
         _record_chat_if_auth(db, auth_header, payload.message, fallback_reply)
         return ChatResponse(response=fallback_reply)

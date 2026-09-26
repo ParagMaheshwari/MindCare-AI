@@ -13,6 +13,8 @@
  * Leave as null (automatically resolves to http://127.0.0.1:8000 on localhost).
  */
 window.MINDCARE_CONFIG = {
-  // Connected to live Render backend
-  API_BASE_URL: "https://mindcare-ai-backend-6sxk.onrender.com"
+  // Automatically route to local backend on localhost/127.0.0.1, and production Render in deployment
+  API_BASE_URL: (typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"))
+    ? "http://127.0.0.1:8000"
+    : "https://mindcare-ai-backend-6sxk.onrender.com"
 };
