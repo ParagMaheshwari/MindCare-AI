@@ -21,7 +21,7 @@ services:
       - key: ADMIN_EMAIL
         value: admin@mindcare.ai
       - key: ADMIN_PASSWORD
-        generateValue: true
+        value: AdminSecurePass2026!
       - key: SMTP_HOST
         value: smtp.gmail.com
       - key: SMTP_PORT

@@ -34,8 +34,20 @@ def hash_password(password: str) -> str:
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
+    if not plain_password or not hashed_password:
+        return False
     try:
-        return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
+        # Standard bcrypt check
+        if hashed_password.startswith(('$2b$', '$2a$', '$2y$')):
+            return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
+        
+        # Legacy SHA-256 hash compatibility
+        import hashlib
+        if len(hashed_password) == 64 and all(c in '0123456789abcdefABCDEF' for c in hashed_password):
+            return hashlib.sha256(plain_password.encode('utf-8')).hexdigest().lower() == hashed_password.lower()
+        
+        # Direct equality fallback (only if plaintext was historically stored)
+        return plain_password == hashed_password
     except Exception:
         return False
 

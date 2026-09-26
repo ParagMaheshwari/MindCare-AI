@@ -67,66 +67,113 @@ const MindCareAPI = (() => {
   }
 
   /**
-   * Generic POST helper with consistent, user-friendly error handling.
+   * Generic POST helper with consistent, user-friendly error handling and cold-start tolerance.
    */
   async function post(path, body) {
     let response;
+    const isLocal = typeof window !== "undefined" && (window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost");
+    const controller = (typeof AbortController !== "undefined") ? new AbortController() : null;
+    const timeoutId = controller ? setTimeout(() => controller.abort(), 45000) : null;
+
     try {
       response = await fetch(`${API_BASE_URL}${path}`, {
         method: "POST",
         headers: getAuthHeaders(true),
         body: JSON.stringify(body),
+        signal: controller ? controller.signal : undefined,
       });
     } catch (networkError) {
-      const err = new Error("network_error");
-      err.friendlyMessage =
-        "Unable to connect to the backend server. Please make sure FastAPI is running on port 8000.";
+      if (timeoutId) clearTimeout(timeoutId);
+      const isTimeout = networkError && (networkError.name === "AbortError" || networkError.code === 20);
+      const err = new Error(isTimeout ? "timeout_error" : "network_error");
+      if (isTimeout) {
+        err.friendlyMessage = isLocal
+          ? "Request timed out waiting for local backend (http://127.0.0.1:8000). Please check server logs."
+          : "The server took too long to respond. The cloud service may still be waking up. Please try again in a moment.";
+      } else {
+        err.friendlyMessage = isLocal
+          ? "Unable to connect to the backend server. Please verify FastAPI is running on port 8000."
+          : "Unable to reach the MindCare cloud server. The service might be waking up or experiencing network connectivity issues. Please try again.";
+      }
+      throw err;
+    } finally {
+      if (timeoutId) clearTimeout(timeoutId);
+    }
+
+    if (response.status === 401) {
+      const errData = await response.json().catch(() => ({}));
+      const err = new Error("auth_error");
+      err.status = 401;
+      err.friendlyMessage = errData.detail || "Incorrect email or password. Please verify your credentials and try again.";
       throw err;
     }
 
-    if (response.status === 400 || response.status === 401) {
+    if (response.status === 400) {
       const errData = await response.json().catch(() => ({}));
-      const err = new Error("auth_error");
-      err.friendlyMessage = errData.detail || "Authentication failed. Please check your details.";
+      const err = new Error("bad_request");
+      err.status = 400;
+      err.friendlyMessage = errData.detail || "Invalid request. Please check the information provided.";
       throw err;
     }
 
     if (response.status === 403) {
       const errData = await response.json().catch(() => ({}));
       const err = new Error("forbidden");
-      err.friendlyMessage = errData.detail || "Access denied. You do not have permission to view this resource.";
+      err.status = 403;
+      err.friendlyMessage = errData.detail || "Your account has been suspended or access is denied. Please contact support.";
       throw err;
     }
 
     if (response.status === 422) {
+      const errData = await response.json().catch(() => ({}));
+      let detailMsg = "Please verify your input fields.";
+      if (errData && errData.detail) {
+        if (typeof errData.detail === "string") {
+          detailMsg = errData.detail;
+        } else if (Array.isArray(errData.detail) && errData.detail.length > 0) {
+          detailMsg = errData.detail[0].msg || detailMsg;
+        }
+      }
       const err = new Error("validation_error");
-      err.friendlyMessage = "Please check the entered information.";
+      err.status = 422;
+      err.friendlyMessage = detailMsg;
+      throw err;
+    }
+
+    if (response.status === 429) {
+      const err = new Error("rate_limited");
+      err.status = 429;
+      err.friendlyMessage = "Too many attempts. Please wait a moment before trying again.";
       throw err;
     }
 
     if (response.status === 503) {
       const errData = await response.json().catch(() => ({}));
       const err = new Error("service_unavailable");
-      err.friendlyMessage = errData.detail || "The service is temporarily unavailable. Please try again later.";
+      err.status = 503;
+      err.friendlyMessage = errData.detail || "The service is temporarily unavailable. Please try again in a few moments.";
       throw err;
     }
 
     if (response.status >= 500) {
       const errData = await response.json().catch(() => ({}));
       const err = new Error("server_error");
-      err.friendlyMessage = errData.detail || "Something went wrong on the server.";
+      err.status = response.status;
+      err.friendlyMessage = errData.detail || "The server encountered an error while processing your request. Please try again shortly.";
       throw err;
     }
 
     if (!response.ok) {
       const errData = await response.json().catch(() => ({}));
       const err = new Error("request_failed");
+      err.status = response.status;
       err.friendlyMessage = errData.detail || "Something went wrong. Please try again.";
       throw err;
     }
 
     return response.json();
   }
+
 
   /**
    * Generic GET helper with authentication headers.

@@ -18,6 +18,8 @@ DB_NAME = os.getenv('DB_NAME', 'mindcare_db')
 
 custom_url = os.getenv('DATABASE_URL')
 if custom_url:
+    if custom_url.startswith('postgres://'):
+        custom_url = custom_url.replace('postgres://', 'postgresql://', 1)
     DATABASE_URL = custom_url
 else:
     # URL-encode password in case it contains special characters
@@ -28,50 +30,99 @@ else:
 # Base class for SQLAlchemy models
 Base = declarative_base()
 
+def _get_sqlite_engine():
+    fallback_path = os.getenv('SQLITE_DB_PATH')
+    if not fallback_path:
+        fallback_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'mindcare_fallback.db')).replace('\\', '/')
+    fallback_url = f'sqlite:///{fallback_path}'
+    fallback_engine = create_engine(
+        fallback_url,
+        connect_args={'check_same_thread': False, 'timeout': 15},
+        echo=False
+    )
+    # Enable WAL mode and busy timeout for high concurrency
+    try:
+        with fallback_engine.connect() as conn:
+            conn.execute(text('PRAGMA journal_mode=WAL;'))
+            conn.execute(text('PRAGMA busy_timeout=5000;'))
+    except Exception as e:
+        logger.warning(f'Could not set SQLite PRAGMA journal_mode: {e}')
+    return fallback_engine, True
+
 def get_engine():
     global DATABASE_URL
-    try:
-        # First attempt to ensure the MySQL database exists
-        import pymysql
+    import socket
+
+    # 1. Custom URL explicitly configured (e.g. Postgres on Render / Supabase / Neon or remote MySQL)
+    if custom_url:
         try:
-            conn = pymysql.connect(
-                host=DB_HOST,
-                port=int(DB_PORT),
-                user=DB_USER,
-                password=DB_PASSWORD,
-                connect_timeout=3
+            logger.info('Connecting to explicitly configured DATABASE_URL...')
+            is_postgres = 'postgresql' in custom_url
+            connect_args = {'sslmode': 'require'} if is_postgres and 'localhost' not in custom_url and '127.0.0.1' not in custom_url else {}
+            engine = create_engine(
+                DATABASE_URL,
+                pool_pre_ping=True,
+                pool_recycle=300,
+                connect_args=connect_args,
+                echo=False
             )
-            with conn.cursor() as cursor:
-                cursor.execute(f'CREATE DATABASE IF NOT EXISTS {DB_NAME} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;')
-            conn.commit()
-            conn.close()
-            logger.info(f'MySQL database \"{DB_NAME}\" is verified/ready.')
-        except Exception as dbe:
-            logger.warning(f'Could not verify/create database \"{DB_NAME}\" via raw connection: {dbe}')
+            with engine.connect() as conn:
+                conn.execute(text('SELECT 1'))
+            logger.info('Connected to configured external database successfully.')
+            return engine, False
+        except Exception as ce:
+            logger.error(f'Failed to connect to configured DATABASE_URL: {ce}')
+            logger.warning('Falling back to SQLite to ensure continuous system availability.')
+            return _get_sqlite_engine()
+
+    # 2. Check if running in a cloud container without external database (e.g. Render Free Tier)
+    if os.getenv('RENDER') or os.getenv('VERCEL'):
+        logger.info('Cloud deployment detected without external DATABASE_URL. Using SQLite database engine.')
+        return _get_sqlite_engine()
+
+    # 3. Localhost MySQL Probe: fast socket probe to avoid multi-second connection hangs
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(0.5)
+        res = sock.connect_ex((DB_HOST, int(DB_PORT)))
+        sock.close()
+        if res != 0:
+            logger.info(f'MySQL port {DB_PORT} on {DB_HOST} is not open (res={res}). Using SQLite fallback immediately.')
+            return _get_sqlite_engine()
+    except Exception as se:
+        logger.info(f'Could not probe MySQL socket: {se}. Using SQLite fallback.')
+        return _get_sqlite_engine()
+
+    # 4. Attempt local MySQL connection
+    try:
+        import pymysql
+        conn = pymysql.connect(
+            host=DB_HOST,
+            port=int(DB_PORT),
+            user=DB_USER,
+            password=DB_PASSWORD,
+            connect_timeout=1
+        )
+        with conn.cursor() as cursor:
+            cursor.execute(f'CREATE DATABASE IF NOT EXISTS {DB_NAME} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;')
+        conn.commit()
+        conn.close()
 
         engine = create_engine(
             DATABASE_URL,
             pool_pre_ping=True,
             pool_recycle=3600,
-            connect_args={'connect_timeout': 3},
+            connect_args={'connect_timeout': 1},
             echo=False
         )
-        # Test connection
         with engine.connect() as conn:
             conn.execute(text('SELECT 1'))
         logger.info(f'Connected to MySQL successfully: {DB_HOST}:{DB_PORT}/{DB_NAME}')
         return engine, False
     except Exception as e:
-        logger.error(f'Failed to connect to MySQL database at {DB_HOST}:{DB_PORT}: {e}')
-        logger.warning('Initializing local SQLite fallback (mindcare_fallback.db) to ensure application stability.')
-        fallback_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'mindcare_fallback.db')).replace('\\', '/')
-        fallback_url = f'sqlite:///{fallback_path}'
-        fallback_engine = create_engine(
-            fallback_url,
-            connect_args={'check_same_thread': False},
-            echo=False
-        )
-        return fallback_engine, True
+        logger.warning(f'Local MySQL unavailable or credentials mismatch ({e}). Initializing SQLite engine.')
+        return _get_sqlite_engine()
+
 
 engine, is_fallback = get_engine()
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

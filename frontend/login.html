@@ -367,9 +367,15 @@
     element.classList.add("mc-soft-shake");
   }
 
+  let isSubmitting = false;
+  let coldStartTimer = null;
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    errorBanner.classList.remove("visible");
+    if (isSubmitting) return;
+
+    errorBanner.classList.remove("visible", "form-banner-info");
+    errorBanner.textContent = "";
 
     hasSubmitted = true;
     emailHasTyped = true;
@@ -389,11 +395,11 @@
       return;
     }
 
-    const email = emailInput.value.trim();
+    const email = emailInput.value.trim().toLowerCase();
     const password = passwordInput.value;
     const remember = rememberCheckbox.checked;
 
-    // Loading State
+    isSubmitting = true;
     submitBtn.disabled = true;
     submitBtn.innerHTML = `<span class="btn-spinner" aria-hidden="true"></span> <span>Logging in…</span>`;
 
@@ -404,20 +410,34 @@
       localStorage.removeItem("mindcare_remembered_email");
     }
 
+    // Set a cold-start reassurance indicator for free cloud hosting spin-ups
+    coldStartTimer = setTimeout(() => {
+      if (isSubmitting) {
+        submitBtn.innerHTML = `<span class="btn-spinner" aria-hidden="true"></span> <span>Waking up cloud server…</span>`;
+        errorBanner.classList.remove("visible");
+        errorBanner.classList.add("visible", "form-banner-info");
+        errorBanner.innerHTML = `<span>⏳ <strong>Connecting to server:</strong> Cloud instances spin down when inactive. Waking up instance (usually takes 15–30s)...</span>`;
+      }
+    }, 2500);
+
     try {
       await MindCareAuth.loginUser({ email, password, remember });
+      if (coldStartTimer) clearTimeout(coldStartTimer);
       window.location.href = "dashboard.html";
     } catch (err) {
+      if (coldStartTimer) clearTimeout(coldStartTimer);
+      isSubmitting = false;
       submitBtn.disabled = false;
       submitBtn.innerHTML = `<span class="btn-text">Login</span>`;
 
-      let msg = "Incorrect email or password. Please verify your credentials and try again.";
-      if (err && err.message === "network_error") {
-        msg = "Unable to connect to the backend server. Please verify FastAPI is running on port 8000.";
-      } else if (err && err.friendlyMessage) {
+      let msg = "An unexpected error occurred. Please try again.";
+      if (err && err.friendlyMessage) {
         msg = err.friendlyMessage;
+      } else if (err && err.message === "network_error") {
+        msg = "Unable to connect to the authentication server. Please check your connection and try again.";
       }
 
+      errorBanner.classList.remove("form-banner-info");
       errorBanner.textContent = msg;
       errorBanner.classList.add("visible");
       triggerShake(errorBanner);
@@ -427,6 +447,7 @@
       passwordInput.select();
     }
   });
+
 
   // ---------------------------------------------------------------------------
   // Modal: Forgot Password

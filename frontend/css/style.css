@@ -1122,6 +1122,18 @@ body[data-page="home"] .container {
   animation: mc-soft-shake 0.35s ease-in-out;
 }
 
+.form-error-banner.form-banner-info {
+  background: rgba(59, 130, 246, 0.12);
+  color: #3b82f6;
+  border: 1px solid rgba(59, 130, 246, 0.28);
+  animation: none;
+}
+[data-theme="dark"] .form-error-banner.form-banner-info {
+  background: rgba(96, 165, 250, 0.14);
+  color: #93c5fd;
+  border: 1px solid rgba(96, 165, 250, 0.3);
+}
+
 /* Ambient Calming Breathing Aura */
 .auth-ambient-wrapper {
   display: flex;
@@ -2129,6 +2141,227 @@ body[data-page="home"] .container {
   font-weight: 700;
   color: var(--moss-dark);
   white-space: nowrap;
+}
+
+/* ==========================================================================
+   Foundational Wellness Pillars Interactive Cards & Widgets
+   ========================================================================== */
+
+.tips-grid {
+  align-items: start;
+}
+
+.pillar-card {
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease, background-color 0.22s ease;
+  user-select: none;
+}
+
+.pillar-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--moss);
+  box-shadow: 0 10px 24px -6px rgba(47, 93, 80, 0.16);
+}
+
+[data-theme="dark"] .pillar-card:hover {
+  background-color: #162236;
+  border-color: var(--moss);
+  box-shadow: 0 12px 28px rgba(16, 185, 129, 0.16);
+}
+
+.pillar-card:focus-visible {
+  outline: 2px solid var(--moss);
+  outline-offset: 3px;
+}
+
+.pillar-card.expanded {
+  border-color: var(--moss);
+}
+
+[data-theme="dark"] .pillar-card.expanded {
+  border-color: var(--moss);
+  background-color: #141f32;
+}
+
+.pillar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.pillar-header-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pillar-badge {
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--moss-light);
+  color: var(--moss-dark);
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+[data-theme="dark"] .pillar-badge {
+  background: rgba(52, 211, 153, 0.15);
+  color: var(--moss);
+}
+
+.pillar-badge.all-done {
+  background: var(--moss);
+  color: #ffffff;
+}
+
+[data-theme="dark"] .pillar-badge.all-done {
+  background: var(--moss);
+  color: #06281E;
+}
+
+.pillar-expand-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  transition: transform 0.25s ease, color 0.2s ease;
+}
+
+.pillar-card.expanded .pillar-expand-icon {
+  transform: rotate(180deg);
+  color: var(--moss);
+}
+
+.pillar-action-hint {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--moss-dark);
+}
+
+[data-theme="dark"] .pillar-action-hint {
+  color: var(--moss);
+}
+
+.pillar-action-arrow {
+  transition: transform 0.2s ease;
+}
+
+.pillar-card:hover .pillar-action-arrow {
+  transform: translateX(3px);
+}
+
+/* Expandable drawer */
+.pillar-drawer {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 260ms cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: default;
+}
+
+.pillar-drawer-inner {
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 200ms ease, transform 240ms ease;
+}
+
+.pillar-card.expanded .pillar-drawer {
+  grid-template-rows: 1fr;
+}
+
+.pillar-card.expanded .pillar-drawer-inner {
+  opacity: 1;
+  transform: translateY(0);
+  padding-top: 14px;
+}
+
+.pillar-divider {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 12px;
+}
+
+/* Card 1: Checklist styles */
+.checklist-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.84rem;
+  margin-bottom: 10px;
+  color: var(--ink);
+}
+
+.checklist-date {
+  font-size: 0.74rem;
+  color: var(--ink-faint);
+}
+
+.pillar-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--canvas-dim);
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.84rem;
+  color: var(--ink);
+  transition: background 0.15s ease;
+}
+
+.checklist-item:hover {
+  background: var(--moss-light);
+}
+
+[data-theme="dark"] .checklist-item:hover {
+  background: rgba(52, 211, 153, 0.12);
+}
+
+.checklist-item input[type="checkbox"] {
+  width: 17px;
+  height: 17px;
+  cursor: pointer;
+  accent-color: var(--moss-dark);
+}
+
+[data-theme="dark"] .checklist-item input[type="checkbox"] {
+  accent-color: var(--moss);
+}
+
+.checklist-item.checked .checklist-text {
+  text-decoration: line-through;
+  color: var(--ink-faint);
+}
+
+.checklist-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 6px;
+  font-size: 0.78rem;
+  color: var(--ink-faint);
 }
 
 /* ==========================================================================

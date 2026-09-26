@@ -21,6 +21,8 @@ ENV/
 
 # Database files (local test db)
 *.db
+*.db-wal
+*.db-shm
 *.sqlite3
 backend/mindcare_fallback.db
 mindcare_fallback.db

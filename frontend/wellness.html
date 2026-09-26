@@ -34,10 +34,53 @@
     <p style="font-size: 0.9rem; color: var(--ink-soft); margin-bottom: 20px;">Daily sustainable habits to maintain clarity, reduce cognitive fatigue, and improve focus.</p>
 
     <div class="tips-grid">
-      <div class="tip-card">
-        <div class="icon-wrap" data-icon="moon"></div>
+      <div class="tip-card pillar-card" id="pillar-sleep" role="button" tabindex="0" aria-expanded="false" aria-label="Better Sleep wind-down checklist">
+        <div class="pillar-header">
+          <div class="icon-wrap" data-icon="moon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+          </div>
+          <div class="pillar-header-meta">
+            <span class="pillar-badge" id="sleep-progress-pill">0/4 done tonight</span>
+            <span class="pillar-expand-icon" aria-hidden="true">▾</span>
+          </div>
+        </div>
         <h3>Better Sleep</h3>
         <p>Try keeping a consistent sleep and wake time, even on weekends, and wind down screens before bed to help your body settle into rest.</p>
+        <div class="pillar-action-hint">
+          <span>Wind-Down Checklist</span>
+          <span class="pillar-action-arrow">→</span>
+        </div>
+        <div class="pillar-drawer" id="sleep-drawer">
+          <div class="pillar-drawer-inner">
+            <div class="pillar-divider"></div>
+            <div class="checklist-header">
+              <strong>Tonight's Wind-Down Checklist</strong>
+              <span class="checklist-date" id="sleep-checklist-date">Tonight</span>
+            </div>
+            <div class="pillar-checklist" id="sleep-checklist">
+              <label class="checklist-item">
+                <input type="checkbox" data-index="0" />
+                <span class="checklist-text">Screens off 30 min before bed</span>
+              </label>
+              <label class="checklist-item">
+                <input type="checkbox" data-index="1" />
+                <span class="checklist-text">Room dark, quiet & cool</span>
+              </label>
+              <label class="checklist-item">
+                <input type="checkbox" data-index="2" />
+                <span class="checklist-text">Consistent bedtime set</span>
+              </label>
+              <label class="checklist-item">
+                <input type="checkbox" data-index="3" />
+                <span class="checklist-text">No caffeine after 4 PM</span>
+              </label>
+            </div>
+            <div class="checklist-footer">
+              <span id="sleep-checklist-status">Select items as you complete them</span>
+              <button type="button" class="btn btn-ghost btn-sm" id="sleep-reset-btn" style="padding:2px 8px; font-size:0.75rem;">Reset</button>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="tip-card">
         <div class="icon-wrap" data-icon="phone"></div>
@@ -81,6 +124,7 @@
 <script src="js/results.js"></script>
 <script src="js/app-shell.js"></script>
 <script src="js/chatbot.js"></script>
+<script src="js/wellness-pillars.js"></script>
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     const user = typeof MindCareAuth !== "undefined" ? MindCareAuth.getCurrentUser() : null;
@@ -122,8 +166,8 @@
       }
     }
 
-    if (typeof mcFillIconPlaceholders === "function") {
-      mcFillIconPlaceholders();
+    if (typeof mcRenderDataIcons === "function") {
+      mcRenderDataIcons();
     }
 
     // Check for existing assessment to render real personalized recommendations
@@ -218,8 +262,8 @@
       `;
     }
 
-    if (typeof mcFillIconPlaceholders === "function") {
-      mcFillIconPlaceholders();
+    if (typeof mcRenderDataIcons === "function") {
+      mcRenderDataIcons();
     }
   }
 </script>

@@ -1,0 +1,479 @@
+[
+  {
+    "id": 1,
+    "name": "Test Student",
+    "email": "student_test1@mindcare.ai",
+    "password_hash": "$2b$12$awBlzt3.vh1hyZ17rGc1eujKSanHgOZQwVPoCVrdZY1I4ufOAXhXq",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-20 13:53:13.047844"
+  },
+  {
+    "id": 2,
+    "name": "Second Student",
+    "email": "student_test2@mindcare.ai",
+    "password_hash": "$2b$12$bdkev73Zs.vAdT2tg3lEg.cFbScihJjsJmQ8rjJfdfDbyuXQYyoQa",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-20 13:53:13.696022"
+  },
+  {
+    "id": 3,
+    "name": "Alice Test",
+    "email": "alice_1789912937@mindcare.test",
+    "password_hash": "$2b$12$9DJ7MDzcMW3gnelHQ7sAB..MaXRc/AjXd9pvMgFngo.ymsqhtAh2G",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-20 14:02:18.080752"
+  },
+  {
+    "id": 4,
+    "name": "Bob Test",
+    "email": "bob_1789912937@mindcare.test",
+    "password_hash": "$2b$12$E84dQ7xt5zJus7fJoOJyLeUUlqQcjvi6UaKz9uZKgr8ysjjr/kg6K",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-20 14:02:18.471112"
+  },
+  {
+    "id": 5,
+    "name": "Alice Verification",
+    "email": "alice_1789913012@mindcare.test",
+    "password_hash": "$2b$12$MVmVzaq5eIeRnZtWoUmgAetq3CPT3fQD.Hay0ulwMlR5YjR/pHm6e",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-20 14:03:33.218797"
+  },
+  {
+    "id": 6,
+    "name": "Bob Verification",
+    "email": "bob_1789913012@mindcare.test",
+    "password_hash": "$2b$12$j7zzViQSa/xP6nzq1A.V0.Qxj3gzkZX.iz9A7OebqYkjUWh6QwSEG",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-20 14:03:33.550134"
+  },
+  {
+    "id": 7,
+    "name": "Alice Verification",
+    "email": "alice_1789913226@mindcare.test",
+    "password_hash": "$2b$12$c4M.UBgDJNlBURFV1M5AfOHxWav9oC1VvfwLZEsbirbBfJebf/9qm",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-20 14:07:06.868905"
+  },
+  {
+    "id": 8,
+    "name": "Bob Verification",
+    "email": "bob_1789913226@mindcare.test",
+    "password_hash": "$2b$12$EsCHvcVyWFPVTL2tNA.EYOYADPqLcKZmoWzwGE5eeRt3SLi1vJ7qi",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-20 14:07:07.229030"
+  },
+  {
+    "id": 9,
+    "name": "Alex Mercer",
+    "email": "testuser_1790006954@example.com",
+    "password_hash": "$2b$12$szLAcQr1M.QTScy13Pdcr.VlitE0IPj7fxs5eLdMZnakswdmQdcJK",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-21 16:09:15.107551"
+  },
+  {
+    "id": 10,
+    "name": "Alex Mercer",
+    "email": "testuser_1790007006@example.com",
+    "password_hash": "$2b$12$e0V.Dl.3w.zN8OU7yXJBZ.li1pcUx27PNJdy7bp27tXZc3RNdPxSi",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-21 16:10:07.125109"
+  },
+  {
+    "id": 11,
+    "name": "Alex Mercer",
+    "email": "testuser_1790007045@example.com",
+    "password_hash": "$2b$12$JW/Qn4qV8tISA3Xztb.1C.qljp5qJ0EvZ1nU51QkWeFa3u3BNkgsa",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-21 16:10:45.991734"
+  },
+  {
+    "id": 13,
+    "name": "Parag Maheshwari",
+    "email": "paragmaheshwari19@gmail.com",
+    "password_hash": "$2b$12$sYv3N2o8AOKNZIV6DUogiu4K84OmcTuGrz7bXyOb.Xmn.1B0e2Fae",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-21 16:51:36.588223"
+  },
+  {
+    "id": 15,
+    "name": "meet bhargav",
+    "email": "meetb4784@gmail.com",
+    "password_hash": "$2b$12$tRVMbhSTU5oREUMhDfzi9OuJIBayykb9iXumU.fhPEaFATOhlh.Jm",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-22 11:26:55.113987"
+  },
+  {
+    "id": 16,
+    "name": "Test Student",
+    "email": "student_69597d01@mindcare-test.edu",
+    "password_hash": "$2b$12$JQVG5EyqVrG1Xi5T9MTvsuCbDBx4mbEPOFbGcvm4mY7JFLBxzNUeW",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-24 22:28:27.590855"
+  },
+  {
+    "id": 17,
+    "name": "Parag Maheshwari",
+    "email": "paragmaheshwari1902@gmail.com",
+    "password_hash": "$2b$12$Tbhl04sL5geJXeQnNarjz.Haj14EayYLlIw/Q9VAnBsWRyYj3hggi",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-24 22:44:35.839328"
+  },
+  {
+    "id": 18,
+    "name": "PDF Tester",
+    "email": "pdf_test_user@mindcare.ai",
+    "password_hash": "$2b$12$aM57QkRwmQyWd/obL07nwOGl27VUld0PI8kib.OpSp/cHY5V6Q82O",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-24 22:50:56.337011"
+  },
+  {
+    "id": 19,
+    "name": "Administrator",
+    "email": "admin@mindcare.ai",
+    "password_hash": "$2b$12$yzOJUzwI27ZtJ6W/exB9QuoLUgL96tkJGyhMEbJdqiDoDCGECtz/m",
+    "role": "admin",
+    "status": "active",
+    "created_at": "2026-09-25 07:04:12.369969"
+  },
+  {
+    "id": 20,
+    "name": "Alice Developer",
+    "email": "testuser_1790320064@example.com",
+    "password_hash": "$2b$12$FFsevT2mi6UFt9staZ/A1.A7bEMI/wXNJGww/nnU2SG9OEeKdks7e",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 07:07:44.818770"
+  },
+  {
+    "id": 21,
+    "name": "Alice Developer",
+    "email": "testuser_1790320077@example.com",
+    "password_hash": "$2b$12$0zLpMibZafn7/foczTHi/edaNLRnbbJVlZV2PO84SXJCExjvp7noG",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 07:07:57.623311"
+  },
+  {
+    "id": 22,
+    "name": "Alice Developer",
+    "email": "testuser_1790320115@example.com",
+    "password_hash": "$2b$12$vfIcm9hmn2upBYZ2sM2Nzu.FPiu5Jw4AlOXqgs8tDYFNiUDv.YQgG",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 07:08:35.269456"
+  },
+  {
+    "id": 23,
+    "name": "Alice Developer",
+    "email": "testuser_1790320346@example.com",
+    "password_hash": "$2b$12$6Vw7W8NkURWWDPuoq6i6fulQybaWoY11BoHSSFG4/vb8itZN34oNW",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 07:12:26.884689"
+  },
+  {
+    "id": 24,
+    "name": "Alice Developer",
+    "email": "testuser_1790320362@example.com",
+    "password_hash": "$2b$12$8HfsDUMMhEifbdiaDRYIYOMT5yYI5arYpAdkM6KHIGqXSHDOtY2Qe",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 07:12:42.908402"
+  },
+  {
+    "id": 25,
+    "name": "Bob Tester",
+    "email": "testuser_b_1790320362@example.com",
+    "password_hash": "$2b$12$PtxRWsBW/gFenJxCavsGguWWv57c.VzpOEe3IUyGlK5NkidUUH/7C",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 07:12:43.246703"
+  },
+  {
+    "id": 26,
+    "name": "Reset Tester",
+    "email": "reset_test_1790320894@example.com",
+    "password_hash": "$2b$12$XhA6dSu79TogsPKmVurtsOL2PTQpvmwVjtxeh600fThNSKSjAhMOK",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 07:21:34.271215"
+  },
+  {
+    "id": 27,
+    "name": "Reset Tester",
+    "email": "reset_test_1790320907@example.com",
+    "password_hash": "$2b$12$ycGQzJPC7UTl/tw7JANx8.zHrTIkzeNKtrAkLgXfOOCqOjoOZNwOC",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 07:21:47.318630"
+  },
+  {
+    "id": 28,
+    "name": "Reset Tester",
+    "email": "reset_test_1790320925@example.com",
+    "password_hash": "$2b$12$/4/gbLOYU658ZBtr.i2v1eh5oyYkX9f92qLYi/r4O888lzYuG/WFq",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 07:22:05.388852"
+  },
+  {
+    "id": 29,
+    "name": "Alex Mercer",
+    "email": "delivered@resend.dev",
+    "password_hash": "$2b$12$5kKDKCPH8D.jP2OVPgLkout8w4qqTnm43E0II.Kd81DSMqZVGXs86",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 07:31:05.129793"
+  },
+  {
+    "id": 30,
+    "name": "Reset Test User",
+    "email": "reset_test_039a0076@example.com",
+    "password_hash": "$2b$12$kzOyG9fxkwvbRdF8mJnJdO9hN2WnAR/YdH1wc7QEd3OswwUaT4dc2",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 07:32:01.400034"
+  },
+  {
+    "id": 31,
+    "name": "Reset Test User",
+    "email": "reset_test_dd60fc41@testdomain.com",
+    "password_hash": "$2b$12$WwaNeu5AGEATDVAgVaPOV.nSlUm4kSs5YqOe9T/eQ0B0gIjbvuK.2",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 07:32:23.023168"
+  },
+  {
+    "id": 32,
+    "name": "Reset Test User",
+    "email": "reset_test_f2400c61@testdomain.com",
+    "password_hash": "$2b$12$AWA7Ce5rCEL2EWnwO9wgG./3XqHMz1IBrmHupkom2/Z20.GHdgeIO",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 07:32:37.091884"
+  },
+  {
+    "id": 33,
+    "name": "Reset Test User",
+    "email": "reset_test_5eee009e@testdomain.com",
+    "password_hash": "$2b$12$A/JYSflxtFFOoc8ABpeu9uLJtbAu0UbPVN.R2X5AuhFyAJRhJTaQi",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 07:39:39.930786"
+  },
+  {
+    "id": 34,
+    "name": "Audit Tester e7d641cc",
+    "email": "audit_user_e7d641cc@mindcare.test",
+    "password_hash": "$2b$12$4FUK.PYxmLVoguO1Ldgl5uc3laGQBKe4wGhp0iuOPQfjE4Ld7CaHO",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 08:24:41.548693"
+  },
+  {
+    "id": 35,
+    "name": "Role Test",
+    "email": "role_test_1@example.com",
+    "password_hash": "$2b$12$H7CIkmPoNVDDGsOeYXB5veg2VlZJ31LbmLJ/KRt/MNLyycPZK5M6q",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 08:24:49.281212"
+  },
+  {
+    "id": 36,
+    "name": "Audit Tester bedfb86c",
+    "email": "audit_user_bedfb86c@mindcare.test",
+    "password_hash": "$2b$12$KaOjR/durbgfcFc9.i42hub4nG97utiau9pZqktABdTSmzC2MsGlG",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 08:25:07.484356"
+  },
+  {
+    "id": 37,
+    "name": "Audit Tester d8e78bdc",
+    "email": "audit_user_d8e78bdc@mindcare.test",
+    "password_hash": "$2b$12$D9sPNO90GcVWdBzJn9cSauzYwfLENrz0qsdJXdTdN35SLUlinD4wy",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 08:27:59.913957"
+  },
+  {
+    "id": 38,
+    "name": "Audit Tester 383e7a7e",
+    "email": "audit_user_383e7a7e@mindcare.test",
+    "password_hash": "$2b$12$Jg..JcOi/gYbOR1ku4xxOuKGOOWzjVBqCe6yCDOkHRtuVqjQGJA6C",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 08:39:35.329086"
+  },
+  {
+    "id": 39,
+    "name": "GTest",
+    "email": "gtest@mindcare.test",
+    "password_hash": "$2b$12$cSF.Q9Xo7rO.cQlnEyuOsOBD1Xse9HSW7FUTCRxDW/3PLLK36Uqym",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 08:40:11.580859"
+  },
+  {
+    "id": 40,
+    "name": "Audit Tester 05b4a0c3",
+    "email": "audit_user_05b4a0c3@mindcare.test",
+    "password_hash": "$2b$12$V7eX0HXYy9p3TJsJwVJkfOCmVH6AbJ08JnZ7ddJgnlRRthSqsh90u",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 08:42:45.237088"
+  },
+  {
+    "id": 41,
+    "name": "Audit Tester 0fc8a440",
+    "email": "audit_user_0fc8a440@mindcare.test",
+    "password_hash": "$2b$12$CUoAWaLXxFzH9hh1eApBKOp4exBt91Axgn8Epo5MWC8Q2Ms9kjxSC",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 08:46:12.895935"
+  },
+  {
+    "id": 42,
+    "name": "Reset Tester c3aa1821",
+    "email": "reset_tester_c3aa1821@mindcare.test",
+    "password_hash": "$2b$12$agZLvBlh8QbkOxlYUqwDMOphjsPnJHp8vL/dtOBFbaj1149oiMBpy",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 08:47:15.073251"
+  },
+  {
+    "id": 43,
+    "name": "Reset Tester cbfd0aaf",
+    "email": "reset_tester_cbfd0aaf@mindcare.test",
+    "password_hash": "$2b$12$HA3tCZyfvoyMfUapb1o72eyNf3KmqDphrvh3eMyXAkQWkFgh7w57y",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 08:47:38.739255"
+  },
+  {
+    "id": 44,
+    "name": "Reset Tester 420555ef",
+    "email": "reset_tester_420555ef@mindcare.test",
+    "password_hash": "$2b$12$Xu2a6.JBUO1yuB7mMNTkU.HZvR9CIgp7wrC5iOTfQAeVstfID3rq2",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 08:48:06.457151"
+  },
+  {
+    "id": 45,
+    "name": "Audit Tester e7dcf347",
+    "email": "audit_user_e7dcf347@mindcare.test",
+    "password_hash": "$2b$12$FWxN/TtAuJ1sw3e/moiKKe.yoNfVNcOdedqVhBYOMx.bLZQuKQfuW",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 18:14:45.094157"
+  },
+  {
+    "id": 46,
+    "name": "Audit Tester cc0b3d69",
+    "email": "audit_user_cc0b3d69@mindcare.test",
+    "password_hash": "$2b$12$9hXBcAg7rqzpIo4wy17XfeDylAYJH6QNgE9zKIk9MnV.K6zcKQixG",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 18:15:45.709707"
+  },
+  {
+    "id": 47,
+    "name": "Audit Tester cd81c063",
+    "email": "audit_user_cd81c063@mindcare.test",
+    "password_hash": "$2b$12$IM7QHo5nbIISw/kz52oWwuSj4lr.wsNtaHYvdyZugdJMFdrLE.IRO",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 18:28:55.898540"
+  },
+  {
+    "id": 48,
+    "name": "Audit Tester 12fe57bb",
+    "email": "audit_user_12fe57bb@mindcare.test",
+    "password_hash": "$2b$12$8sXhWtk/bx/IWwC.ujxP6uo4sAONG/IL1o2kx9dXq8Qm8NLKYsmVC",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 18:29:25.432900"
+  },
+  {
+    "id": 49,
+    "name": "User A 3234e345",
+    "email": "user_a_3234e345@mindcare.test",
+    "password_hash": "$2b$12$dLXZKdQPM3NbD27jnZcJj.dxvZwSK5V.TcqBIbgq/dPUGRqfoGq5u",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 18:40:50.728340"
+  },
+  {
+    "id": 50,
+    "name": "User B d2c87159",
+    "email": "user_b_d2c87159@mindcare.test",
+    "password_hash": "$2b$12$A/YAkaQDfENY/qNth7wWo.YZUyoDOIKAsudB5IcWVILfz5Q0Nz522",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 18:40:50.972150"
+  },
+  {
+    "id": 51,
+    "name": "User A 953af015",
+    "email": "user_a_953af015@mindcare.test",
+    "password_hash": "$2b$12$7bHuHvaWEaqFcqbo5w.DheFBLG6yX1uvyDi8WstVnUU1F7S0pHC6.",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 18:41:14.530266"
+  },
+  {
+    "id": 52,
+    "name": "User B df89d6c3",
+    "email": "user_b_df89d6c3@mindcare.test",
+    "password_hash": "$2b$12$sNokWl0v5uidGGN7JDSTcu.yj7K6Kyu03L9VU49T3ngM/GanbY.vW",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 18:41:14.789074"
+  },
+  {
+    "id": 53,
+    "name": "Audit Tester c1576499",
+    "email": "audit_user_c1576499@mindcare.test",
+    "password_hash": "$2b$12$8T6siiIISqCWX.ZM6p2.Uud616X6qRjK6LKnqcPV5.zh0QpyLwSEq",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 18:49:23.607426"
+  },
+  {
+    "id": 54,
+    "name": "User A be909d63",
+    "email": "user_a_be909d63@mindcare.test",
+    "password_hash": "$2b$12$Nsca32DioJ576e9vjXEMYeNEhxsNdqCONEU5SIFccY3dUd2QlUFlG",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 19:00:34.855495"
+  },
+  {
+    "id": 55,
+    "name": "User B 601b57be",
+    "email": "user_b_601b57be@mindcare.test",
+    "password_hash": "$2b$12$N0oZpVCqcFq3F6NPh.aOdOiU/RVuXF3u7Z.TaTs4yC6UraTmQ04.a",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-09-25 19:00:35.087961"
+  }
+]

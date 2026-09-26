@@ -29,6 +29,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Response, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from database import get_db, init_db, SessionLocal
@@ -84,6 +85,7 @@ app = FastAPI(title="MindCare AI API", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
+    allow_origin_regex=r"^https:\/\/.*\.vercel\.app$",
     allow_credentials=allow_creds,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -104,7 +106,7 @@ def bootstrap_admin_user() -> None:
     admin_password = os.getenv("ADMIN_PASSWORD", "AdminSecurePass2026!")
     db = SessionLocal()
     try:
-        admin = db.query(User).filter(User.email == admin_email).first()
+        admin = db.query(User).filter(func.lower(User.email) == admin_email).first()
         if not admin:
             admin = User(
                 name="Administrator",
@@ -123,8 +125,59 @@ def bootstrap_admin_user() -> None:
                 admin.role = "admin"
                 db.commit()
                 logger.info("Updated existing user %s to admin role.", admin_email)
+            if not verify_password(admin_password, admin.password_hash):
+                admin.password_hash = hash_password(admin_password)
+                db.commit()
+                logger.info("Synchronized admin password for %s.", admin_email)
     except Exception as e:
         logger.warning("Admin bootstrap check notice: %s", e)
+        db.rollback()
+    finally:
+        db.close()
+
+
+def bootstrap_seed_users() -> None:
+    """Ensure registered accounts from seed_users.json are always present across restarts and deployments."""
+    seed_file = os.path.join(os.path.dirname(__file__), "seed_users.json")
+    if not os.path.exists(seed_file):
+        return
+    db = SessionLocal()
+    try:
+        with open(seed_file, "r", encoding="utf-8") as f:
+            seed_users = json.load(f)
+
+        existing_emails = set(row[0].strip().lower() for row in db.query(User.email).all())
+        added = 0
+        for u in seed_users:
+            email_clean = u.get("email", "").strip().lower()
+            if not email_clean or email_clean in existing_emails:
+                continue
+
+            created = datetime.utcnow()
+            if u.get("created_at"):
+                try:
+                    created = datetime.fromisoformat(u["created_at"].replace("Z", ""))
+                except Exception:
+                    pass
+
+            user = User(
+                name=u.get("name", "User"),
+                email=email_clean,
+                password_hash=u.get("password_hash"),
+                role=u.get("role", "user"),
+                status=u.get("status", "active"),
+                created_at=created,
+                updated_at=created
+            )
+            db.add(user)
+            existing_emails.add(email_clean)
+            added += 1
+
+        if added > 0:
+            db.commit()
+            logger.info("Successfully bootstrapped %d user accounts into database.", added)
+    except Exception as e:
+        logger.warning("Notice during bootstrap_seed_users: %s", e)
         db.rollback()
     finally:
         db.close()
@@ -138,6 +191,7 @@ def startup_event() -> None:
         init_db()
         logger.info("Database schema checked/initialized.")
         bootstrap_admin_user()
+        bootstrap_seed_users()
     except Exception:
         logger.exception("Failed to initialize database")
 
@@ -309,7 +363,7 @@ class AuthResponse(BaseModel):
 @app.post("/auth/register", response_model=AuthResponse)
 def register_user(payload: RegisterRequest, db: Session = Depends(get_db)):
     email_clean = payload.email.strip().lower()
-    existing = db.query(User).filter(User.email == email_clean).first()
+    existing = db.query(User).filter(func.lower(User.email) == email_clean).first()
     if existing:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -340,7 +394,11 @@ def register_user(payload: RegisterRequest, db: Session = Depends(get_db)):
 @app.post("/auth/login", response_model=AuthResponse)
 def login_user(payload: LoginRequest, db: Session = Depends(get_db)):
     email_clean = payload.email.strip().lower()
-    user = db.query(User).filter(User.email == email_clean).first()
+    user = db.query(User).filter(func.lower(User.email) == email_clean).first()
+    if not user:
+        # Fallback in case of raw casing in database
+        user = db.query(User).filter(User.email == payload.email.strip()).first()
+
     if not user or not verify_password(payload.password, user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -395,7 +453,9 @@ def forgot_password(payload: ForgotPasswordRequest, db: Session = Depends(get_db
     email_clean = payload.email.strip().lower()
     logger.info("Forgot password request received for email: %s", email_clean)
 
-    user = db.query(User).filter(User.email == email_clean).first()
+    user = db.query(User).filter(func.lower(User.email) == email_clean).first()
+    if not user:
+        user = db.query(User).filter(User.email == payload.email.strip()).first()
     user_found = user is not None
     logger.info("User found: %s", user_found)
 
