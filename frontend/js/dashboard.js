@@ -578,14 +578,14 @@ document.addEventListener("DOMContentLoaded", () => {
       : null;
 
     moodEl.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:6px;">
         <h3 style="font-size:1.1rem; margin:0;">Daily Mood Status</h3>
         <a href="mood.html" style="font-size:0.84rem; font-weight:600;">View Analytics →</a>
       </div>
       ${
         todayMood
           ? `
-        <div style="background:var(--moss-light); border-radius:var(--radius-md); padding:16px; display:flex; align-items:center; gap:16px;">
+        <div style="background:var(--moss-light); border-radius:var(--radius-md); padding:16px; display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
           <span style="font-size:2.8rem; line-height:1;">${todayMood.emoji || "🙂"}</span>
           <div>
             <div style="font-weight:700; font-size:1.1rem; color:var(--moss-dark);">Feeling ${todayMood.label || "Good"} Today</div>
@@ -606,11 +606,11 @@ document.addEventListener("DOMContentLoaded", () => {
           <p style="font-size:0.9rem; margin-bottom:12px;">You haven't checked in with your emotional state today.</p>
           <a href="mood.html" class="btn btn-primary btn-sm">🎙️ Check-in with Voice or Text</a>
         </div>
-        <div style="display:flex; gap:8px; justify-content:space-between;">
-          <button type="button" class="btn btn-secondary btn-sm dash-quick-mood" data-mood="5" style="flex:1;">😄 Great</button>
-          <button type="button" class="btn btn-secondary btn-sm dash-quick-mood" data-mood="4" style="flex:1;">🙂 Good</button>
-          <button type="button" class="btn btn-secondary btn-sm dash-quick-mood" data-mood="3" style="flex:1;">😐 Okay</button>
-          <button type="button" class="btn btn-secondary btn-sm dash-quick-mood" data-mood="2" style="flex:1;">😟 Low</button>
+        <div style="display:flex; gap:8px; justify-content:space-between; flex-wrap:wrap;">
+          <button type="button" class="btn btn-secondary btn-sm dash-quick-mood" data-mood="5" style="flex:1 1 70px;">😄 Great</button>
+          <button type="button" class="btn btn-secondary btn-sm dash-quick-mood" data-mood="4" style="flex:1 1 70px;">🙂 Good</button>
+          <button type="button" class="btn btn-secondary btn-sm dash-quick-mood" data-mood="3" style="flex:1 1 70px;">😐 Okay</button>
+          <button type="button" class="btn btn-secondary btn-sm dash-quick-mood" data-mood="2" style="flex:1 1 70px;">😟 Low</button>
         </div>`
       }
     `;

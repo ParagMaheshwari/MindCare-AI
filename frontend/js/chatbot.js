@@ -1,5 +1,6 @@
 /**
- * chatbot.js — floating "MindCare AI Assistant" widget.
+ * chatbot.js — MindCare AI Assistant (Single Source of Truth)
+ * Centralized singleton module: MindCareChat
  * Talks only to the backend's /chat endpoint with multi-turn conversation history.
  */
 
@@ -75,7 +76,7 @@ function mcFormatTime(isoString) {
 
 function mcBuildChatContext(user) {
   if (!user || !user.email) return null;
-  const latest = MindCareResults.getLatest(user.email);
+  const latest = typeof MindCareResults !== "undefined" && MindCareResults.getLatest ? MindCareResults.getLatest(user.email) : null;
   if (!latest) return null;
   const fd = latest.formData || {};
   return {
@@ -90,69 +91,41 @@ function mcBuildChatContext(user) {
   };
 }
 
-function mcInitChatbot(user) {
-  if (document.getElementById("mc-chat-fab")) return;
+const MindCareChat = (() => {
+  let isMounted = false;
+  let currentUser = null;
+  let fab = null;
+  let panel = null;
+  let body = null;
+  let suggestionsWrap = null;
+  let textarea = null;
+  let sendBtn = null;
+  let clearBtn = null;
+  let closeBtn = null;
+  let backBtn = null;
+  let messages = [];
 
-  const wrap = document.createElement("div");
-  wrap.innerHTML = `
-    <button class="chat-fab" id="mc-chat-fab" aria-label="Open MindCare AI Assistant">
-      ${MC_ICONS.chat}
-    </button>
-    <div class="chat-panel" id="mc-chat-panel" role="dialog" aria-label="MindCare AI Chat">
-      <div class="chat-header">
-        <div class="id">
-          <div class="avatar-dot">${MC_ICONS.spark}</div>
-          <div>
-            <h4>MindCare AI Assistant</h4>
-            <div class="status">Online · Supportive AI</div>
-          </div>
-        </div>
-        <div class="chat-header-actions">
-          <button id="mc-chat-clear" title="Clear conversation">${MC_ICONS.trash}</button>
-          <button id="mc-chat-close" title="Close">${MC_ICONS.close}</button>
-        </div>
-      </div>
-      <div class="chat-body" id="mc-chat-body"></div>
-      <div class="chat-suggestions" id="mc-chat-suggestions"></div>
-      <div class="chat-input-row">
-        <textarea id="mc-chat-input" placeholder="Ask about stress, sleep, focus, or study balance… (Enter to send)" rows="1"></textarea>
-        <button class="chat-send-btn" id="mc-chat-send" title="Send message" aria-label="Send">${MC_ICONS.send}</button>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(wrap);
-
-  const fab = document.getElementById("mc-chat-fab");
-  const panel = document.getElementById("mc-chat-panel");
-  const body = document.getElementById("mc-chat-body");
-  const suggestionsWrap = document.getElementById("mc-chat-suggestions");
-  const textarea = document.getElementById("mc-chat-input");
-  const sendBtn = document.getElementById("mc-chat-send");
-  const clearBtn = document.getElementById("mc-chat-clear");
-  const closeBtn = document.getElementById("mc-chat-close");
-
-  const emailKey = user && user.email ? user.email : "guest";
-  const STORAGE_KEY = `mindcare_chat_${emailKey}`;
+  function getStorageKey() {
+    const emailKey = currentUser && currentUser.email ? currentUser.email : "guest";
+    return `mindcare_chat_${emailKey}`;
+  }
 
   function loadMessages() {
     try {
-      return JSON.parse(sessionStorage.getItem(STORAGE_KEY)) || [];
+      return JSON.parse(sessionStorage.getItem(getStorageKey())) || [];
     } catch {
       return [];
     }
   }
 
-  function saveMessages(messages) {
+  function saveMessages(msgs) {
     try {
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
-    } catch {
-      // Storage full or unavailable
-    }
+      sessionStorage.setItem(getStorageKey(), JSON.stringify(msgs));
+    } catch {}
   }
 
-  let messages = loadMessages();
-
   function renderSuggestions() {
+    if (!suggestionsWrap) return;
     if (messages.length > 0) {
       suggestionsWrap.style.display = "none";
       return;
@@ -163,6 +136,7 @@ function mcInitChatbot(user) {
     ).join("");
     suggestionsWrap.querySelectorAll("button").forEach((btn) => {
       btn.addEventListener("click", () => {
+        if (!textarea) return;
         textarea.value = btn.dataset.prompt;
         adjustTextareaHeight();
         sendMessage();
@@ -171,6 +145,7 @@ function mcInitChatbot(user) {
   }
 
   function renderMessages() {
+    if (!body) return;
     body.innerHTML = "";
     if (messages.length === 0) {
       const welcomeWrap = document.createElement("div");
@@ -179,7 +154,7 @@ function mcInitChatbot(user) {
         <div class="chat-avatar-sm">${MC_ICONS.spark}</div>
         <div class="chat-bubble-wrap">
           <div class="chat-bubble bot">
-            <p><strong>Hi ${mcEscape((user?.name || "").split(" ")[0] || "there")}! 👋</strong></p>
+            <p><strong>Hi ${mcEscape((currentUser?.name || "").split(" ")[0] || "there")}! 👋</strong></p>
             <p>I'm your MindCare AI wellness companion. I can help with study stress, relaxation routines, sleep habits, and digital wellbeing.</p>
             <p style="font-size:0.8rem; color:var(--ink-faint); margin-top:6px;"><em>Note: I provide educational, non-diagnostic support and do not replace a licensed mental health professional.</em></p>
           </div>
@@ -196,7 +171,7 @@ function mcInitChatbot(user) {
         const isError = m.role === "error";
 
         const avatarHtml = isUser
-          ? `<div class="chat-avatar-sm user-av">${MindCareAuth.initials(user?.name || "You")}</div>`
+          ? `<div class="chat-avatar-sm user-av">${typeof MindCareAuth !== "undefined" ? MindCareAuth.initials(currentUser?.name || "You") : "U"}</div>`
           : `<div class="chat-avatar-sm">${MC_ICONS.spark}</div>`;
 
         const bubbleContent = isUser
@@ -220,6 +195,7 @@ function mcInitChatbot(user) {
   }
 
   function showTyping() {
+    if (!body) return;
     const el = document.createElement("div");
     el.className = "chat-msg-row bot";
     el.id = "mc-typing-row";
@@ -239,15 +215,16 @@ function mcInitChatbot(user) {
   }
 
   function adjustTextareaHeight() {
+    if (!textarea) return;
     textarea.style.height = "auto";
     textarea.style.height = Math.min(120, textarea.scrollHeight) + "px";
   }
 
   async function sendMessage() {
+    if (!textarea) return;
     const text = textarea.value.trim();
     if (!text) return;
 
-    // Add user message with timestamp
     const now = new Date().toISOString();
     messages.push({ role: "user", text, timestamp: now });
     saveMessages(messages);
@@ -256,11 +233,9 @@ function mcInitChatbot(user) {
     textarea.value = "";
     textarea.style.height = "42px";
     textarea.disabled = true;
-    sendBtn.disabled = true;
+    if (sendBtn) sendBtn.disabled = true;
     showTyping();
 
-    // Prepare multi-turn history for backend
-    // Exclude error messages and the message just added
     const history = messages.slice(0, -1)
       .filter((m) => m.role === "user" || m.role === "bot")
       .map((m) => ({
@@ -269,7 +244,7 @@ function mcInitChatbot(user) {
       }));
 
     try {
-      const context = mcBuildChatContext(user);
+      const context = mcBuildChatContext(currentUser);
       const result = await MindCareAPI.chat(text, history, context);
       hideTyping();
       messages.push({
@@ -289,38 +264,164 @@ function mcInitChatbot(user) {
     saveMessages(messages);
     renderMessages();
     textarea.disabled = false;
-    sendBtn.disabled = false;
+    if (sendBtn) sendBtn.disabled = false;
     textarea.focus();
   }
 
-  fab.addEventListener("click", () => {
-    panel.classList.toggle("open");
-    if (panel.classList.contains("open")) {
-      renderMessages();
-      textarea.focus();
+  function open() {
+    if (!isMounted || !panel) {
+      init();
     }
-  });
+    if (!panel) return;
+    panel.classList.add("open");
+    document.body.classList.add("chat-open");
+    if (fab) fab.setAttribute("aria-expanded", "true");
+    renderMessages();
+    setTimeout(() => {
+      textarea?.focus();
+    }, 100);
+  }
 
-  closeBtn.addEventListener("click", () => panel.classList.remove("open"));
+  function close() {
+    if (!panel) return;
+    panel.classList.remove("open");
+    document.body.classList.remove("chat-open");
+    if (fab) fab.setAttribute("aria-expanded", "false");
+  }
 
-  clearBtn.addEventListener("click", () => {
-    if (confirm("Clear this conversation history?")) {
-      messages = [];
-      saveMessages(messages);
-      renderMessages();
+  function toggle() {
+    if (isOpen()) {
+      close();
+    } else {
+      open();
     }
-  });
+  }
 
-  sendBtn.addEventListener("click", sendMessage);
+  function isOpen() {
+    return panel && panel.classList.contains("open");
+  }
 
-  textarea.addEventListener("input", adjustTextareaHeight);
+  function init(user) {
+    if (user) currentUser = user;
+    if (!currentUser && typeof MindCareAuth !== "undefined") {
+      currentUser = MindCareAuth.getCurrentUser();
+    }
 
-  textarea.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (isMounted || document.getElementById("mc-chat-fab")) {
+      messages = loadMessages();
+      renderMessages();
+      return;
+    }
+
+    const wrap = document.createElement("div");
+    wrap.id = "mc-global-chat-root";
+    wrap.innerHTML = `
+      <button class="chat-fab" id="mc-chat-fab" aria-label="Open MindCare AI Assistant" aria-expanded="false" title="Chat with AI">
+        ${MC_ICONS.chat}
+      </button>
+      <div class="chat-panel" id="mc-chat-panel" role="dialog" aria-label="MindCare AI Chat">
+        <div class="chat-header">
+          <div class="id">
+            <button type="button" class="chat-back-btn" id="mc-chat-back" title="Back to page" aria-label="Back to page">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+              <span>Back</span>
+            </button>
+            <div class="avatar-dot">${MC_ICONS.spark}</div>
+            <div>
+              <h4>MindCare AI Assistant</h4>
+              <div class="status">Online · Supportive AI</div>
+            </div>
+          </div>
+          <div class="chat-header-actions">
+            <button type="button" id="mc-chat-clear" title="Clear conversation" aria-label="Clear conversation">${MC_ICONS.trash}</button>
+            <button type="button" id="mc-chat-close" title="Close chat" aria-label="Close chat">${MC_ICONS.close}</button>
+          </div>
+        </div>
+        <div class="chat-body" id="mc-chat-body"></div>
+        <div class="chat-suggestions" id="mc-chat-suggestions"></div>
+        <div class="chat-input-row">
+          <textarea id="mc-chat-input" placeholder="Ask about stress, sleep, focus, or study balance… (Enter to send)" rows="1"></textarea>
+          <button class="chat-send-btn" id="mc-chat-send" title="Send message" aria-label="Send">${MC_ICONS.send}</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(wrap);
+    isMounted = true;
+
+    fab = document.getElementById("mc-chat-fab");
+    panel = document.getElementById("mc-chat-panel");
+    body = document.getElementById("mc-chat-body");
+    suggestionsWrap = document.getElementById("mc-chat-suggestions");
+    textarea = document.getElementById("mc-chat-input");
+    sendBtn = document.getElementById("mc-chat-send");
+    clearBtn = document.getElementById("mc-chat-clear");
+    closeBtn = document.getElementById("mc-chat-close");
+    backBtn = document.getElementById("mc-chat-back");
+
+    messages = loadMessages();
+
+    fab.addEventListener("click", (e) => {
       e.preventDefault();
-      sendMessage();
+      toggle();
+    });
+
+    closeBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      close();
+    });
+
+    if (backBtn) {
+      backBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        close();
+      });
+    }
+
+    clearBtn.addEventListener("click", () => {
+      if (confirm("Clear this conversation history?")) {
+        messages = [];
+        saveMessages(messages);
+        renderMessages();
+      }
+    });
+
+    sendBtn.addEventListener("click", sendMessage);
+    textarea.addEventListener("input", adjustTextareaHeight);
+    textarea.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    renderMessages();
+  }
+
+  // Delegated global trigger listener: any chat trigger opens this exact chatbot
+  document.addEventListener("click", (e) => {
+    const trigger = e.target.closest('[data-action="openChat"], #mc-mobile-chat, #mc-talk-to-ai, #mc-hero-chat-btn');
+    if (trigger) {
+      e.preventDefault();
+      open();
     }
   });
 
-  renderMessages();
+  return { init, open, close, toggle, isOpen };
+})();
+
+if (typeof window !== "undefined") {
+  window.MindCareChat = MindCareChat;
+  window.mcInitChatbot = (user) => MindCareChat.init(user);
+  window.mcOpenChat = () => MindCareChat.open();
+  window.mcCloseChat = () => MindCareChat.close();
+  window.mcToggleChat = () => MindCareChat.toggle();
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+      MindCareChat.init();
+    });
+  } else {
+    MindCareChat.init();
+  }
 }
+

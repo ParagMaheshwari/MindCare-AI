@@ -47,8 +47,13 @@ class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Expires', '0')
         super().end_headers()
 
+class ThreadingServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    daemon_threads = True
+    allow_reuse_address = True
+
 if __name__ == '__main__':
     socketserver.TCPServer.allow_reuse_address = True
-    with socketserver.TCPServer(('127.0.0.1', PORT), NoCacheHandler) as httpd:
+    with ThreadingServer(('127.0.0.1', PORT), NoCacheHandler) as httpd:
         print(f'Serving frontend with no-cache on http://127.0.0.1:{PORT}')
         httpd.serve_forever()
+

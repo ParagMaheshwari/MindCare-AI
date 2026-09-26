@@ -1386,6 +1386,13 @@ select {
   gap: 16px;
 }
 
+.grid-2 > *,
+.grid-3 > *,
+.grid-4 > *,
+.grid-5 > * {
+  min-width: 0;
+}
+
 .score-hero {
   display: flex;
   align-items: center;
@@ -2049,6 +2056,30 @@ select {
 
 .chat-fab:hover {
   transform: scale(1.05);
+}
+
+body.chat-open .chat-fab {
+  display: none !important;
+}
+
+.chat-back-btn {
+  display: none;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  padding: 5px 9px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  margin-right: 4px;
+  transition: background 0.15s ease;
+}
+
+.chat-back-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
 }
 
 .chat-panel {
@@ -4733,11 +4764,17 @@ html, body {
   }
 
   /* Chat drawer & FAB */
+  .chat-back-btn {
+    display: inline-flex;
+  }
+
   .chat-panel {
     inset: auto 8px 76px 8px !important;
     width: auto !important;
-    max-height: calc(100vh - 100px) !important;
-    border-radius: var(--radius-md);
+    height: 80vh !important;
+    max-height: calc(100vh - 92px) !important;
+    border-radius: var(--radius-lg);
+    z-index: 95 !important;
   }
 
   .chat-fab {

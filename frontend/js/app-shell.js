@@ -155,17 +155,9 @@ function mcInitAppShell() {
             <span class="mark" style="width:28px;height:28px;">${mcBrandMarkSVG(16)}</span> MindCare AI
           </a>
           <div class="topbar-actions">
-            <button type="button" class="theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme" style="width:34px;height:34px;">
-              ${typeof MindCareTheme !== "undefined" && MindCareTheme.get() === "dark" ? MindCareTheme.ICONS.sun : (typeof MindCareTheme !== "undefined" ? MindCareTheme.ICONS.moon : "")}
-            </button>
-            <button type="button" class="topbar-chat-btn" id="mc-topbar-chat" title="Open AI Chatbot">
-              ${MC_ICONS.chat}
-            </button>
-            <a href="profile.html" class="user-avatar" style="width:32px;height:32px;font-size:0.78rem;" title="Profile">
-              ${MindCareAuth.initials(user.name)}
-            </a>
-            <button type="button" class="logout-btn-compact" id="mc-logout-topbar" style="width:auto; margin:0; padding:6px 12px;" title="Logout">
+            <button type="button" class="logout-btn-compact" id="mc-logout-topbar" style="width:auto; margin:0; padding:6px 12px; display:inline-flex; align-items:center; gap:6px; font-size:0.8rem; font-weight:600;" title="Logout" aria-label="Logout of MindCare AI">
               ${MC_ICONS.logout}
+              <span>Log Out</span>
             </button>
           </div>
         </header>
@@ -212,19 +204,18 @@ function mcInitAppShell() {
   const logoutMobile = document.getElementById("mc-mobile-logout");
   if (logoutMobile) logoutMobile.addEventListener("click", mcShowLogoutConfirm);
 
-  // Wire up chat action triggers
+  // Wire up chat action triggers to centralized MindCareChat
   const openChat = (e) => {
     if (e) e.preventDefault();
-    const fab = document.getElementById("mc-chat-fab");
-    const panel = document.getElementById("mc-chat-panel");
-    if (panel && !panel.classList.contains("open")) {
+    if (typeof MindCareChat !== "undefined") {
+      MindCareChat.open();
+    } else {
+      const fab = document.getElementById("mc-chat-fab");
       fab?.click();
-    } else if (panel) {
-      document.getElementById("mc-chat-input")?.focus();
     }
   };
 
-  document.querySelectorAll('[data-action="openChat"], #mc-topbar-chat, #mc-mobile-chat').forEach((btn) => {
+  document.querySelectorAll('[data-action="openChat"], #mc-mobile-chat').forEach((btn) => {
     btn.addEventListener("click", openChat);
   });
 
