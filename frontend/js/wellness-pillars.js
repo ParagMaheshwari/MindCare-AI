@@ -60,57 +60,135 @@
     }
   }
 
-  // Global robust card expand/collapse delegation on document
-  // Guarantees all pillar cards remain fully interactive even if DOM is replaced/hydrated
+  // ---------------------------------------------------------------------------
+  // Modal Manager: Open / Close / Backdrop / Keyboard (Escape, Enter, Space)
+  // ---------------------------------------------------------------------------
+  let activeModal = null;
+  let lastTriggerEl = null;
+
+  function openPillarModal(modalId, triggerEl) {
+    const modal = typeof modalId === 'string' ? document.getElementById(modalId) : modalId;
+    if (!modal) return;
+
+    if (activeModal && activeModal !== modal) {
+      closePillarModal(activeModal, false);
+    }
+
+    lastTriggerEl = triggerEl || document.activeElement;
+    activeModal = modal;
+
+    modal.removeAttribute('hidden');
+    void modal.offsetWidth; // Force layout reflow for CSS scale-in
+    modal.classList.add('is-open');
+    document.body.classList.add('pillar-modal-open');
+
+    // Focus close button or first interactive control inside modal
+    const closeBtn = modal.querySelector('.pillar-modal-close');
+    if (closeBtn) {
+      setTimeout(() => closeBtn.focus(), 60);
+    }
+  }
+
+  function closePillarModal(modalId, returnFocus = true) {
+    const modal = typeof modalId === 'string' ? document.getElementById(modalId) : (modalId || activeModal);
+    if (!modal) return;
+
+    modal.classList.remove('is-open');
+    setTimeout(() => {
+      if (!modal.classList.contains('is-open')) {
+        modal.setAttribute('hidden', '');
+      }
+    }, 240);
+
+    if (activeModal === modal) {
+      activeModal = null;
+      document.body.classList.remove('pillar-modal-open');
+    }
+
+    if (returnFocus && lastTriggerEl && typeof lastTriggerEl.focus === 'function') {
+      try {
+        lastTriggerEl.focus();
+      } catch (err) {}
+    }
+  }
+
+  window.openPillarModal = openPillarModal;
+  window.closePillarModal = closePillarModal;
+
+  // Global robust modal & card delegation on document
   if (!window._pillarCardDelegationBound) {
     window._pillarCardDelegationBound = true;
 
     document.addEventListener('click', (e) => {
+      // 1. Check if clicked close button or footer close button or backdrop
+      if (
+        e.target.closest('.pillar-modal-close') ||
+        e.target.closest('.pillar-modal-close-btn') ||
+        e.target.classList.contains('pillar-modal-backdrop')
+      ) {
+        const modal = e.target.closest('.pillar-modal-overlay');
+        if (modal) {
+          e.preventDefault();
+          closePillarModal(modal);
+          return;
+        }
+      }
+
+      // 2. Check if clicked directly on overlay outside dialog
+      if (e.target.classList.contains('pillar-modal-overlay')) {
+        closePillarModal(e.target);
+        return;
+      }
+
+      // 3. If click originated inside dialog content, do NOT close and do NOT bubble to cards
+      if (e.target.closest('.pillar-modal-dialog')) {
+        return;
+      }
+
+      // 4. Check if clicked a pillar card
       const card = e.target.closest('.pillar-card');
       if (!card) return;
 
       // Card 3 is an <a> tag link to breathing.html — let it follow naturally
       if (card.tagName.toLowerCase() === 'a' || e.target.closest('a')) return;
 
-      // Do NOT toggle if click was inside an open drawer or form control
-      const drawer = card.querySelector('.pillar-drawer');
-      if (drawer && drawer.contains(e.target)) return;
-      if (e.target.closest('input, label, button, select, textarea')) return;
-
-      const isExpanded = card.classList.contains('expanded');
-      const next = !isExpanded;
-      card.classList.toggle('expanded', next);
-      card.setAttribute('aria-expanded', String(next));
+      // Open target modal
+      const targetModalId = card.dataset.modalTarget;
+      if (targetModalId) {
+        e.preventDefault();
+        openPillarModal(targetModalId, card);
+      }
     });
 
     document.addEventListener('keydown', (e) => {
+      // Escape key closes open modal
+      if (e.key === 'Escape' || e.key === 'Esc') {
+        if (activeModal) {
+          e.preventDefault();
+          closePillarModal(activeModal);
+          return;
+        }
+      }
+
+      // Enter or Space opens card modal
       if (e.key === 'Enter' || e.key === ' ' || e.code === 'Space') {
+        // If focus is currently inside a modal dialog, let inputs/buttons operate normally
+        if (document.activeElement && document.activeElement.closest('.pillar-modal-dialog')) {
+          return;
+        }
+
         const card = e.target.closest('.pillar-card');
         if (!card) return;
         if (card.tagName.toLowerCase() === 'a' || e.target.closest('a')) return;
 
-        const drawer = card.querySelector('.pillar-drawer');
-        if (drawer && drawer.contains(e.target)) return;
-        if (e.target.closest('input, label, button, select, textarea')) return;
-
-        e.preventDefault();
-        const isExpanded = card.classList.contains('expanded');
-        const next = !isExpanded;
-        card.classList.toggle('expanded', next);
-        card.setAttribute('aria-expanded', String(next));
+        const targetModalId = card.dataset.modalTarget;
+        if (targetModalId) {
+          e.preventDefault();
+          openPillarModal(targetModalId, card);
+        }
       }
     });
   }
-
-  function bindCardDrawer(cardId, drawerId) {
-    const drawer = document.getElementById(drawerId);
-    if (drawer) {
-      drawer.addEventListener('click', (e) => {
-        e.stopPropagation();
-      });
-    }
-  }
-
 
   /* ==========================================================================
      CARD 1: BETTER SLEEP — WIND-DOWN CHECKLIST & BEDTIME
@@ -122,10 +200,9 @@
     const card = document.getElementById('pillar-sleep');
     if (!card || card.dataset.initialized === 'true') return;
     card.dataset.initialized = 'true';
-    bindCardDrawer('pillar-sleep', 'sleep-drawer');
 
     const progressPill = document.getElementById('sleep-progress-pill');
-    const checkboxes = card.querySelectorAll('#sleep-checklist input[type="checkbox"]');
+    const checkboxes = document.querySelectorAll('#sleep-checklist input[type="checkbox"]');
     const statusText = document.getElementById('sleep-checklist-status');
     const resetBtn = document.getElementById('sleep-reset-btn');
     const dateLabel = document.getElementById('sleep-checklist-date');
@@ -274,7 +351,6 @@
     const card = document.getElementById('pillar-digital');
     if (!card || card.dataset.initialized === 'true') return;
     card.dataset.initialized = 'true';
-    bindCardDrawer('pillar-digital', 'digital-drawer');
 
     const progressPill = document.getElementById('digital-progress-pill');
     const hoursInput = document.getElementById('digital-hours-input');
@@ -290,7 +366,7 @@
     const trendMessage = document.getElementById('digital-trend-message');
 
     // Timer controls
-    const breakPillBtns = card.querySelectorAll('.btn-pill-choice[data-duration]');
+    const breakPillBtns = document.querySelectorAll('#modal-digital .btn-pill-choice[data-duration], .btn-pill-choice[data-duration]');
     const breakTimerDisplay = document.getElementById('digital-timer-display');
     const breakStartBtn = document.getElementById('digital-break-start');
     const breakPauseBtn = document.getElementById('digital-break-pause');
@@ -590,7 +666,6 @@
     const card = document.getElementById('pillar-study');
     if (!card || card.dataset.initialized === 'true') return;
     card.dataset.initialized = 'true';
-    bindCardDrawer('pillar-study', 'study-drawer');
 
     const progressPill = document.getElementById('study-progress-pill');
     const phaseBadge = document.getElementById('study-phase-badge');
@@ -720,7 +795,6 @@
     const card = document.getElementById('pillar-activity');
     if (!card || card.dataset.initialized === 'true') return;
     card.dataset.initialized = 'true';
-    bindCardDrawer('pillar-activity', 'activity-drawer');
 
     const progressPill = document.getElementById('activity-progress-pill');
     const stepLabel = document.getElementById('activity-step-label');
@@ -857,7 +931,6 @@
     const card = document.getElementById('pillar-social');
     if (!card || card.dataset.initialized === 'true') return;
     card.dataset.initialized = 'true';
-    bindCardDrawer('pillar-social', 'social-drawer');
 
     const weekPill = document.getElementById('social-week-pill');
     const personGroup = document.getElementById('social-person-group');
