@@ -125,9 +125,9 @@
     </div>
 
     <!-- Add Goal Form -->
-    <div style="display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap;">
-      <input type="text" id="mc-new-goal-title" placeholder="New goal (e.g., Sleep before 11 PM)..." style="flex:2; min-width:220px;" />
-      <select id="mc-new-goal-cat" style="flex:1; min-width:140px;">
+    <div class="profile-input-row goal-add-row" style="display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap;">
+      <input type="text" id="mc-new-goal-title" placeholder="New goal (e.g., Sleep before 11 PM)..." style="flex:2 1 180px; min-width:0;" />
+      <select id="mc-new-goal-cat" style="flex:1 1 120px; min-width:0;">
         <option value="General">General</option>
         <option value="Sleep">Sleep</option>
         <option value="Movement">Movement</option>
@@ -143,9 +143,9 @@
   <!-- Wellness Reminders Manager -->
   <div class="card section-gap">
     <h2 style="font-size:1.2rem; margin-bottom:16px;">Wellness Reminders</h2>
-    <div style="display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap;">
-      <input type="text" id="mc-new-rem-title" placeholder="Reminder title (e.g. Take a study break)..." style="flex:2; min-width:220px;" />
-      <input type="time" id="mc-new-rem-time" value="15:00" style="flex:1; min-width:110px;" />
+    <div class="profile-input-row reminder-add-row" style="display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap;">
+      <input type="text" id="mc-new-rem-title" placeholder="Reminder title (e.g. Take a study break)..." style="flex:2 1 180px; min-width:0;" />
+      <input type="time" id="mc-new-rem-time" value="15:00" style="flex:1 1 100px; min-width:0;" />
       <button type="button" class="btn btn-secondary btn-sm" id="mc-add-rem-btn">Add Reminder</button>
     </div>
     <div class="reminder-list" id="mc-reminders-list"></div>

@@ -919,25 +919,16 @@ const MindCareChat = (() => {
   function lockScroll() {
     const isMobile = window.matchMedia("(max-width: 768px)").matches;
     if (isMobile) {
-      savedScrollY = window.scrollY || document.documentElement.scrollTop || 0;
-      document.body.style.top = `-${savedScrollY}px`;
-      document.body.style.position = "fixed";
-      document.body.style.width = "100%";
       document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
     }
     document.body.classList.add("chat-open");
   }
 
   function unlockScroll() {
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
     document.body.classList.remove("chat-open");
-    if (isMobile) {
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.width = "";
-      document.body.style.overflow = "";
-      window.scrollTo(0, savedScrollY);
-    }
+    document.body.style.overflow = "";
+    document.documentElement.style.overflow = "";
   }
 
   function open() {
