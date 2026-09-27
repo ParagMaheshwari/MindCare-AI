@@ -47,6 +47,7 @@ const NAV_ITEMS = [
   { key: "mood", href: "mood.html", label: "Mood", icon: MC_ICONS.mood },
   { key: "journal", href: "journal.html", label: "Journal", icon: MC_ICONS.journal },
   { key: "chat", href: "#chat", label: "AI Chat", icon: MC_ICONS.chat, action: "openChat" },
+  { key: "wellness", href: "wellness.html", label: "Wellness Hub", icon: MC_ICONS.leaf },
   { key: "resources", href: "resources.html", label: "Resources", icon: MC_ICONS.resources },
   { key: "profile", href: "profile.html", label: "Profile", icon: MC_ICONS.user },
 ];
@@ -98,7 +99,7 @@ function mcInitAppShell() {
   const pageContent = document.getElementById("page-content");
   if (!mount || !pageContent) return user;
 
-  const contentHTML = pageContent.innerHTML;
+
 
   const effectiveNav = [...NAV_ITEMS];
   if (user.role === "admin") {
@@ -191,8 +192,13 @@ function mcInitAppShell() {
     </nav>
   `;
 
-  document.getElementById("page-body-target").innerHTML = contentHTML;
-  pageContent.remove();
+  const pageBodyTarget = document.getElementById("page-body-target");
+  if (pageBodyTarget && pageContent) {
+    while (pageContent.firstChild) {
+      pageBodyTarget.appendChild(pageContent.firstChild);
+    }
+    pageContent.remove();
+  }
 
   // Wire up logout with confirmation modal
   const logoutDesktop = document.getElementById("mc-logout-desktop");

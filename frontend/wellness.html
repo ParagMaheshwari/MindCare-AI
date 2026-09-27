@@ -408,6 +408,11 @@
       mcRenderDataIcons();
     }
 
+    // Re-initialize wellness pillars on the active DOM (whether rendered in app-shell or standalone)
+    if (typeof initWellnessPillars === "function") {
+      try { initWellnessPillars(); } catch (err) { console.error("Wellness pillars init error:", err); }
+    }
+
     // Check for existing assessment to render real personalized recommendations
     renderPersonalizedSection(user);
   });

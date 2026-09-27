@@ -60,32 +60,50 @@
     }
   }
 
-  // Common card expand/collapse binder
-  function bindCardDrawer(cardId, drawerId) {
-    const card = document.getElementById(cardId);
-    const drawer = document.getElementById(drawerId);
-    if (!card) return;
+  // Global robust card expand/collapse delegation on document
+  // Guarantees all pillar cards remain fully interactive even if DOM is replaced/hydrated
+  if (!window._pillarCardDelegationBound) {
+    window._pillarCardDelegationBound = true;
 
-    function toggleCard(e) {
-      if (e && e.target && e.target.closest('#' + drawerId + ', input, label, button, a, select, textarea')) {
-        return;
-      }
+    document.addEventListener('click', (e) => {
+      const card = e.target.closest('.pillar-card');
+      if (!card) return;
+
+      // Card 3 is an <a> tag link to breathing.html — let it follow naturally
+      if (card.tagName.toLowerCase() === 'a' || e.target.closest('a')) return;
+
+      // Do NOT toggle if click was inside an open drawer or form control
+      const drawer = card.querySelector('.pillar-drawer');
+      if (drawer && drawer.contains(e.target)) return;
+      if (e.target.closest('input, label, button, select, textarea')) return;
+
       const isExpanded = card.classList.contains('expanded');
       const next = !isExpanded;
       card.classList.toggle('expanded', next);
       card.setAttribute('aria-expanded', String(next));
-    }
-
-    card.addEventListener('click', toggleCard);
-    card.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ' || e.code === 'Space') {
-        if (!e.target.closest('#' + drawerId + ', input, label, button, a, select, textarea')) {
-          e.preventDefault();
-          toggleCard(e);
-        }
-      }
     });
 
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ' || e.code === 'Space') {
+        const card = e.target.closest('.pillar-card');
+        if (!card) return;
+        if (card.tagName.toLowerCase() === 'a' || e.target.closest('a')) return;
+
+        const drawer = card.querySelector('.pillar-drawer');
+        if (drawer && drawer.contains(e.target)) return;
+        if (e.target.closest('input, label, button, select, textarea')) return;
+
+        e.preventDefault();
+        const isExpanded = card.classList.contains('expanded');
+        const next = !isExpanded;
+        card.classList.toggle('expanded', next);
+        card.setAttribute('aria-expanded', String(next));
+      }
+    });
+  }
+
+  function bindCardDrawer(cardId, drawerId) {
+    const drawer = document.getElementById(drawerId);
     if (drawer) {
       drawer.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -102,7 +120,8 @@
 
   function initSleepCard() {
     const card = document.getElementById('pillar-sleep');
-    if (!card) return;
+    if (!card || card.dataset.initialized === 'true') return;
+    card.dataset.initialized = 'true';
     bindCardDrawer('pillar-sleep', 'sleep-drawer');
 
     const progressPill = document.getElementById('sleep-progress-pill');
@@ -253,7 +272,8 @@
 
   function initDigitalCard() {
     const card = document.getElementById('pillar-digital');
-    if (!card) return;
+    if (!card || card.dataset.initialized === 'true') return;
+    card.dataset.initialized = 'true';
     bindCardDrawer('pillar-digital', 'digital-drawer');
 
     const progressPill = document.getElementById('digital-progress-pill');
@@ -551,7 +571,8 @@
      ========================================================================== */
   function initStressCard() {
     const card = document.getElementById('pillar-stress');
-    if (!card) return;
+    if (!card || card.dataset.initialized === 'true') return;
+    card.dataset.initialized = 'true';
 
     card.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ' || e.code === 'Space') {
@@ -567,7 +588,8 @@
      ========================================================================== */
   function initStudyCard() {
     const card = document.getElementById('pillar-study');
-    if (!card) return;
+    if (!card || card.dataset.initialized === 'true') return;
+    card.dataset.initialized = 'true';
     bindCardDrawer('pillar-study', 'study-drawer');
 
     const progressPill = document.getElementById('study-progress-pill');
@@ -696,7 +718,8 @@
      ========================================================================== */
   function initActivityCard() {
     const card = document.getElementById('pillar-activity');
-    if (!card) return;
+    if (!card || card.dataset.initialized === 'true') return;
+    card.dataset.initialized = 'true';
     bindCardDrawer('pillar-activity', 'activity-drawer');
 
     const progressPill = document.getElementById('activity-progress-pill');
@@ -832,7 +855,8 @@
 
   function initSocialCard() {
     const card = document.getElementById('pillar-social');
-    if (!card) return;
+    if (!card || card.dataset.initialized === 'true') return;
+    card.dataset.initialized = 'true';
     bindCardDrawer('pillar-social', 'social-drawer');
 
     const weekPill = document.getElementById('social-week-pill');
