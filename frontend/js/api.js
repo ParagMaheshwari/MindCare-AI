@@ -431,6 +431,121 @@ const MindCareAPI = (() => {
     });
   }
 
+  /**
+   * High-speed streaming chat helper using Server-Sent Events (SSE).
+   * Progressively calls callbacks.onChunk(chunk, accumulatedText) as tokens arrive.
+   */
+  async function chatStream(message, history, context, callbacks = {}) {
+    const { onChunk, onDone, onError, signal } = callbacks;
+    const isLocal = typeof window !== "undefined" && (window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost");
+
+    const controller = (typeof AbortController !== "undefined" && !signal) ? new AbortController() : null;
+    const activeSignal = signal || (controller ? controller.signal : undefined);
+    const timeoutId = controller ? setTimeout(() => controller.abort(), 28000) : null;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/chat/stream`, {
+        method: "POST",
+        headers: getAuthHeaders(true),
+        body: JSON.stringify({
+          message,
+          history: history || [],
+          context: context || null,
+          stream: true,
+        }),
+        signal: activeSignal,
+      });
+
+      if (timeoutId) clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        if (response.status === 429) {
+          const err = new Error("rate_limited");
+          err.friendlyMessage = "MindCare AI is receiving high traffic right now. Please wait a moment and try again.";
+          throw err;
+        }
+        const err = new Error(`server_error_${response.status}`);
+        err.friendlyMessage = "MindCare AI is temporarily unavailable. Please try again in a moment.";
+        throw err;
+      }
+
+      if (!response.body || typeof response.body.getReader !== "function") {
+        const data = await response.json();
+        const text = data.response || "";
+        if (onChunk && text) onChunk(text, text);
+        if (onDone) onDone(text);
+        return text;
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder("utf-8");
+      let buffer = "";
+      let accumulatedText = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n\n");
+        buffer = lines.pop();
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed.startsWith("data:")) continue;
+          const jsonStr = trimmed.slice(5).trim();
+          if (!jsonStr) continue;
+
+          try {
+            const parsed = JSON.parse(jsonStr);
+            if (parsed.error) {
+              const err = new Error("stream_error");
+              err.friendlyMessage = parsed.error;
+              throw err;
+            }
+            if (parsed.chunk) {
+              accumulatedText += parsed.chunk;
+              if (onChunk) onChunk(parsed.chunk, accumulatedText);
+            }
+            if (parsed.done) {
+              const finalTxt = accumulatedText || parsed.full_text || "";
+              if (onDone) onDone(finalTxt);
+              return finalTxt;
+            }
+          } catch (e) {
+            if (e.friendlyMessage) throw e;
+          }
+        }
+      }
+
+      if (onDone) onDone(accumulatedText);
+      return accumulatedText;
+    } catch (networkError) {
+      if (timeoutId) clearTimeout(timeoutId);
+      if (networkError && networkError.name === "AbortError") {
+        if (signal && signal.aborted) {
+          return "";
+        }
+        const err = new Error("timeout_error");
+        err.friendlyMessage = isLocal
+          ? "Request timed out waiting for local backend (http://127.0.0.1:8000)."
+          : "MindCare AI is taking longer than expected. Please try again.";
+        if (onError) onError(err);
+        throw err;
+      }
+      if (networkError.friendlyMessage) {
+        if (onError) onError(networkError);
+        throw networkError;
+      }
+      const err = new Error("network_error");
+      err.friendlyMessage = isLocal
+        ? "Unable to connect to the backend server. Please verify FastAPI is running on port 8000."
+        : "MindCare AI is temporarily unreachable. The cloud service may still be waking up. Please try again.";
+      if (onError) onError(err);
+      throw err;
+    }
+  }
+
   function reflectJournal(title, content) {
     return post("/journal/reflect", {
       title: title || "",
@@ -641,6 +756,7 @@ const MindCareAPI = (() => {
     downloadAssessmentReport,
     predict,
     chat,
+    chatStream,
     reflectJournal,
     downloadReportPDF,
     syncUserData,

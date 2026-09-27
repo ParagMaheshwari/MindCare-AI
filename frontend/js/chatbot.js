@@ -179,6 +179,9 @@ const MindCareChat = (() => {
   let confirmCancelBtn = null;
   let confirmClearBtn = null;
 
+  let isSending = false;
+  let currentAbortController = null;
+
   function getStorageKey() {
     const emailKey = currentUser && currentUser.email ? currentUser.email : "guest";
     return `mindcare_chat_${emailKey}`;
@@ -592,6 +595,10 @@ const MindCareChat = (() => {
   }
 
   function executeClearChat() {
+    if (currentAbortController) {
+      try { currentAbortController.abort(); } catch {}
+    }
+    isSending = false;
     stopSpeaking();
     stopListening();
     messages = [];
@@ -779,9 +786,12 @@ const MindCareChat = (() => {
   }
 
   async function sendMessage() {
-    if (!textarea) return;
+    if (!textarea || isSending) return;
     const text = textarea.value.trim();
     if (!text) return;
+
+    isSending = true;
+    currentAbortController = new AbortController();
 
     stopListening();
 
@@ -797,44 +807,113 @@ const MindCareChat = (() => {
     if (micBtn) micBtn.disabled = true;
     showTyping();
 
+    // Send only recent conversation turns (max 6) to keep prompt concise & fast
     const history = messages.slice(0, -1)
       .filter((m) => m.role === "user" || m.role === "bot")
+      .slice(-6)
       .map((m) => ({
         role: m.role === "user" ? "user" : "model",
         content: m.text,
       }));
 
+    let botMsgIdx = -1;
+    let botRowEl = null;
+    let botBubbleEl = null;
+
     try {
       const context = mcBuildChatContext(currentUser);
-      const result = await MindCareAPI.chat(text, history, context);
-      hideTyping();
-      messages.push({
-        role: "bot",
-        text: result.response,
-        timestamp: new Date().toISOString(),
-      });
-      saveMessages(messages);
-      renderMessages();
 
-      // Auto-read response if preference is active
-      if (voiceAutoSpeak) {
-        speakText(result.response, messages.length - 1);
-      }
+      await MindCareAPI.chatStream(text, history, context, {
+        signal: currentAbortController.signal,
+        onChunk: (chunk, accumulated) => {
+          hideTyping();
+          if (botMsgIdx === -1) {
+            // First chunk received!
+            messages.push({
+              role: "bot",
+              text: accumulated,
+              timestamp: new Date().toISOString(),
+            });
+            botMsgIdx = messages.length - 1;
+
+            botRowEl = document.createElement("div");
+            botRowEl.className = "chat-msg-row bot";
+            botRowEl.innerHTML = `
+              <div class="chat-avatar-sm" aria-hidden="true">${CHAT_ICONS.spark}</div>
+              <div class="chat-bubble-wrap">
+                <div class="chat-bubble bot streaming">
+                  ${mcRenderMarkdown(accumulated)}
+                </div>
+              </div>
+            `;
+            if (flow) {
+              flow.appendChild(botRowEl);
+              botBubbleEl = botRowEl.querySelector(".chat-bubble.bot");
+            }
+          } else {
+            messages[botMsgIdx].text = accumulated;
+            if (botBubbleEl) {
+              botBubbleEl.innerHTML = mcRenderMarkdown(accumulated);
+            }
+          }
+          if (body) {
+            body.scrollTop = body.scrollHeight;
+          }
+        },
+        onDone: (fullText) => {
+          hideTyping();
+          if (botMsgIdx !== -1) {
+            messages[botMsgIdx].text = fullText;
+          } else if (fullText) {
+            messages.push({
+              role: "bot",
+              text: fullText,
+              timestamp: new Date().toISOString(),
+            });
+            botMsgIdx = messages.length - 1;
+          }
+          saveMessages(messages);
+          renderMessages();
+
+          if (voiceAutoSpeak && fullText) {
+            speakText(fullText, botMsgIdx >= 0 ? botMsgIdx : messages.length - 1);
+          }
+        },
+        onError: (err) => {
+          hideTyping();
+          if (currentAbortController && currentAbortController.signal.aborted) {
+            return;
+          }
+          messages.push({
+            role: "error",
+            text: err.friendlyMessage || "Something went wrong. Please check your connection and try again.",
+            timestamp: new Date().toISOString(),
+          });
+          saveMessages(messages);
+          renderMessages();
+        }
+      });
     } catch (err) {
       hideTyping();
-      messages.push({
-        role: "error",
-        text: err.friendlyMessage || "Something went wrong. Please check your connection and try again.",
-        timestamp: new Date().toISOString(),
-      });
-      saveMessages(messages);
-      renderMessages();
+      if (!currentAbortController || !currentAbortController.signal.aborted) {
+        if (botMsgIdx === -1) {
+          messages.push({
+            role: "error",
+            text: err.friendlyMessage || "Something went wrong. Please try again in a moment.",
+            timestamp: new Date().toISOString(),
+          });
+          saveMessages(messages);
+          renderMessages();
+        }
+      }
+    } finally {
+      isSending = false;
+      currentAbortController = null;
+      textarea.disabled = false;
+      if (micBtn) micBtn.disabled = false;
+      updateSendButtonState();
+      textarea.focus();
     }
-
-    textarea.disabled = false;
-    if (micBtn) micBtn.disabled = false;
-    updateSendButtonState();
-    textarea.focus();
   }
 
   function lockScroll() {
@@ -890,6 +969,10 @@ const MindCareChat = (() => {
     if (!panel) return;
     if (!panel.classList.contains("open")) return;
 
+    if (currentAbortController) {
+      try { currentAbortController.abort(); } catch {}
+    }
+    isSending = false;
     stopSpeaking();
     stopListening();
     closeVoiceOverlay();

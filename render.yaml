@@ -37,6 +37,6 @@ services:
       - key: MAIL_FROM
         value: MindCare AI <no-reply@mindcare.ai>
       - key: GEMINI_MODEL
-        value: gemini-flash-lite-latest
+        value: gemini-3.1-flash-lite
       - key: GEMINI_API_KEY
         sync: false

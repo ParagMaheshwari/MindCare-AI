@@ -27,6 +27,7 @@ from dataframe_shim import pd
 import json
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Response, Depends, status
+from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from sqlalchemy import func
@@ -1482,11 +1483,13 @@ def generate_pdf_report(payload: ReportRequest):
 
 
 # ---------------------------------------------------------------------------
-# /chat — Gemini-powered wellness assistant
+# /chat — Fast Gemini-powered wellness assistant
 # ---------------------------------------------------------------------------
 
+import google.generativeai as genai
+
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
-GEMINI_MODEL_NAME = os.environ.get("GEMINI_MODEL", "gemini-flash-lite-latest")
+GEMINI_MODEL_NAME = os.environ.get("GEMINI_MODEL", "gemini-3.1-flash-lite")
 
 SYSTEM_PROMPT = """You are MindCare AI, a compassionate, supportive student mental wellness companion.
 
@@ -1502,9 +1505,7 @@ STRICT INSTRUCTIONS:
 4. NON-DIAGNOSTIC: You provide educational, supportive wellness guidance. Do not diagnose conditions or prescribe medications.
 5. CRISIS SAFETY: If the user indicates immediate danger, self-harm, or severe crisis, immediately provide the 988 Suicide & Crisis Lifeline (call/text 988) or emergency services."""
 
-# Lightweight, backend-side safety net. This does not replace Gemini's own
-# judgement — it guarantees a caring, resource-forward reply even if the
-# upstream model call fails or is misconfigured.
+# Lightweight, backend-side safety net.
 CRISIS_KEYWORDS = [
     "suicide",
     "kill myself",
@@ -1547,6 +1548,7 @@ class ChatRequest(BaseModel):
     message: str = Field(..., min_length=1, max_length=2000)
     history: Optional[List[ChatMessageItem]] = []
     context: Optional[ChatContext] = None
+    stream: Optional[bool] = False
 
 
 class ChatResponse(BaseModel):
@@ -1581,35 +1583,84 @@ def _build_context_note(context: Optional[ChatContext]) -> str:
     return "For context, here is this user's latest self-reported assessment data: " + "; ".join(parts) + "."
 
 
+_genai_configured = False
+_model_cache: Dict[str, Any] = {}
+
+
+def _ensure_gemini_configured():
+    global _genai_configured
+    api_key = os.environ.get("GEMINI_API_KEY") or GEMINI_API_KEY
+    if api_key and not _genai_configured:
+        try:
+            genai.configure(api_key=api_key, transport="rest")
+            _genai_configured = True
+            logger.info("Gemini SDK configured once at module scope (transport=rest).")
+        except Exception as e:
+            logger.warning("Error configuring Gemini SDK: %s", e)
+
+
 def _get_candidate_models() -> List[str]:
-    """Return an ordered, deduplicated list of candidate Gemini models to try."""
+    """Return an ordered, deduplicated list of fast candidate Gemini models to try."""
     configured = os.environ.get("GEMINI_MODEL", "").strip()
     candidates = [
         configured,
-        "gemini-flash-lite-latest",
-        "gemini-3.5-flash-lite",
+        "gemini-3.1-flash-lite",
+        "gemini-flash-latest",
         "gemini-3.8-flash",
-        "gemini-3.7-flash",
-        "gemini-3.6-flash",
         "gemini-3.5-flash",
     ]
+    # Exclude models that time out or are 404 discontinued
+    excluded = {
+        "gemini-flash-lite-latest",
+        "gemini-3.5-flash-lite",
+        "gemini-2.0-flash",
+        "gemini-2.0-flash-lite",
+        "gemini-1.5-flash",
+        "gemini-1.5-flash-latest",
+        "gemini-2.5-flash",
+        "gemini-pro",
+    }
     unique_models: List[str] = []
     for m in candidates:
-        if m and m not in unique_models:
+        if m and m not in unique_models and m not in excluded:
             unique_models.append(m)
+    if "gemini-3.1-flash-lite" not in unique_models:
+        unique_models.insert(0, "gemini-3.1-flash-lite")
     return unique_models
 
 
-def _sanitize_gemini_history(history_items: Optional[List[ChatMessageItem]]) -> List[dict]:
-    """Ensure history turns strictly alternate between 'user' and 'model' and start with 'user'."""
+def _get_or_create_model(model_name: str, system_instruction: str) -> genai.GenerativeModel:
+    _ensure_gemini_configured()
+    cache_key = f"{model_name}:{hash(system_instruction)}"
+    if cache_key in _model_cache:
+        return _model_cache[cache_key]
+
+    generation_config = genai.types.GenerationConfig(
+        temperature=0.7,
+        max_output_tokens=550,
+    )
+    model = genai.GenerativeModel(
+        model_name=model_name,
+        system_instruction=system_instruction,
+        generation_config=generation_config,
+    )
+    _model_cache[cache_key] = model
+    return model
+
+
+def _sanitize_gemini_history(history_items: Optional[List[ChatMessageItem]], max_turns: int = 6) -> List[dict]:
+    """Ensure history turns strictly alternate, are limited in length and count, and start with 'user'."""
     if not history_items:
         return []
+    recent = history_items[-max_turns:]
     sanitized: List[dict] = []
-    for item in history_items:
+    for item in recent:
         role = "user" if item.role in ("user",) else "model"
         content = (item.content or "").strip()
         if not content:
             continue
+        if len(content) > 600:
+            content = content[:600] + "..."
         if sanitized and sanitized[-1]["role"] == role:
             sanitized[-1]["parts"][0] += f"\n\n{content}"
         else:
@@ -1622,26 +1673,44 @@ def _sanitize_gemini_history(history_items: Optional[List[ChatMessageItem]]) -> 
     return sanitized
 
 
+def _extract_user_id(auth_header) -> Optional[int]:
+    try:
+        if auth_header and auth_header.credentials:
+            payload = decode_access_token(auth_header.credentials)
+            if payload and payload.get("sub"):
+                return int(payload.get("sub"))
+    except Exception:
+        pass
+    return None
+
+
+def _record_chat_if_auth(user_id: Optional[int], user_msg: str, bot_reply: str):
+    if not user_id:
+        return
+    try:
+        with SessionLocal() as db:
+            msg_user = ChatMessage(user_id=user_id, role="user", content=user_msg, created_at=datetime.utcnow())
+            msg_bot = ChatMessage(user_id=user_id, role="bot", content=bot_reply, created_at=datetime.utcnow())
+            db.add(msg_user)
+            db.add(msg_bot)
+            db.commit()
+    except Exception as e:
+        logger.warning("Could not persist chat message: %s", e)
+
+
 def _call_gemini_with_fallback(
-    api_key: str,
     system_instruction: str,
     prompt: str,
     history: Optional[List[dict]] = None,
 ) -> str:
-    """Attempt generation with candidate models sequentially to handle quota/availability issues."""
-    import google.generativeai as genai
-
-    genai.configure(api_key=api_key, transport="rest")
+    """Attempt generation with candidate models sequentially with short per-model timeout."""
     models = _get_candidate_models()
     last_exc = None
+    req_opts = {"timeout": 8}
 
     for model_name in models:
         try:
-            gemini_model = genai.GenerativeModel(
-                model_name=model_name,
-                system_instruction=system_instruction,
-            )
-            req_opts = {"timeout": 12}
+            gemini_model = _get_or_create_model(model_name, system_instruction)
             if history:
                 chat_session = gemini_model.start_chat(history=history)
                 result = chat_session.send_message(prompt, request_options=req_opts)
@@ -1660,54 +1729,122 @@ def _call_gemini_with_fallback(
     raise ValueError("No response received from any candidate Gemini model.")
 
 
-def _record_chat_if_auth(db: Session, auth_header, user_msg: str, bot_reply: str):
-    try:
-        if auth_header and auth_header.credentials:
-            payload = decode_access_token(auth_header.credentials)
-            if payload and payload.get("sub"):
-                uid = int(payload.get("sub"))
-                msg_user = ChatMessage(user_id=uid, role="user", content=user_msg, created_at=datetime.utcnow())
-                msg_bot = ChatMessage(user_id=uid, role="bot", content=bot_reply, created_at=datetime.utcnow())
-                db.add(msg_user)
-                db.add(msg_bot)
-                db.commit()
-    except Exception as e:
-        logger.warning("Could not persist chat message: %s", e)
-        db.rollback()
+def _stream_gemini_generator(
+    system_instruction: str,
+    prompt: str,
+    history: Optional[List[dict]] = None,
+    user_id: Optional[int] = None,
+    original_message: str = "",
+):
+    models = _get_candidate_models()
+    req_opts = {"timeout": 8}
+    success = False
+    full_text_parts = []
+
+    for model_name in models:
+        try:
+            gemini_model = _get_or_create_model(model_name, system_instruction)
+            if history:
+                chat_session = gemini_model.start_chat(history=history)
+                response = chat_session.send_message(prompt, stream=True, request_options=req_opts)
+            else:
+                response = gemini_model.generate_content(prompt, stream=True, request_options=req_opts)
+
+            for chunk in response:
+                if chunk and chunk.text:
+                    full_text_parts.append(chunk.text)
+                    payload = json.dumps({"chunk": chunk.text})
+                    yield f"data: {payload}\n\n"
+
+            complete_text = "".join(full_text_parts).strip()
+            if complete_text:
+                success = True
+                _record_chat_if_auth(user_id, original_message, complete_text)
+                yield f"data: {json.dumps({'done': True, 'full_text': complete_text})}\n\n"
+                break
+        except Exception as exc:
+            logger.warning("Gemini streaming model '%s' failed (%s); trying fallback candidate...", model_name, exc)
+            continue
+
+    if not success:
+        fallback_msg = (
+            "I'm temporarily having trouble connecting to my AI service. "
+            "Please check your internet connection and try again in a moment."
+        )
+        if not full_text_parts:
+            _record_chat_if_auth(user_id, original_message, fallback_msg)
+            yield f"data: {json.dumps({'error': fallback_msg})}\n\n"
+        else:
+            complete_text = "".join(full_text_parts).strip()
+            _record_chat_if_auth(user_id, original_message, complete_text)
+            yield f"data: {json.dumps({'done': True, 'full_text': complete_text})}\n\n"
 
 
-@app.post("/chat", response_model=ChatResponse)
-def chat(
+@app.post("/chat/stream")
+async def chat_stream(
     payload: ChatRequest,
-    db: Session = Depends(get_db),
     auth_header: Optional[Any] = Depends(security_bearer)
-) -> ChatResponse:
+):
+    user_id = _extract_user_id(auth_header)
     if _contains_crisis_language(payload.message):
-        reply = CRISIS_RESPONSE
-        _record_chat_if_auth(db, auth_header, payload.message, reply)
-        return ChatResponse(response=reply)
+        _record_chat_if_auth(user_id, payload.message, CRISIS_RESPONSE)
+        def crisis_gen():
+            yield f"data: {json.dumps({'chunk': CRISIS_RESPONSE})}\n\n"
+            yield f"data: {json.dumps({'done': True, 'full_text': CRISIS_RESPONSE})}\n\n"
+        return StreamingResponse(
+            crisis_gen(),
+            media_type="text/event-stream",
+            headers={"Cache-Control": "no-cache", "Connection": "keep-alive"}
+        )
 
-    api_key = os.environ.get("GEMINI_API_KEY") or GEMINI_API_KEY
+    context_note = _build_context_note(payload.context)
+    gemini_history = _sanitize_gemini_history(payload.history)
+    prompt = payload.message if not context_note else f"{context_note}\n\nUser: {payload.message}"
 
-    try:
-        if not api_key:
-            raise ValueError("GEMINI_API_KEY is not configured")
-
-        context_note = _build_context_note(payload.context)
-
-        # Build clean multi-turn history for Gemini
-        gemini_history = _sanitize_gemini_history(payload.history)
-
-        prompt = payload.message if not context_note else f"{context_note}\n\nUser: {payload.message}"
-
-        text = _call_gemini_with_fallback(
-            api_key=api_key,
+    return StreamingResponse(
+        _stream_gemini_generator(
             system_instruction=SYSTEM_PROMPT,
             prompt=prompt,
             history=gemini_history if gemini_history else None,
+            user_id=user_id,
+            original_message=payload.message,
+        ),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        }
+    )
+
+
+@app.post("/chat", response_model=ChatResponse)
+async def chat(
+    payload: ChatRequest,
+    auth_header: Optional[Any] = Depends(security_bearer)
+):
+    user_id = _extract_user_id(auth_header)
+    if _contains_crisis_language(payload.message):
+        _record_chat_if_auth(user_id, payload.message, CRISIS_RESPONSE)
+        return ChatResponse(response=CRISIS_RESPONSE)
+
+    if payload.stream:
+        return await chat_stream(payload, auth_header)
+
+    try:
+        context_note = _build_context_note(payload.context)
+        gemini_history = _sanitize_gemini_history(payload.history)
+        prompt = payload.message if not context_note else f"{context_note}\n\nUser: {payload.message}"
+
+        import anyio
+        text = await anyio.to_thread.run_sync(
+            _call_gemini_with_fallback,
+            SYSTEM_PROMPT,
+            prompt,
+            gemini_history if gemini_history else None,
         )
 
-        _record_chat_if_auth(db, auth_header, payload.message, text)
+        _record_chat_if_auth(user_id, payload.message, text)
         return ChatResponse(response=text)
     except Exception as exc:
         logger.warning("Gemini chat request failed (%s); returning transparent error message.", exc)
@@ -1715,7 +1852,7 @@ def chat(
             "I'm temporarily having trouble connecting to my AI service. "
             "Please check your internet connection and try again in a moment."
         )
-        _record_chat_if_auth(db, auth_header, payload.message, fallback_reply)
+        _record_chat_if_auth(user_id, payload.message, fallback_reply)
         return ChatResponse(response=fallback_reply)
 
 
@@ -1816,12 +1953,6 @@ def reflect_journal(payload: JournalReflectRequest) -> JournalReflectResponse:
 
 @app.get("/health")
 def health():
-    global model
-    if model is None:
-        try:
-            model = joblib.load(MODEL_PATH)
-        except Exception:
-            logger.exception("Failed to load ML model in /health")
     return {"status": "ok", "model_loaded": model is not None}
 
 
