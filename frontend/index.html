@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>MindCare AI — Understand Your Mental Well-Being</title>
+<title>MindCare AI — AI-Powered Wellness for Students</title>
 <link rel="stylesheet" href="css/style.css" />
 <script>
   (function() {
@@ -14,229 +14,421 @@
 </head>
 <body data-page="home">
 
-<div class="container">
-  <nav class="top-nav">
-    <a href="index.html" class="brand">
-      <span class="mark">
+<div class="landing-page-shell">
+  <!-- Top Navigation Bar -->
+  <header class="landing-nav" role="banner">
+    <a href="index.html" class="landing-brand" aria-label="MindCare AI Home">
+      <span class="mark" aria-hidden="true">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20c9 0 14-5 14-14 0 0-13-2-14 9-.4 3 0 5 0 5Z"/><path d="M5 20c0-6 3-9 8-11"/></svg>
       </span>
-      MindCare AI
+      <span>MindCare AI</span>
     </a>
-    <div class="top-nav-links">
-      <a href="#features">Features</a>
+
+    <nav class="landing-nav-links" aria-label="Main Navigation">
       <a href="#how-it-works">How It Works</a>
+      <a href="#features">Features</a>
       <a href="resources.html">Resources</a>
-    </div>
-    <div class="top-nav-actions" id="mc-nav-auth-slot">
-      <div class="nav-auth-grid guest">
-        <div class="nav-auth-col nav-auth-left">
-          <button type="button" class="theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-          </button>
-        </div>
-        <div class="nav-auth-col nav-auth-center">
-          <a href="login.html" class="btn btn-ghost" id="mc-nav-login">Log In</a>
-        </div>
-        <div class="nav-auth-col nav-auth-right">
-          <a href="assessment.html" class="btn btn-primary" id="mc-nav-cta">Take Assessment</a>
+      <a href="privacy.html">Privacy</a>
+    </nav>
+
+    <div class="landing-nav-actions">
+      <div id="mc-nav-auth-slot">
+        <div class="nav-auth-grid guest">
+          <div class="nav-auth-col nav-auth-left">
+            <button type="button" class="theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+          </div>
+          <div class="nav-auth-col nav-auth-center">
+            <a href="login.html" class="btn btn-ghost" id="mc-nav-login">Log In</a>
+          </div>
+          <div class="nav-auth-col nav-auth-right">
+            <a href="assessment.html" class="btn btn-primary" id="mc-nav-cta">Take Assessment</a>
+          </div>
         </div>
       </div>
+
+      <!-- Accessible Mobile Menu Toggle Button -->
+      <button type="button" class="landing-mobile-toggle" id="mc-mobile-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
     </div>
-  </nav>
+  </header>
+
+  <!-- Mobile Collapsible Menu Drawer -->
+  <div class="landing-mobile-drawer" id="mc-mobile-drawer" aria-label="Mobile Navigation Menu">
+    <a href="#how-it-works">How It Works</a>
+    <a href="#features">Features</a>
+    <a href="resources.html">Resources</a>
+    <a href="privacy.html">Privacy &amp; Security</a>
+    <div class="landing-mobile-drawer-actions" id="mc-mobile-auth-slot">
+      <a href="login.html" class="btn btn-ghost btn-sm">Log In</a>
+      <a href="assessment.html" class="btn btn-primary btn-sm">Take Assessment</a>
+    </div>
+  </div>
 
   <!-- Hero Section -->
-  <section class="hero">
-    <div>
-      <div class="hero-eyebrow">AI-POWERED WELLNESS FOR STUDENTS</div>
-      <h1>Understand Your Mental Well-Being</h1>
-      <p class="lede">
-        MindCare AI analyzes your lifestyle habits, academic workload, and social media patterns to deliver an objective mental wellness score, personalized actionable recommendations, and 24/7 supportive AI chat.
+  <section class="landing-hero" aria-label="Hero Section">
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <span class="hero-eyebrow-dot" aria-hidden="true"></span>
+        <span>AI-Powered Wellness for Students</span>
+      </div>
+      <h1 class="hero-title">
+        Understand Your Wellbeing.<br />
+        <span class="hero-title-accent">Build Better Habits.</span>
+      </h1>
+      <p class="hero-desc">
+        MindCare AI helps you reflect on mood, study pressure, sleep, digital habits, and everyday wellbeing — all in one private space.
       </p>
-      <div class="hero-actions">
-        <a href="assessment.html" class="btn btn-primary">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="M9 11h6M9 15h6"/></svg>
-          Take Mental Health Assessment
+
+      <div class="hero-cta-row">
+        <a href="assessment.html" class="btn btn-primary hero-btn-primary" id="mc-hero-assessment-btn">
+          <span>Start Your Assessment</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
         </a>
-        <button type="button" class="btn btn-secondary" id="mc-hero-chat-btn">
+        <button type="button" class="btn btn-secondary hero-btn-secondary" id="mc-hero-chat-btn">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6a8.5 8.5 0 1 1 14.6-4.9Z"/></svg>
-          Chat with AI
+          <span>Chat with MindCare AI</span>
         </button>
       </div>
-      <div class="disclaimer-strip">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:2px;"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.01"/></svg>
-        <span><strong>Non-Diagnostic Project:</strong> MindCare AI is an educational wellness tool. It does not provide medical diagnosis, clinical evaluation, or replace care from licensed mental-health professionals.</span>
+
+      <!-- Non-Diagnostic Disclaimer Pill -->
+      <div class="hero-disclaimer-pill" role="note">
+        <span class="disclaimer-icon-circle" aria-hidden="true">ⓘ</span>
+        <span class="disclaimer-text">Educational wellness tool · Not a medical device</span>
+        <a href="privacy.html" class="disclaimer-learn-more">Learn more →</a>
       </div>
     </div>
-    <div class="hero-art">
-      <div class="breath-ring r1"></div>
-      <div class="breath-ring r2"></div>
-      <div class="breath-ring r3"></div>
-      <div class="hero-art-core">
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M5 20c9 0 14-5 14-14 0 0-13-2-14 9-.4 3 0 5 0 5Z"/>
-          <path d="M5 20c0-6 3-9 8-11"/>
-        </svg>
+
+    <!-- Right-Side Hero Visual — Realistic MindCare Product Preview -->
+    <div class="hero-visual" aria-hidden="true">
+      <div class="hero-visual-glow"></div>
+      <div class="hero-visual-rings">
+        <div class="hero-visual-ring r1"></div>
+        <div class="hero-visual-ring r2"></div>
+      </div>
+
+      <div class="product-preview-card" role="region" aria-label="Sample Wellbeing Overview Preview">
+        <div class="preview-header">
+          <div class="preview-badge">
+            <span class="preview-dot"></span>
+            <span>Sample Wellbeing Overview</span>
+          </div>
+          <span class="preview-status-chip">Updated today</span>
+        </div>
+
+        <div class="preview-score-block">
+          <div class="preview-score-info">
+            <span class="preview-score-label">Wellbeing Balance</span>
+            <div class="preview-score-row">
+              <span class="preview-score-num">78</span>
+              <span class="preview-score-denom">/ 100</span>
+              <span class="preview-score-tag">Good progress</span>
+            </div>
+          </div>
+          <div class="preview-progress-bar">
+            <div class="preview-progress-fill" style="width: 78%;"></div>
+          </div>
+        </div>
+
+        <div class="preview-metrics-grid">
+          <div class="preview-metric-tile">
+            <div class="tile-icon">🙂</div>
+            <div class="tile-meta">
+              <span class="tile-label">Mood</span>
+              <span class="tile-val">Calm &amp; Steady</span>
+            </div>
+          </div>
+          <div class="preview-metric-tile">
+            <div class="tile-icon">🌙</div>
+            <div class="tile-meta">
+              <span class="tile-label">Sleep</span>
+              <span class="tile-val">7.4h avg</span>
+            </div>
+          </div>
+          <div class="preview-metric-tile">
+            <div class="tile-icon">🎯</div>
+            <div class="tile-meta">
+              <span class="tile-label">Focus</span>
+              <span class="tile-val">82% on track</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="preview-insight-card">
+          <div class="insight-header">
+            <span class="insight-icon">✨</span>
+            <span class="insight-title">Recent Insight</span>
+          </div>
+          <p class="insight-text">
+            "Your routine looks more balanced this week. Consistent sleep habits are buffering your midterm study stress."
+          </p>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Feature Cards Section -->
-  <section class="features-section" id="features">
-    <div class="section-heading">
-      <div class="hero-eyebrow">WHY MINDCARE AI</div>
-      <h2>Engineered for Clarity and Everyday Wellbeing</h2>
-      <p>Combining trained machine-learning pipelines with empathetic AI conversation to support your daily student life.</p>
-    </div>
-    <div class="features-grid">
-      <a href="assessment.html" class="feature-card" aria-label="Mental Health Assessment">
-        <div class="feature-card-header">
-          <div class="icon-badge">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="M9 11h6M9 15h6"/></svg>
-          </div>
-          <span class="feature-card-arrow" aria-hidden="true">→</span>
-        </div>
-        <h3>Mental Health Assessment</h3>
-        <p>A structured 4-step intake covering sleep, physical movement, study hours, and phone usage habits in under 3 minutes.</p>
-        <div class="feature-card-action">
-          <span>Take Assessment</span>
-          <span class="action-arrow">→</span>
-        </div>
-      </a>
-
-      <a href="result.html" class="feature-card" aria-label="AI-Powered Insights">
-        <div class="feature-card-header">
-          <div class="icon-badge">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
-          </div>
-          <span class="feature-card-arrow" aria-hidden="true">→</span>
-        </div>
-        <h3>AI-Powered Insights</h3>
-        <p>Powered by a real trained machine learning pipeline that evaluates behavioral factors without shortcuts or fake mock scores.</p>
-        <div class="feature-card-action">
-          <span>View Insights</span>
-          <span class="action-arrow">→</span>
-        </div>
-      </a>
-
-      <a href="wellness.html" class="feature-card" aria-label="Personalized Recommendations">
-        <div class="feature-card-header">
-          <div class="icon-badge">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20c9 0 14-5 14-14 0 0-13-2-14 9-.4 3 0 5 0 5Z"/><path d="M5 20c0-6 3-9 8-11"/></svg>
-          </div>
-          <span class="feature-card-arrow" aria-hidden="true">→</span>
-        </div>
-        <h3>Personalized Recommendations</h3>
-        <p>Custom wellness suggestions tailored to your predicted score and self-reported sleep, screen time, and study balance.</p>
-        <div class="feature-card-action">
-          <span>Explore Recommendations</span>
-          <span class="action-arrow">→</span>
-        </div>
-      </a>
-
-      <a href="privacy.html" class="feature-card" aria-label="Private & Secure">
-        <div class="feature-card-header">
-          <div class="icon-badge">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          </div>
-          <span class="feature-card-arrow" aria-hidden="true">→</span>
-        </div>
-        <h3>Private & Secure</h3>
-        <p>Your passwords and assessments are processed safely with client-side hashing and backend-only Gemini API communications.</p>
-        <div class="feature-card-action">
-          <span>Review Privacy & Security</span>
-          <span class="action-arrow">→</span>
-        </div>
-      </a>
-    </div>
-  </section>
-
-  <!-- How It Works Section (7 Steps) -->
-  <section class="how-it-works" id="how-it-works">
-    <div class="section-heading">
-      <div class="hero-eyebrow">YOUR COMPLETE WELLNESS JOURNEY</div>
-      <h2>How It Works</h2>
-      <p>A continuous, supportive system designed around student life and evidence-based habits.</p>
-    </div>
-    <div class="steps-row steps-row-4" style="margin-bottom: 24px;">
-      <div class="step-card">
-        <div class="num">01</div>
-        <h3>Create an Account</h3>
-        <p>Set up your private student profile to safely preserve your assessments, moods, and reflections.</p>
-      </div>
-      <div class="step-card">
-        <div class="num">02</div>
-        <h3>Complete the Assessment</h3>
-        <p>Answer questions regarding your academic workload, screen time, sleep patterns, and daily habits.</p>
-      </div>
-      <div class="step-card">
-        <div class="num">03</div>
-        <h3>ML Model Analyzes Responses</h3>
-        <p>The trained Random Forest pipeline processes all lifestyle and behavioral variables objectively.</p>
-      </div>
-      <div class="step-card">
-        <div class="num">04</div>
-        <h3>View Your Results</h3>
-        <p>Explore your categorized mental wellness score on a 0–10 scale with clear, neutral interpretation.</p>
-      </div>
+  <!-- How It Works Section (3 Clean Steps) -->
+  <section class="section-how-it-works" id="how-it-works" aria-label="How MindCare Works">
+    <div class="landing-section-header">
+      <div class="landing-eyebrow">HOW MINDCARE WORKS</div>
+      <h2 class="landing-section-title">A simple way to understand your wellbeing and build healthier everyday habits.</h2>
+      <p class="landing-section-subtitle">
+        A confidential, student-friendly rhythm designed to fit easily into your academic schedule.
+      </p>
     </div>
 
-    <div class="steps-row steps-row-3">
-      <div class="step-card">
-        <div class="num">05</div>
-        <h3>Personalized Recommendations</h3>
-        <p>Receive tailored habit suggestions for sleep routines, screen-time balance, movement, and study breaks.</p>
+    <div class="how-steps-grid">
+      <div class="how-step-card">
+        <div class="how-step-top">
+          <span class="how-step-num">01</span>
+          <div class="how-step-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="M9 11h6M9 15h6"/></svg>
+          </div>
+        </div>
+        <h3 class="how-step-title">Check In</h3>
+        <p class="how-step-desc">
+          Share how you're feeling and answer a few wellbeing questions about study workload, sleep rhythm, and digital habits in under 3 minutes.
+        </p>
       </div>
-      <div class="step-card">
-        <div class="num">06</div>
-        <h3>Track Your Progress</h3>
-        <p>Monitor score trends across multiple assessments, track daily moods, and keep wellness streaks alive.</p>
+
+      <div class="how-step-card">
+        <div class="how-step-top">
+          <span class="how-step-num">02</span>
+          <div class="how-step-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+          </div>
+        </div>
+        <h3 class="how-step-title">Understand</h3>
+        <p class="how-step-desc">
+          Explore patterns across mood, sleep, study, and digital habits with personalized, non-diagnostic AI insights tailored to student life.
+        </p>
       </div>
-      <div class="step-card">
-        <div class="num">07</div>
-        <h3>Talk with AI Assistant</h3>
-        <p>Chat with our empathetic, clinical-boundary AI companion whenever you feel overwhelmed or need guidance.</p>
+
+      <div class="how-step-card">
+        <div class="how-step-top">
+          <span class="how-step-num">03</span>
+          <div class="how-step-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20c9 0 14-5 14-14 0 0-13-2-14 9-.4 3 0 5 0 5Z"/><path d="M5 20c0-6 3-9 8-11"/></svg>
+          </div>
+        </div>
+        <h3 class="how-step-title">Take Action</h3>
+        <p class="how-step-desc">
+          Use practical tools and personalized suggestions to support your routine — from breathing pauses and private journaling to habit goals.
+        </p>
       </div>
     </div>
   </section>
 
-  <!-- Privacy & Security Section -->
-  <section class="card-elevated section-gap" id="privacy-overview" style="margin-top:50px;">
-    <div style="display:flex; align-items:center; gap:16px; margin-bottom:14px;">
-      <div style="width:44px; height:44px; border-radius:12px; background:var(--moss-light); color:var(--moss-dark); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      </div>
-      <div>
-        <h2 style="font-size:1.3rem; margin:0;">Privacy & Data Security First</h2>
-        <span style="font-size:0.86rem; color:var(--moss-dark); font-weight:600;">Confidential, student-centric architecture</span>
-      </div>
+  <!-- Features Section (6 Compact Feature Previews) -->
+  <section class="section-features-showcase" id="features" aria-label="MindCare Core Features">
+    <div class="landing-section-header">
+      <div class="landing-eyebrow">CORE CAPABILITIES</div>
+      <h2 class="landing-section-title">Everything You Need in One Place</h2>
+      <p class="landing-section-subtitle">
+        Practical, evidence-aligned tools built to help students navigate college life with more calm and clarity.
+      </p>
     </div>
-    <p style="font-size:0.92rem; line-height:1.6; color:var(--ink-soft); margin-bottom:16px;">
-      Your mental wellness journey is deeply personal. MindCare AI stores your assessments, private journal entries, and mood check-ins directly on your local device. We never sell your personal data or transmit journal entries to third-party advertisers. All Gemini AI interactions occur through secure server-side proxies without exposing API credentials.
-    </p>
-    <div style="display:flex; gap:12px; flex-wrap:wrap;">
-      <span class="badge badge-neutral">✓ Local Private Storage</span>
-      <span class="badge badge-neutral">✓ SHA-256 Client Hashing</span>
-      <span class="badge badge-neutral">✓ Server-Side API Security</span>
-      <span class="badge badge-neutral">✓ 1-Click Complete Data Wipe</span>
+
+    <div class="features-showcase-grid">
+      <!-- 1. Wellbeing Insights -->
+      <a href="assessment.html" class="showcase-card" aria-label="Wellbeing Insights">
+        <div class="showcase-card-header">
+          <div class="showcase-icon-badge" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="M9 11h6M9 15h6"/></svg>
+          </div>
+          <span class="showcase-arrow" aria-hidden="true">→</span>
+        </div>
+        <h3 class="showcase-title">Wellbeing Insights</h3>
+        <p class="showcase-desc">
+          Analyze lifestyle patterns, academic stress, and daily balance through structured behavioral check-ins.
+        </p>
+        <span class="showcase-cta">Start Assessment →</span>
+      </a>
+
+      <!-- 2. Mood Tracker -->
+      <a href="mood.html" class="showcase-card" aria-label="Mood Tracker">
+        <div class="showcase-card-header">
+          <div class="showcase-icon-badge" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          </div>
+          <span class="showcase-arrow" aria-hidden="true">→</span>
+        </div>
+        <h3 class="showcase-title">Mood Tracker</h3>
+        <p class="showcase-desc">
+          Track how your mood shifts over time with quick daily taps, voice check-ins, and weekly streak analysis.
+        </p>
+        <span class="showcase-cta">Check In →</span>
+      </a>
+
+      <!-- 3. Private Journal -->
+      <a href="journal.html" class="showcase-card" aria-label="Private Journal">
+        <div class="showcase-card-header">
+          <div class="showcase-icon-badge" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+          </div>
+          <span class="showcase-arrow" aria-hidden="true">→</span>
+        </div>
+        <h3 class="showcase-title">Private Journal</h3>
+        <p class="showcase-desc">
+          Write freely in your private on-device space with guided wellness prompts and supportive AI reflections.
+        </p>
+        <span class="showcase-cta">Open Journal →</span>
+      </a>
+
+      <!-- 4. AI Assistant -->
+      <div class="showcase-card" id="mc-feature-chat-card" role="button" tabindex="0" aria-label="MindCare AI Assistant">
+        <div class="showcase-card-header">
+          <div class="showcase-icon-badge" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6a8.5 8.5 0 1 1 14.6-4.9Z"/><path d="M12 7v2M12 13v2"/></svg>
+          </div>
+          <span class="showcase-arrow" aria-hidden="true">→</span>
+        </div>
+        <h3 class="showcase-title">AI Assistant</h3>
+        <p class="showcase-desc">
+          Talk with MindCare AI whenever you need an empathetic, non-judgmental conversational space.
+        </p>
+        <span class="showcase-cta">Chat Now →</span>
+      </div>
+
+      <!-- 5. Healthy Habits -->
+      <a href="wellness.html" class="showcase-card" aria-label="Healthy Habits">
+        <div class="showcase-card-header">
+          <div class="showcase-icon-badge" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+          </div>
+          <span class="showcase-arrow" aria-hidden="true">→</span>
+        </div>
+        <h3 class="showcase-title">Healthy Habits</h3>
+        <p class="showcase-desc">
+          Build sustainable routines for sleep hygiene, screen-time boundaries, and study-life equilibrium.
+        </p>
+        <span class="showcase-cta">Explore Habits →</span>
+      </a>
+
+      <!-- 6. Wellness Tools -->
+      <a href="wellness.html" class="showcase-card" aria-label="Wellness Tools">
+        <div class="showcase-card-header">
+          <div class="showcase-icon-badge" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>
+          </div>
+          <span class="showcase-arrow" aria-hidden="true">→</span>
+        </div>
+        <h3 class="showcase-title">Wellness Tools</h3>
+        <p class="showcase-desc">
+          Access instant breathing exercises, grounding timers, and science-backed reset practices.
+        </p>
+        <span class="showcase-cta">Try Exercises →</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Privacy & Trust Section -->
+  <section class="section-privacy-trust" id="privacy-overview" aria-label="Privacy and Trust">
+    <div class="privacy-trust-card">
+      <div class="privacy-trust-header">
+        <div class="privacy-icon-wrap" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div>
+          <h2 class="privacy-title">Your wellbeing deserves privacy.</h2>
+          <span class="privacy-subtitle">Confidential, student-centric architecture</span>
+        </div>
+      </div>
+
+      <p class="privacy-desc">
+        MindCare is designed to give you a private space to reflect, track your wellbeing, and explore healthy habits. Your assessments, private journal entries, and mood check-ins are preserved securely on your local device without third-party tracking or advertising.
+      </p>
+
+      <div class="privacy-badges-grid">
+        <span class="privacy-badge-pill">
+          <span class="privacy-badge-check" aria-hidden="true">✓</span>
+          <span>Local On-Device Storage</span>
+        </span>
+        <span class="privacy-badge-pill">
+          <span class="privacy-badge-check" aria-hidden="true">✓</span>
+          <span>Zero Advertising Trackers</span>
+        </span>
+        <span class="privacy-badge-pill">
+          <span class="privacy-badge-check" aria-hidden="true">✓</span>
+          <span>Secure Server-Side Gemini AI Requests</span>
+        </span>
+        <span class="privacy-badge-pill">
+          <span class="privacy-badge-check" aria-hidden="true">✓</span>
+          <span>1-Click Complete Account Data Deletion</span>
+        </span>
+      </div>
+
+      <a href="privacy.html" class="privacy-action-link">
+        <span>Review Privacy &amp; Security Policy</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- Final CTA Section -->
+  <section class="section-final-cta" aria-label="Get Started with MindCare">
+    <div class="final-cta-card">
+      <h2 class="final-cta-title">Ready to understand your wellbeing?</h2>
+      <p class="final-cta-desc">
+        Start with a simple check-in and explore what your everyday patterns are telling you.
+      </p>
+
+      <div class="final-cta-actions">
+        <a href="assessment.html" class="btn btn-primary hero-btn-primary" id="mc-final-assessment-btn">
+          <span>Start Your Assessment</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+        <button type="button" class="btn btn-secondary hero-btn-secondary" id="mc-final-chat-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6a8.5 8.5 0 1 1 14.6-4.9Z"/></svg>
+          <span>Chat with MindCare AI</span>
+        </button>
+      </div>
     </div>
   </section>
 
   <!-- Clean Modern Footer -->
-  <footer class="landing-footer">
-    <div>
-      <strong>MindCare AI</strong> — Student Mental Well-Being Platform
-      <div style="font-size:0.78rem; color:var(--ink-faint); margin-top:4px;">Educational Machine Learning & Gemini AI Project</div>
+  <footer class="landing-footer-modern" role="contentinfo">
+    <div class="footer-top-grid">
+      <div class="footer-brand-wrap">
+        <a href="index.html" class="landing-brand">
+          <span class="mark" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20c9 0 14-5 14-14 0 0-13-2-14 9-.4 3 0 5 0 5Z"/><path d="M5 20c0-6 3-9 8-11"/></svg>
+          </span>
+          <span>MindCare AI</span>
+        </a>
+        <p class="footer-brand-desc">
+          AI-powered wellness companion built for student life. Designed to help you reflect, understand your routines, and build sustainable habits.
+        </p>
+      </div>
+
+      <div class="footer-links-group">
+        <div class="footer-col-title">Wellness Tools</div>
+        <div class="footer-nav-list">
+          <a href="assessment.html">Wellbeing Assessment</a>
+          <a href="dashboard.html">Student Dashboard</a>
+          <a href="mood.html">Mood Tracker</a>
+          <a href="journal.html">Private Journal</a>
+          <a href="wellness.html">Wellness Hub</a>
+          <a href="breathing.html">Breathing Pause</a>
+        </div>
+      </div>
+
+      <div class="footer-links-group">
+        <div class="footer-col-title">Product &amp; Trust</div>
+        <div class="footer-nav-list">
+          <a href="#how-it-works">How It Works</a>
+          <a href="#features">Features</a>
+          <a href="resources.html">Resources &amp; Hotlines</a>
+          <a href="privacy.html">Privacy &amp; Security</a>
+        </div>
+      </div>
     </div>
-    <div style="display:flex; gap:18px; align-items:center; flex-wrap:wrap;">
-      <a href="assessment.html">Assessment</a>
-      <a href="dashboard.html">Dashboard</a>
-      <a href="mood.html">Mood Tracker</a>
-      <a href="journal.html">Journal</a>
-      <a href="breathing.html">Breathing Pause</a>
-      <a href="resources.html">Resources</a>
-      <a href="privacy.html">Privacy & Security</a>
-      <span style="color:var(--border-strong);">|</span>
-      <span>Not a medical device</span>
+
+    <div class="footer-bottom-row">
+      <span>© 2026 MindCare AI. Built for student wellness and mental wellbeing.</span>
+      <span>Educational wellness tool · Not a medical device</span>
     </div>
   </footer>
 </div>
@@ -253,9 +445,10 @@
   document.addEventListener("DOMContentLoaded", () => {
     const user = MindCareAuth.getCurrentUser();
     const navAuthSlot = document.getElementById("mc-nav-auth-slot");
+    const mobileAuthSlot = document.getElementById("mc-mobile-auth-slot");
 
     if (user) {
-      navAuthSlot.innerHTML = `
+      const loggedInHtml = `
         <div class="nav-auth-grid logged-in">
           <div class="nav-auth-col nav-auth-left">
             <button type="button" class="theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme">
@@ -268,15 +461,26 @@
             </a>
           </div>
           <div class="nav-auth-col nav-auth-right">
-            <a href="profile.html" class="user-avatar" style="width:44px;height:44px;font-size:0.88rem;" title="${user.name}" aria-label="Profile">
+            <a href="profile.html" class="user-avatar" style="width:40px;height:40px;font-size:0.86rem;" title="${user.name}" aria-label="Profile">
               ${MindCareAuth.initials(user.name)}
             </a>
-            <button type="button" class="logout-btn-compact" id="mc-landing-logout" style="width:44px;height:44px;margin:0;padding:0;display:inline-flex;align-items:center;justify-content:center;" title="Logout" aria-label="Logout">
+            <button type="button" class="logout-btn-compact" id="mc-landing-logout" style="width:40px;height:40px;margin:0;padding:0;display:inline-flex;align-items:center;justify-content:center;" title="Logout" aria-label="Logout">
               ${MC_ICONS.logout}
             </button>
           </div>
         </div>
       `;
+      if (navAuthSlot) navAuthSlot.innerHTML = loggedInHtml;
+
+      if (mobileAuthSlot) {
+        mobileAuthSlot.innerHTML = `
+          <a href="dashboard.html" class="btn btn-ghost btn-sm">Dashboard</a>
+          <a href="profile.html" class="btn btn-secondary btn-sm">Profile</a>
+          <button type="button" class="btn btn-ghost btn-sm" id="mc-mobile-logout" style="color:var(--brick);">Log Out</button>
+        `;
+        document.getElementById("mc-mobile-logout")?.addEventListener("click", mcShowLogoutConfirm);
+      }
+
       document.getElementById("mc-landing-logout")?.addEventListener("click", mcShowLogoutConfirm);
       mcInitChatbot(user);
     } else {
@@ -285,8 +489,27 @@
     }
     MindCareTheme.updateButtons();
 
-    // Hero "Chat with AI" CTA button
-    document.getElementById("mc-hero-chat-btn")?.addEventListener("click", () => {
+    // Mobile Navigation Drawer Toggle
+    const mobileToggle = document.getElementById("mc-mobile-toggle");
+    const mobileDrawer = document.getElementById("mc-mobile-drawer");
+    if (mobileToggle && mobileDrawer) {
+      mobileToggle.addEventListener("click", () => {
+        const isOpen = mobileDrawer.classList.toggle("open");
+        mobileDrawer.style.display = isOpen ? "flex" : "none";
+        mobileToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      });
+
+      mobileDrawer.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => {
+          mobileDrawer.classList.remove("open");
+          mobileDrawer.style.display = "none";
+          mobileToggle.setAttribute("aria-expanded", "false");
+        });
+      });
+    }
+
+    // Helper: Trigger MindCare AI Chatbot Assistant
+    function openChatAssistant() {
       const fab = document.getElementById("mc-chat-fab");
       const panel = document.getElementById("mc-chat-panel");
       if (panel && !panel.classList.contains("open")) {
@@ -294,10 +517,24 @@
       } else if (panel) {
         document.getElementById("mc-chat-input")?.focus();
       }
-    });
+    }
+
+    // Wire up all AI Chat triggers
+    document.getElementById("mc-hero-chat-btn")?.addEventListener("click", openChatAssistant);
+    document.getElementById("mc-final-chat-btn")?.addEventListener("click", openChatAssistant);
+
+    const featureChatCard = document.getElementById("mc-feature-chat-card");
+    if (featureChatCard) {
+      featureChatCard.addEventListener("click", openChatAssistant);
+      featureChatCard.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " " || e.code === "Space") {
+          e.preventDefault();
+          openChatAssistant();
+        }
+      });
+    }
   });
 </script>
 
 </body>
 </html>
-
