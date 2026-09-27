@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Private Journal — MindCare AI</title>
+<title>Private Wellness Journal — MindCare AI</title>
 <link rel="stylesheet" href="css/style.css" />
 <script>
   (function() {
@@ -16,74 +16,183 @@
 
 <div id="app-shell-mount"></div>
 
-<div id="page-content">
-  <div class="page-head" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
-    <div>
-      <h1>Private Wellness Journal</h1>
-      <p>Express your feelings safely. Your entries remain strictly confidential on your local device.</p>
+<div id="page-content" class="journal-page-wrapper">
+  <!-- Page Header -->
+  <div class="journal-hero-header">
+    <div class="journal-hero-text">
+      <div class="journal-privacy-indicator">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span>Private on this device</span>
+      </div>
+      <h1 class="journal-page-title">Private Wellness Journal</h1>
+      <p class="journal-page-subtitle">Write freely. Reflect honestly. Your journal stays private.</p>
     </div>
-    <button type="button" class="btn btn-primary" id="mc-new-entry-btn">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      New Journal Entry
-    </button>
   </div>
 
   <div class="journal-layout">
     <!-- Sidebar / Past Entries List -->
-    <aside class="journal-sidebar">
-      <div style="position:relative;">
-        <input type="text" id="mc-journal-search" placeholder="Search entries..." style="padding:10px 14px; font-size:0.86rem;" />
+    <aside class="journal-sidebar" aria-label="Journal history and search">
+      <div class="journal-sidebar-header">
+        <div class="journal-sidebar-heading-wrap">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="journal-icon-muted"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          <span class="journal-sidebar-title">Journal History</span>
+          <span id="mc-journal-count" class="journal-count-badge">0</span>
+        </div>
+        <button type="button" class="btn btn-ghost btn-sm journal-sidebar-new-btn" id="mc-sidebar-new-btn" title="Create new entry">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>New</span>
+        </button>
       </div>
-      <div id="mc-journal-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+
+      <div class="journal-search-wrap">
+        <svg class="journal-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="mc-journal-search" class="journal-search-input" placeholder="Search your journal..." aria-label="Search your journal" />
+        <button type="button" id="mc-journal-search-clear" class="journal-search-clear" aria-label="Clear search" style="display:none;">&times;</button>
+      </div>
+
+      <div id="mc-journal-list" class="journal-entry-list"></div>
     </aside>
 
-    <!-- Main Editor & Reflection Area -->
-    <main class="card-elevated">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
-        <span id="mc-entry-timestamp" style="font-size:0.8rem; font-weight:600; color:var(--ink-faint);">New Entry</span>
-        <div style="display:flex; gap:8px;">
-          <button type="button" class="btn btn-ghost btn-sm" id="mc-delete-entry-btn" style="color:var(--brick); display:none;">Delete</button>
+    <!-- Main Writing Workspace -->
+    <main class="card-elevated journal-workspace-card" id="journal-workspace-card">
+      <div class="journal-workspace-header">
+        <div>
+          <span class="journal-workspace-eyebrow" id="mc-workspace-eyebrow">NEW ENTRY</span>
+          <h2 class="journal-workspace-title" id="mc-workspace-title">New Journal Entry</h2>
+          <p class="journal-workspace-helper" id="mc-workspace-helper">Take a moment to write what is on your mind.</p>
+        </div>
+        <div class="journal-workspace-actions">
+          <span id="mc-entry-timestamp" class="journal-timestamp-badge" style="display:none;"></span>
+          <button type="button" class="btn btn-ghost btn-sm" id="mc-new-entry-btn" style="display:none;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            New Entry
+          </button>
+          <button type="button" class="btn btn-ghost btn-sm journal-btn-danger" id="mc-delete-entry-btn" style="display:none;" title="Delete this entry">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            Delete
+          </button>
         </div>
       </div>
 
-      <div class="field">
-        <label for="mc-journal-title">Entry Title</label>
-        <input type="text" id="mc-journal-title" placeholder="Give your entry a title..." />
+      <!-- Custom Inline Delete Confirmation Box -->
+      <div id="mc-delete-confirm-box" class="journal-confirm-box" style="display:none;">
+        <div class="journal-confirm-text">
+          <strong>Delete this journal entry?</strong>
+          <span>This action cannot be undone.</span>
+        </div>
+        <div class="journal-confirm-buttons">
+          <button type="button" class="btn btn-ghost btn-sm" id="mc-delete-cancel-btn">Cancel</button>
+          <button type="button" class="btn btn-sm btn-danger" id="mc-delete-confirm-btn">Delete</button>
+        </div>
       </div>
 
-      <div class="field">
-        <label for="mc-journal-content">What's on your mind?</label>
-        <textarea id="mc-journal-content" rows="10" placeholder="Write freely about your feelings, worries, accomplishments, or daily events..." style="width:100%; padding:14px; border:1.5px solid var(--border-strong); border-radius:var(--radius-sm); font-family:inherit; font-size:0.95rem; line-height:1.6;"></textarea>
+      <!-- Mood Check-in Selector -->
+      <div class="journal-mood-section">
+        <label class="journal-section-label">How are you feeling?</label>
+        <div class="journal-mood-chips" role="radiogroup" aria-label="Select your current mood">
+          <button type="button" class="journal-mood-chip" data-mood="Calm" role="radio" aria-checked="false">
+            <span class="mood-emoji">😌</span>
+            <span class="mood-name">Calm</span>
+          </button>
+          <button type="button" class="journal-mood-chip" data-mood="Good" role="radio" aria-checked="false">
+            <span class="mood-emoji">🙂</span>
+            <span class="mood-name">Good</span>
+          </button>
+          <button type="button" class="journal-mood-chip" data-mood="Okay" role="radio" aria-checked="false">
+            <span class="mood-emoji">😐</span>
+            <span class="mood-name">Okay</span>
+          </button>
+          <button type="button" class="journal-mood-chip" data-mood="Stressed" role="radio" aria-checked="false">
+            <span class="mood-emoji">😟</span>
+            <span class="mood-name">Stressed</span>
+          </button>
+          <button type="button" class="journal-mood-chip" data-mood="Low" role="radio" aria-checked="false">
+            <span class="mood-emoji">😔</span>
+            <span class="mood-name">Low</span>
+          </button>
+        </div>
       </div>
 
-      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-top:20px; padding-top:16px; border-top:1px solid var(--border);">
-        <button type="button" class="btn btn-secondary" id="mc-ai-reflect-btn">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
-          Get AI Reflection
+      <!-- Title Input -->
+      <div class="journal-field-group">
+        <label for="mc-journal-title" class="journal-section-label">Entry title</label>
+        <input type="text" id="mc-journal-title" class="journal-title-input" placeholder="Give this moment a title..." maxlength="120" />
+      </div>
+
+      <!-- Writing Prompt Toggle & Card -->
+      <div class="journal-prompt-wrap">
+        <button type="button" class="journal-prompt-toggle" id="mc-prompt-toggle" aria-expanded="false">
+          <span class="journal-prompt-badge">✨ Need a prompt?</span>
+          <span class="journal-prompt-toggle-icon">▾</span>
         </button>
-        <button type="button" class="btn btn-primary" id="mc-save-entry-btn">Save Entry</button>
+        <div class="journal-prompt-box" id="mc-prompt-box" style="display:none;">
+          <p class="journal-prompt-text" id="mc-prompt-text">"What was one thing that felt difficult today?"</p>
+          <div class="journal-prompt-controls">
+            <button type="button" class="journal-prompt-link" id="mc-prompt-next-btn">Next prompt ↻</button>
+            <button type="button" class="journal-prompt-link journal-prompt-insert" id="mc-prompt-insert-btn">Use this prompt →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Writing Textarea Area -->
+      <div class="journal-field-group">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <label for="mc-journal-content" class="journal-section-label">What's on your mind?</label>
+          <span id="mc-word-counter" class="journal-word-counter">0 words</span>
+        </div>
+        <textarea id="mc-journal-content" class="journal-textarea" rows="10" placeholder="Write freely about your feelings, thoughts, worries, accomplishments or anything you'd like to remember..."></textarea>
+      </div>
+
+      <!-- Action Bar -->
+      <div class="journal-action-bar">
+        <button type="button" class="btn btn-secondary journal-reflect-btn" id="mc-ai-reflect-btn" title="Reflect with MindCare AI">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="sparkle-icon"><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+          <span id="mc-reflect-btn-label">✨ Get AI Reflection</span>
+        </button>
+
+        <div style="display:flex; align-items:center; gap:12px;">
+          <button type="button" class="btn btn-primary journal-save-btn" id="mc-save-entry-btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            <span>Save Entry</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Floating or Inline Toast Confirmation -->
+      <div id="mc-journal-toast" class="journal-toast" style="display:none;" role="status" aria-live="polite">
+        ✓ Journal entry saved
       </div>
 
       <!-- AI Reflection Display Card -->
-      <div id="mc-ai-reflection-box" class="ai-reflection-box" style="display:none;">
-        <div class="reflection-header">
-          <div class="badge-ai">
+      <div id="mc-ai-reflection-box" class="journal-reflection-card" style="display:none;">
+        <div class="journal-reflection-card-header">
+          <div class="journal-badge-ai">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
-            MindCare AI Reflection
+            <span>✨ MindCare Reflection</span>
           </div>
-          <span style="font-size:0.75rem; color:var(--ink-faint);">Non-Diagnostic Companion</span>
+          <span class="journal-ai-companion-label">Compassionate Companion</span>
         </div>
-        <h4>Emotional Reflection</h4>
-        <p id="mc-reflect-emotion">—</p>
 
-        <h4>Compassionate Observations</h4>
-        <p id="mc-reflect-obs">—</p>
+        <div class="journal-reflection-block">
+          <h4 class="journal-reflection-heading">Emotional Reflection</h4>
+          <p id="mc-reflect-emotion" class="journal-reflection-body">—</p>
+        </div>
 
-        <h4>Healthy Coping Suggestions</h4>
-        <ul id="mc-reflect-coping"></ul>
+        <div class="journal-reflection-block">
+          <h4 class="journal-reflection-heading">Compassionate Observations</h4>
+          <p id="mc-reflect-obs" class="journal-reflection-body">—</p>
+        </div>
 
-        <h4>Practical Next Steps</h4>
-        <ul id="mc-reflect-steps"></ul>
+        <div class="journal-reflection-grid">
+          <div class="journal-reflection-col">
+            <h4 class="journal-reflection-heading">Healthy Coping Suggestions</h4>
+            <ul id="mc-reflect-coping" class="journal-reflection-bullets"></ul>
+          </div>
+          <div class="journal-reflection-col">
+            <h4 class="journal-reflection-heading">Practical Next Steps</h4>
+            <ul id="mc-reflect-steps" class="journal-reflection-bullets"></ul>
+          </div>
+        </div>
       </div>
     </main>
   </div>

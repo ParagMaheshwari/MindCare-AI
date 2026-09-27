@@ -383,7 +383,7 @@ const MindCareStore = (() => {
   // ---------------------------------------------------------------------------
   // Private Journal
   // ---------------------------------------------------------------------------
-  function saveJournalEntry(email, { id, title, content, aiReflection = null }) {
+  function saveJournalEntry(email, { id, title, content, mood = null, aiReflection = null }) {
     if (!email || !content) return null;
     const all = _read(KEYS.JOURNALS);
     const key = email.trim().toLowerCase();
@@ -398,6 +398,7 @@ const MindCareStore = (() => {
       dateStr: _todayStr(),
       title: (title || "Untitled Reflection").trim(),
       content: content.trim(),
+      mood: mood !== undefined ? mood : (existingIdx >= 0 ? list[existingIdx].mood : null),
       aiReflection,
       updatedAt: new Date().toISOString(),
     };
@@ -406,6 +407,9 @@ const MindCareStore = (() => {
       entry.date = list[existingIdx].date;
       if (!aiReflection && list[existingIdx].aiReflection) {
         entry.aiReflection = list[existingIdx].aiReflection;
+      }
+      if (mood === undefined && list[existingIdx].mood) {
+        entry.mood = list[existingIdx].mood;
       }
       list[existingIdx] = entry;
     } else {
@@ -469,7 +473,10 @@ const MindCareStore = (() => {
     if (!query) return list;
     const q = query.toLowerCase();
     return list.filter(
-      (e) => e.title.toLowerCase().includes(q) || e.content.toLowerCase().includes(q)
+      (e) =>
+        (e.title && e.title.toLowerCase().includes(q)) ||
+        (e.content && e.content.toLowerCase().includes(q)) ||
+        (e.mood && e.mood.toLowerCase().includes(q))
     );
   }
 
