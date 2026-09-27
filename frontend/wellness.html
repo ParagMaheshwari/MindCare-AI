@@ -62,12 +62,12 @@
                 <input type="time" id="sleep-bedtime-input" value="22:30" class="pillar-input" style="padding:2px 6px; font-size:0.8rem;" />
               </div>
               <div id="sleep-bedtime-display" style="font-size:0.82rem; font-weight:600; color:var(--moss);">Target bedtime: 10:30 PM</div>
-              <div id="sleep-winddown-status" style="font-size:0.76rem; color:var(--ink-soft); margin-top:3px;">Wind-down starts in 25 minutes</div>
+              <div id="sleep-winddown-status" style="font-size:0.76rem; color:var(--ink-soft); margin-top:3px;">Wind-down in 25m</div>
             </div>
 
-            <!-- Wind-down checklist -->
+            <!-- Tonight's Wind-Down -->
             <div class="checklist-header">
-              <strong>Tonight's Wind-Down Checklist</strong>
+              <strong>Tonight's Wind-Down</strong>
               <span class="checklist-date" id="sleep-checklist-date">Tonight</span>
             </div>
             <div class="pillar-checklist" id="sleep-checklist">
@@ -81,7 +81,7 @@
               </label>
               <label class="checklist-item">
                 <input type="checkbox" data-index="2" />
-                <span class="checklist-text">Consistent bedtime set</span>
+                <span class="checklist-text">Consistent bedtime</span>
               </label>
               <label class="checklist-item">
                 <input type="checkbox" data-index="3" />
@@ -118,41 +118,43 @@
             <div class="pillar-divider"></div>
             
             <!-- Screen Time Check-in -->
-            <div style="font-size:0.84rem; font-weight:700; color:var(--ink); margin-bottom:8px;">Screen Time Check-in</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span style="font-size:0.84rem; font-weight:700; color:var(--ink);">Screen Time Check-in</span>
+              <span style="font-size:0.7rem; color:var(--ink-faint); background:var(--canvas-dim); padding:2px 6px; border-radius:4px;">Self-reported screen time</span>
+            </div>
             
             <div style="background:var(--canvas-dim); padding:10px 12px; border-radius:8px; margin-bottom:12px;">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                <label for="digital-hours-input" style="font-size:0.78rem; color:var(--ink-soft);">Hours on phone today:</label>
+                <label for="digital-hours-input" style="font-size:0.78rem; color:var(--ink-soft);">Today's phone usage:</label>
                 <div style="display:flex; align-items:center; gap:4px;">
-                  <input type="number" id="digital-hours-input" min="0" max="24" step="0.5" value="4.5" class="pillar-input" style="width:68px; text-align:right;" />
-                  <span style="font-size:0.78rem; color:var(--ink-faint);">hrs</span>
+                  <input type="number" id="digital-hours-input" min="0" max="12" step="0.5" value="4.5" class="pillar-input" style="width:68px; text-align:right;" />
+                  <span style="font-size:0.78rem; color:var(--ink-faint);">hours</span>
                 </div>
               </div>
-              <input type="range" id="digital-hours-slider" min="0" max="24" step="0.5" value="4.5" style="width:100%; accent-color:var(--moss); cursor:pointer;" />
+              <input type="range" id="digital-hours-slider" min="0" max="12" step="0.5" value="4.5" style="width:100%; accent-color:var(--moss); cursor:pointer;" />
               
               <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
                 <label for="digital-goal-input" style="font-size:0.78rem; color:var(--ink-soft);">Daily Goal:</label>
                 <div style="display:flex; align-items:center; gap:4px;">
-                  <input type="number" id="digital-goal-input" min="1" max="24" step="0.5" value="5.0" class="pillar-input" style="width:68px; text-align:right;" />
-                  <span style="font-size:0.78rem; color:var(--ink-faint);">hrs</span>
+                  <input type="number" id="digital-goal-input" min="1" max="12" step="0.5" value="4.0" class="pillar-input" style="width:68px; text-align:right;" />
+                  <span style="font-size:0.78rem; color:var(--ink-faint);">hours</span>
                 </div>
               </div>
 
               <!-- Progress bar -->
-              <div class="progress-bar-bg">
-                <div id="digital-progress-bar" class="progress-bar-fill" style="width: 90%;"></div>
+              <div class="progress-bar-bg" style="margin-top:10px;">
+                <div id="digital-progress-bar" class="progress-bar-fill" style="width: 100%;"></div>
               </div>
-              <div style="display:flex; justify-content:space-between; font-size:0.76rem; color:var(--ink-faint);">
-                <span>Today: <strong id="digital-preview-hours" style="color:var(--ink);">4.5 hrs</strong></span>
-                <span>Goal: <strong id="digital-preview-goal" style="color:var(--ink);">5.0 hrs</strong></span>
-                <span>Progress: <strong id="digital-progress-pct" style="color:var(--moss);">90%</strong></span>
+              <div style="display:flex; justify-content:space-between; font-size:0.76rem; color:var(--ink-faint); margin-top:4px;">
+                <span>Today: <strong id="digital-today-summary" style="color:var(--ink);">4.5h / 4h</strong></span>
+                <span>Progress: <strong id="digital-progress-pct" style="color:var(--moss);">100%</strong></span>
               </div>
 
-              <button type="button" class="btn btn-primary btn-sm btn-block" id="digital-save-btn" style="margin-top:10px; width:100%;">Save Today's Screen Time</button>
+              <button type="button" class="btn btn-primary btn-sm btn-block" id="digital-save-btn" style="margin-top:10px; width:100%; font-weight:700; letter-spacing:0.02em;">SAVE TODAY</button>
             </div>
 
-            <!-- 7-Day History & Average -->
-            <div style="font-size:0.8rem; font-weight:700; color:var(--ink); margin-bottom:4px;">7-Day History</div>
+            <!-- Last 7 Days & Average -->
+            <div style="font-size:0.8rem; font-weight:700; color:var(--ink); margin-bottom:4px;">Last 7 Days</div>
             <div id="digital-history-bars" class="pillar-history-bars">
               <!-- Dynamically populated from actual saved entries -->
             </div>
@@ -221,16 +223,17 @@
             <div class="pillar-divider"></div>
             
             <div style="text-align:center;">
+              <div style="font-size:0.84rem; font-weight:700; color:var(--ink); margin-bottom:6px;">FOCUS TIMER</div>
               <div id="study-phase-badge" class="pillar-phase-badge focus">FOCUS</div>
               <div id="study-timer-display" class="pillar-large-timer">25:00</div>
               <div id="study-session-count" style="font-size:0.82rem; color:var(--ink-soft); margin-bottom:12px;">Session 1 of 4</div>
             </div>
 
             <div class="pillar-timer-controls">
-              <button type="button" class="btn btn-primary btn-sm" id="study-start-btn" style="min-width:76px;">Start</button>
-              <button type="button" class="btn btn-secondary btn-sm" id="study-pause-btn" style="display:none; min-width:76px;">Pause</button>
-              <button type="button" class="btn btn-secondary btn-sm" id="study-resume-btn" style="display:none; min-width:76px;">Resume</button>
-              <button type="button" class="btn btn-ghost btn-sm" id="study-reset-btn">Reset</button>
+              <button type="button" class="btn btn-primary btn-sm" id="study-start-btn" style="min-width:76px; font-weight:700;">START</button>
+              <button type="button" class="btn btn-secondary btn-sm" id="study-pause-btn" style="display:none; min-width:76px; font-weight:700;">PAUSE</button>
+              <button type="button" class="btn btn-secondary btn-sm" id="study-resume-btn" style="display:none; min-width:76px; font-weight:700;">RESUME</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="study-reset-btn" style="font-weight:700;">RESET</button>
             </div>
 
             <div id="study-complete-msg" class="pillar-completion-msg" style="display:none;">4 sessions completed ✓</div>
@@ -259,6 +262,7 @@
           <div class="pillar-drawer-inner">
             <div class="pillar-divider"></div>
             
+            <div style="font-size:0.84rem; font-weight:700; color:var(--ink); margin-bottom:8px; text-align:center;">2-Minute Movement Break</div>
             <div style="background:var(--canvas-dim); padding:10px 12px; border-radius:8px; margin-bottom:12px; text-align:center;">
               <div id="activity-step-label" style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--moss);">Exercise 1 of 4</div>
               <div id="activity-name" style="font-size:1.05rem; font-weight:700; color:var(--ink); margin:2px 0;">Neck Rolls</div>
@@ -267,10 +271,10 @@
             </div>
 
             <div class="pillar-timer-controls">
-              <button type="button" class="btn btn-primary btn-sm" id="activity-start-btn" style="min-width:76px;">Start</button>
-              <button type="button" class="btn btn-secondary btn-sm" id="activity-pause-btn" style="display:none; min-width:76px;">Pause</button>
-              <button type="button" class="btn btn-secondary btn-sm" id="activity-resume-btn" style="display:none; min-width:76px;">Resume</button>
-              <button type="button" class="btn btn-ghost btn-sm" id="activity-reset-btn">Reset</button>
+              <button type="button" class="btn btn-primary btn-sm" id="activity-start-btn" style="min-width:76px; font-weight:700;">START</button>
+              <button type="button" class="btn btn-secondary btn-sm" id="activity-pause-btn" style="display:none; min-width:76px; font-weight:700;">PAUSE</button>
+              <button type="button" class="btn btn-secondary btn-sm" id="activity-resume-btn" style="display:none; min-width:76px; font-weight:700;">RESUME</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="activity-reset-btn" style="font-weight:700;">RESET</button>
             </div>
 
             <div id="activity-complete-msg" class="pillar-completion-msg" style="display:none;">Movement break complete ✓</div>
@@ -306,6 +310,7 @@
               <button type="button" class="pill-option active" data-val="Friend">Friend</button>
               <button type="button" class="pill-option" data-val="Family">Family</button>
               <button type="button" class="pill-option" data-val="Classmate">Classmate</button>
+              <button type="button" class="pill-option" data-val="Someone important">Someone important</button>
               <button type="button" class="pill-option" data-val="Other">Other</button>
             </div>
 
@@ -314,7 +319,7 @@
               <button type="button" class="pill-option active" data-val="Call">Call</button>
               <button type="button" class="pill-option" data-val="Message">Message</button>
               <button type="button" class="pill-option" data-val="Meet">Meet</button>
-              <button type="button" class="pill-option" data-val="Video call">Video call</button>
+              <button type="button" class="pill-option" data-val="Video Call">Video Call</button>
             </div>
 
             <div style="font-size:0.78rem; color:var(--ink-soft); margin-top:6px; margin-bottom:4px;">How did it feel?</div>
@@ -325,11 +330,11 @@
               <button type="button" class="pill-option" data-val="Neutral">Neutral</button>
             </div>
 
-            <button type="button" class="btn btn-primary btn-sm btn-block" id="social-save-btn" style="margin-top:10px; width:100%;">Save Check-In</button>
-            <div id="social-feedback" style="display:none; font-size:0.78rem; color:var(--moss); margin-top:6px; font-weight:600; text-align:center;">Saved! Great job staying connected.</div>
+            <button type="button" class="btn btn-primary btn-sm btn-block" id="social-save-btn" style="margin-top:10px; width:100%; font-weight:700; letter-spacing:0.02em;">SAVE CHECK-IN</button>
+            <div id="social-feedback" style="display:none; font-size:0.78rem; color:var(--moss); margin-top:6px; font-weight:600; text-align:center;">Connection logged ✓</div>
 
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px; padding-top:8px; border-top:1px dashed var(--border); font-size:0.8rem;">
-              <strong id="social-weekly-summary" style="color:var(--ink);">This week: 0 connections</strong>
+              <strong id="social-weekly-summary" style="color:var(--ink);">This week: 0</strong>
               <button type="button" class="btn btn-ghost btn-sm" id="social-toggle-history-btn" style="padding:2px 8px; font-size:0.75rem;">View This Week</button>
             </div>
 

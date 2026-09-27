@@ -159,16 +159,16 @@
 
       if (diffMins > 0) {
         if (diffMins < 60) {
-          winddownStatus.textContent = `Wind-down starts in ${diffMins} minute${diffMins === 1 ? '' : 's'}`;
+          winddownStatus.textContent = `Wind-down in ${diffMins}m`;
         } else {
           const h = Math.floor(diffMins / 60);
           const m = diffMins % 60;
-          winddownStatus.textContent = `Wind-down starts in ${h}h ${m}m`;
+          winddownStatus.textContent = `Wind-down in ${h}h ${m}m`;
         }
       } else if (now.getTime() < bedtimeDate.getTime()) {
-        winddownStatus.textContent = '🌙 Wind-down time! Dim lights and power off screens.';
+        winddownStatus.textContent = '🌙 Wind-down time';
       } else {
-        winddownStatus.textContent = '✨ Past target bedtime — rest up for tomorrow.';
+        winddownStatus.textContent = '✨ Past target bedtime';
       }
     }
 
@@ -300,11 +300,16 @@
 
     function updateDigitalPreview() {
       const curHours = parseFloat(hoursInput.value) || 0;
-      const curGoal = parseFloat(goalInput.value) || 5.0;
+      const curGoal = parseFloat(goalInput.value) || 4.0;
 
       hoursSlider.value = curHours;
-      previewHours.textContent = `${curHours.toFixed(1)} hrs`;
-      previewGoal.textContent = `${curGoal.toFixed(1)} hrs`;
+      if (previewHours) previewHours.textContent = `${curHours.toFixed(1)} hours`;
+      if (previewGoal) previewGoal.textContent = `${curGoal.toFixed(1)} hours`;
+      const todaySummary = document.getElementById('digital-today-summary');
+      if (todaySummary) {
+        const goalStr = Number.isInteger(curGoal) ? `${curGoal}h` : `${curGoal.toFixed(1)}h`;
+        todaySummary.textContent = `${curHours.toFixed(1)}h / ${goalStr}`;
+      }
 
       const pct = Math.min(100, Math.round((curHours / Math.max(0.1, curGoal)) * 100));
       progressBar.style.width = `${pct}%`;
@@ -396,7 +401,7 @@
       let v = parseFloat(hoursInput.value);
       if (isNaN(v)) v = 0;
       if (v < 0) v = 0;
-      if (v > 24) v = 24;
+      if (v > 12) v = 12;
       hoursSlider.value = v;
       updateDigitalPreview();
     });
@@ -411,7 +416,7 @@
       e.stopPropagation();
       let g = parseFloat(goalInput.value);
       if (isNaN(g) || g < 1) g = 1;
-      if (g > 24) g = 24;
+      if (g > 12) g = 12;
       digitalState.dailyGoal = g;
       updateDigitalPreview();
     });
@@ -425,7 +430,7 @@
         return;
       }
       hVal = Math.round(hVal * 10) / 10;
-      const gVal = parseFloat(goalInput.value) || 5.0;
+      const gVal = parseFloat(goalInput.value) || 4.0;
 
       digitalState.dailyGoal = gVal;
       digitalState.today = { date: today, hours: hVal };
@@ -447,8 +452,8 @@
 
       safeSetJSON(DIGITAL_STORAGE_KEY, digitalState);
       renderHistory();
-      saveBtn.textContent = 'Saved Today ✓';
-      setTimeout(() => { saveBtn.textContent = "Save Today's Screen Time"; }, 1500);
+      saveBtn.textContent = 'SAVED TODAY ✓';
+      setTimeout(() => { saveBtn.textContent = "SAVE TODAY"; }, 1500);
     });
 
     // -------------------------------------------------------------------------
@@ -467,7 +472,7 @@
         btn.classList.add('active');
         breakDurationMinutes = parseInt(btn.dataset.duration, 10) || 15;
         breakRemainingSeconds = breakDurationMinutes * 60;
-        breakTimerDisplay.textContent = `Screen-free break: ${formatMMSS(breakRemainingSeconds)} remaining`;
+        breakTimerDisplay.textContent = `Screen-Free Break: ${formatMMSS(breakRemainingSeconds)} remaining`;
         breakCompleteMsg.style.display = 'none';
       });
     });
@@ -475,12 +480,12 @@
     function tickBreakTimer() {
       if (breakRemainingSeconds > 0) {
         breakRemainingSeconds--;
-        breakTimerDisplay.textContent = `Screen-free break: ${formatMMSS(breakRemainingSeconds)} remaining`;
+        breakTimerDisplay.textContent = `Screen-Free Break: ${formatMMSS(breakRemainingSeconds)} remaining`;
       } else {
         clearInterval(breakTimerInterval);
         breakTimerInterval = null;
         breakIsRunning = false;
-        breakTimerDisplay.textContent = 'Screen-free break: 00:00 remaining';
+        breakTimerDisplay.textContent = 'Screen-Free Break: 00:00 remaining';
         breakCompleteMsg.style.display = 'block';
         breakStartBtn.style.display = 'inline-flex';
         breakStartBtn.textContent = 'Start';
@@ -527,7 +532,7 @@
       if (breakTimerInterval) clearInterval(breakTimerInterval);
       breakTimerInterval = null;
       breakRemainingSeconds = breakDurationMinutes * 60;
-      breakTimerDisplay.textContent = `Screen-free break: ${formatMMSS(breakRemainingSeconds)} remaining`;
+      breakTimerDisplay.textContent = `Screen-Free Break: ${formatMMSS(breakRemainingSeconds)} remaining`;
       breakStartBtn.style.display = 'inline-flex';
       breakStartBtn.textContent = 'Start';
       breakPauseBtn.style.display = 'none';
@@ -885,8 +890,8 @@
       const thisWeek = getThisWeekCheckins(all);
       const count = thisWeek.length;
 
-      const countStr = `This week: ${count} connection${count === 1 ? '' : 's'}`;
-      weekPill.textContent = `This week: ${count}`;
+      const countStr = `This week: ${count}`;
+      weekPill.textContent = countStr;
       weeklySummary.textContent = countStr;
 
       renderHistoryList(thisWeek);
