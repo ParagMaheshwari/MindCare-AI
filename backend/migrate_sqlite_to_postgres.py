@@ -147,7 +147,14 @@ def reset_postgres_sequences(pg_conn, table_name: str) -> None:
         # Check if table has an id column
         res = pg_conn.execute(text(f"SELECT COALESCE(MAX(id), 0) FROM {table_name}")).scalar()
         max_id = res or 0
-        next_id = max(max_id, 1)
+        # For populated tables, setval(seq, max_id, true) -> next ID is max_id + 1
+        # For empty tables, setval(seq, 1, false) -> next ID is 1
+        if max_id > 0:
+            val = max_id
+            is_called = "true"
+        else:
+            val = 1
+            is_called = "false"
 
         # Attempt standard sequence update
         seq_query = text(f"""
@@ -156,13 +163,13 @@ def reset_postgres_sequences(pg_conn, table_name: str) -> None:
         seq_name = pg_conn.execute(seq_query).scalar()
 
         if seq_name:
-            pg_conn.execute(text(f"SELECT setval('{seq_name}', {next_id}, true);"))
+            pg_conn.execute(text(f"SELECT setval('{seq_name}', {val}, {is_called});"))
             logger.info(f"  Updated sequence '{seq_name}' -> next value will be > {max_id}")
         else:
             # Fallback to standard convention <table>_id_seq
             fallback_seq = f"{table_name}_id_seq"
             try:
-                pg_conn.execute(text(f"SELECT setval('{fallback_seq}', {next_id}, true);"))
+                pg_conn.execute(text(f"SELECT setval('{fallback_seq}', {val}, {is_called});"))
                 logger.info(f"  Updated sequence '{fallback_seq}' -> next value will be > {max_id}")
             except Exception:
                 logger.debug(f"  No serial sequence found for table '{table_name}' (using identity or manual keys).")
@@ -214,8 +221,9 @@ def migrate(sqlite_path: str, pg_url: str, dry_run: bool = False, skip_export: b
     logger.info(f"Execution Mode:               {'DRY-RUN (No changes will be saved)' if dry_run else 'LIVE MIGRATION'}")
     logger.info("==================================================================")
 
-    # 1. Create Engines
-    sqlite_url = f"sqlite:///{os.path.abspath(sqlite_path).replace(os.sep, '/')}"
+    # 1. Create Engines (Strict read-only for SQLite source)
+    norm_sq_path = os.path.abspath(sqlite_path).replace(os.sep, "/")
+    sqlite_url = f"sqlite:///file:{norm_sq_path}?mode=ro&uri=true"
     sqlite_engine = create_engine(sqlite_url, connect_args={"check_same_thread": False})
 
     connect_args = {"sslmode": "require"} if "localhost" not in pg_url and "127.0.0.1" not in pg_url else {}
@@ -450,7 +458,8 @@ def main():
             sys.exit(1)
         timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
         backup_file = args.backup_path or os.path.join(os.path.dirname(os.path.abspath(args.sqlite_path)), f"mindcare_sqlite_backup_{timestamp}.json")
-        sqlite_engine = create_engine(f"sqlite:///{os.path.abspath(args.sqlite_path).replace(os.sep, '/')}")
+        norm_sq_path = os.path.abspath(args.sqlite_path).replace(os.sep, "/")
+        sqlite_engine = create_engine(f"sqlite:///file:{norm_sq_path}?mode=ro&uri=true")
         export_sqlite_backup(sqlite_engine, backup_file)
         sys.exit(0)
 
