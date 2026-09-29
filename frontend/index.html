@@ -528,6 +528,12 @@
     const mobileToggle = document.getElementById("mc-mobile-toggle");
     const mobileDrawer = document.getElementById("mc-mobile-drawer");
     if (mobileToggle && mobileDrawer) {
+      const closeDrawer = () => {
+        mobileDrawer.classList.remove("open");
+        mobileDrawer.style.display = "none";
+        mobileToggle.setAttribute("aria-expanded", "false");
+      };
+
       mobileToggle.addEventListener("click", () => {
         const isOpen = mobileDrawer.classList.toggle("open");
         mobileDrawer.style.display = isOpen ? "flex" : "none";
@@ -535,13 +541,39 @@
       });
 
       mobileDrawer.querySelectorAll("a").forEach((link) => {
-        link.addEventListener("click", () => {
-          mobileDrawer.classList.remove("open");
-          mobileDrawer.style.display = "none";
-          mobileToggle.setAttribute("aria-expanded", "false");
-        });
+        link.addEventListener("click", closeDrawer);
+      });
+
+      // Close drawer on Escape key
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && mobileDrawer.classList.contains("open")) {
+          closeDrawer();
+          mobileToggle.focus();
+        }
+      });
+
+      // Close drawer on click outside
+      document.addEventListener("click", (e) => {
+        if (mobileDrawer.classList.contains("open") && !mobileDrawer.contains(e.target) && !mobileToggle.contains(e.target)) {
+          closeDrawer();
+        }
       });
     }
+
+    // Debounce CTA assessment links to prevent duplicate rapid clicks
+    const handleCtaClick = (e) => {
+      const btn = e.currentTarget;
+      if (btn.dataset.navigating === "true") {
+        e.preventDefault();
+        return;
+      }
+      btn.dataset.navigating = "true";
+      setTimeout(() => {
+        btn.dataset.navigating = "false";
+      }, 1500);
+    };
+    document.getElementById("mc-hero-assessment-btn")?.addEventListener("click", handleCtaClick);
+    document.getElementById("mc-final-assessment-btn")?.addEventListener("click", handleCtaClick);
 
     // Helper: Trigger MindCare AI Chatbot Assistant
     function openChatAssistant() {
