@@ -8424,17 +8424,32 @@ html, body {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 20px;
-  padding: 28px 32px;
+  padding: 32px 36px;
   display: grid;
   grid-template-columns: 1.1fr 1.35fr;
-  gap: 36px;
+  gap: 38px;
   align-items: center;
   box-shadow: var(--shadow-soft);
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 [data-theme="dark"] .privacy-split-card {
-  background: rgba(19, 30, 48, 0.7);
-  border-color: rgba(255, 255, 255, 0.08);
+  background: linear-gradient(135deg, rgba(19, 30, 48, 0.88) 0%, rgba(13, 22, 36, 0.92) 100%);
+  border-color: rgba(52, 211, 153, 0.18);
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.privacy-split-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(16, 185, 129, 0.35);
+  box-shadow: 0 20px 48px -12px rgba(0, 0, 0, 0.22);
+}
+
+[data-theme="dark"] .privacy-split-card:hover {
+  border-color: rgba(52, 211, 153, 0.35);
+  box-shadow: 0 22px 52px -12px rgba(0, 0, 0, 0.65), 0 0 24px rgba(52, 211, 153, 0.08);
 }
 
 .privacy-split-left {
@@ -8444,8 +8459,8 @@ html, body {
 }
 
 .privacy-icon-wrap {
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   border-radius: 12px;
   background: rgba(16, 185, 129, 0.12);
   color: var(--moss-dark);
@@ -8453,23 +8468,30 @@ html, body {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
+  transition: transform 0.2s ease;
 }
 
 [data-theme="dark"] .privacy-icon-wrap {
   color: #34D399;
   background: rgba(52, 211, 153, 0.14);
+  box-shadow: 0 0 16px rgba(52, 211, 153, 0.2);
+}
+
+.privacy-split-card:hover .privacy-icon-wrap {
+  transform: scale(1.06);
 }
 
 .privacy-title {
-  font-size: 1.25rem;
+  font-size: 1.28rem;
   font-weight: 700;
-  margin: 0 0 6px 0;
+  margin: 0 0 8px 0;
   color: var(--ink);
+  letter-spacing: -0.01em;
 }
 
 .privacy-desc {
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   line-height: 1.6;
   color: var(--ink-soft);
   margin: 0;
@@ -8482,13 +8504,17 @@ html, body {
   padding-left: 36px;
 }
 
+[data-theme="dark"] .privacy-split-right {
+  border-left-color: rgba(255, 255, 255, 0.08);
+}
+
 .privacy-right-title {
   font-size: 0.76rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.07em;
   color: var(--moss-dark);
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 [data-theme="dark"] .privacy-right-title {
@@ -8501,14 +8527,14 @@ html, body {
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 10px;
 }
 
 .privacy-check-list li {
   display: flex;
   align-items: baseline;
-  gap: 8px;
-  font-size: 0.86rem;
+  gap: 9px;
+  font-size: 0.88rem;
   color: var(--ink-soft);
   line-height: 1.45;
 }
@@ -8516,7 +8542,7 @@ html, body {
 .privacy-badge-check {
   color: #10B981;
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   flex-shrink: 0;
 }
 
@@ -8532,7 +8558,7 @@ html, body {
   font-weight: 700;
   color: var(--moss-dark);
   transition: gap 0.2s ease, opacity 0.2s ease;
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 [data-theme="dark"] .privacy-action-link {
@@ -8548,28 +8574,38 @@ html, body {
    Final CTA Section
    -------------------------------------------------------------------------- */
 .section-final-cta {
-  padding: 24px 0 52px;
+  padding: 28px 0 54px;
 }
 
 .final-cta-card {
   background: linear-gradient(135deg, var(--surface) 0%, var(--canvas-dim) 100%);
   border: 1px solid rgba(16, 185, 129, 0.25);
-  border-radius: 20px;
-  padding: 38px 28px;
+  border-radius: 22px;
+  padding: 44px 32px;
   text-align: center;
   box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.12);
   position: relative;
   overflow: hidden;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
 [data-theme="dark"] .final-cta-card {
-  background: linear-gradient(135deg, #131E30 0%, #0D1624 100%);
-  border-color: rgba(52, 211, 153, 0.25);
-  box-shadow: 0 20px 44px -10px rgba(0, 0, 0, 0.4);
+  background: radial-gradient(circle at 50% -20%, rgba(52, 211, 153, 0.14) 0%, rgba(19, 30, 48, 0.95) 55%, rgba(11, 17, 32, 0.98) 100%);
+  border-color: rgba(52, 211, 153, 0.28);
+  box-shadow: 0 24px 56px -12px rgba(0, 0, 0, 0.55), 0 0 32px rgba(52, 211, 153, 0.08);
+}
+
+.final-cta-card:hover {
+  border-color: rgba(16, 185, 129, 0.38);
+}
+
+[data-theme="dark"] .final-cta-card:hover {
+  border-color: rgba(52, 211, 153, 0.45);
+  box-shadow: 0 28px 64px -12px rgba(0, 0, 0, 0.65), 0 0 42px rgba(52, 211, 153, 0.14);
 }
 
 .final-cta-title {
-  font-size: clamp(1.7rem, 2.8vw, 2.2rem);
+  font-size: clamp(1.75rem, 2.9vw, 2.3rem);
   font-weight: 700;
   line-height: 1.22;
   margin: 0 0 10px 0;
@@ -8577,11 +8613,11 @@ html, body {
 }
 
 .final-cta-desc {
-  font-size: 1rem;
+  font-size: 1.02rem;
   line-height: 1.55;
   color: var(--ink-soft);
   max-width: 48ch;
-  margin: 0 auto 24px auto;
+  margin: 0 auto 26px auto;
 }
 
 .final-cta-actions {
@@ -8597,14 +8633,14 @@ html, body {
    -------------------------------------------------------------------------- */
 .landing-footer-modern {
   border-top: 1px solid var(--border);
-  padding: 40px 0 28px;
+  padding: 44px 0 28px;
   color: var(--ink-soft);
 }
 
 .footer-top-grid {
   display: grid;
   grid-template-columns: 1.5fr 1fr 1fr;
-  gap: 36px;
+  gap: 40px;
   margin-bottom: 32px;
 }
 
@@ -8628,27 +8664,30 @@ html, body {
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--ink);
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .footer-nav-list {
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 10px;
 }
 
 .footer-nav-list a {
+  display: inline-block;
   color: var(--ink-soft);
   font-size: 0.86rem;
-  transition: color 0.15s ease;
+  transition: color 0.18s ease, transform 0.18s ease;
 }
 
 .footer-nav-list a:hover {
   color: var(--moss-dark);
+  transform: translateX(3px);
 }
 
 [data-theme="dark"] .footer-nav-list a:hover {
   color: #34D399;
+  transform: translateX(3px);
 }
 
 .footer-bottom-row {
