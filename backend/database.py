@@ -154,8 +154,11 @@ def init_db():
                     conn.execute(text("ALTER TABLE users ADD COLUMN status VARCHAR(20) NOT NULL DEFAULT 'active'"))
                     logger.info("Added missing 'status' column to users table.")
                 if 'updated_at' not in columns:
-                    # Support both MySQL and SQLite syntax for DATETIME
-                    if is_fallback:
+                    # Support PostgreSQL, MySQL, and SQLite syntax for DATETIME
+                    dialect = engine.dialect.name
+                    if dialect == 'postgresql':
+                        conn.execute(text("ALTER TABLE users ADD COLUMN updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP"))
+                    elif dialect == 'sqlite' or is_fallback:
                         conn.execute(text("ALTER TABLE users ADD COLUMN updated_at DATETIME"))
                     else:
                         conn.execute(text("ALTER TABLE users ADD COLUMN updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
