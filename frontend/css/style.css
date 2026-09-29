@@ -8075,6 +8075,186 @@ html, body {
   margin: 0;
 }
 
+.how-step-card.highlighted {
+  border-color: rgba(16, 185, 129, 0.35);
+  background: linear-gradient(180deg, rgba(16, 185, 129, 0.05) 0%, var(--surface) 100%);
+}
+
+[data-theme="dark"] .how-step-card.highlighted {
+  border-color: rgba(52, 211, 153, 0.35);
+  background: linear-gradient(180deg, rgba(52, 211, 153, 0.09) 0%, rgba(19, 30, 48, 0.85) 100%);
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(52, 211, 153, 0.15);
+}
+
+/* Miniature UI Previews for Visual Storytelling */
+.how-step-preview {
+  margin-top: 18px;
+  padding: 12px 14px;
+  background: var(--canvas-dim);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+[data-theme="dark"] .how-step-preview {
+  background: rgba(11, 17, 32, 0.55);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+.step-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.step-preview-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--moss-dark);
+}
+
+[data-theme="dark"] .step-preview-badge {
+  color: #34D399;
+}
+
+.step-preview-meta {
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+  font-weight: 600;
+}
+
+.step-preview-delta {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #10B981;
+}
+
+[data-theme="dark"] .step-preview-delta {
+  color: #34D399;
+}
+
+.step-preview-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.step-preview-chip {
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--ink-soft);
+}
+
+[data-theme="dark"] .step-preview-chip {
+  background: rgba(19, 30, 48, 0.8);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #CBD5E1;
+}
+
+.step-preview-chip.active {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #10B981;
+}
+
+[data-theme="dark"] .step-preview-chip.active {
+  background: rgba(52, 211, 153, 0.15);
+  border-color: rgba(52, 211, 153, 0.4);
+  color: #34D399;
+}
+
+/* Micro bar chart */
+.step-preview-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 36px;
+  padding: 4px 2px 0;
+}
+
+.mini-bar {
+  flex: 1;
+  background: rgba(110, 127, 179, 0.25);
+  border-radius: 3px;
+  transition: height 0.4s ease;
+}
+
+[data-theme="dark"] .mini-bar {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.mini-bar.active {
+  background: linear-gradient(180deg, #34D399 0%, #10B981 100%);
+  box-shadow: 0 0 8px rgba(52, 211, 153, 0.35);
+}
+
+/* Micro tool action pill */
+.step-preview-tool {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 2px;
+}
+
+.preview-tool-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.8);
+  animation: pulseDot 2.4s infinite;
+}
+
+.preview-tool-name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ink);
+  flex-grow: 1;
+}
+
+.preview-tool-arrow {
+  font-size: 0.82rem;
+  color: #34D399;
+  font-weight: 700;
+}
+
+/* Subtle Section Entrance Animations */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-content {
+    animation: mcFadeUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .hero-visual {
+    animation: mcFadeUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both;
+  }
+  .how-step-card {
+    animation: mcFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .how-step-card:nth-child(2) {
+    animation-delay: 0.08s;
+  }
+  .how-step-card:nth-child(3) {
+    animation-delay: 0.16s;
+  }
+}
+
+@keyframes mcFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* --------------------------------------------------------------------------
    Features Section (with Prominent Hero Feature Card)
    -------------------------------------------------------------------------- */
