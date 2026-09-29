@@ -30,7 +30,7 @@ from fastapi import FastAPI, HTTPException, Response, Depends, status
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
-from sqlalchemy import func
+from sqlalchemy import func, text
 from sqlalchemy.orm import Session
 
 from database import get_db, init_db, SessionLocal
@@ -42,6 +42,28 @@ from auth import (
 import report_generator
 import email_service
 from email_service import EmailDeliveryError
+
+# ---------------------------------------------------------------------------
+# In-memory rate limiter for auth endpoints
+# ---------------------------------------------------------------------------
+import time as _time
+from collections import defaultdict
+
+class _RateLimiter:
+    """Simple in-memory sliding-window rate limiter."""
+    def __init__(self):
+        self._store: Dict[str, list] = defaultdict(list)
+    
+    def is_rate_limited(self, key: str, max_requests: int, window_seconds: int) -> bool:
+        now = _time.time()
+        cutoff = now - window_seconds
+        self._store[key] = [t for t in self._store[key] if t > cutoff]
+        if len(self._store[key]) >= max_requests:
+            return True
+        self._store[key].append(now)
+        return False
+
+_rate_limiter = _RateLimiter()
 
 env_path = os.path.join(os.path.dirname(__file__), ".env")
 load_dotenv(dotenv_path=env_path)
@@ -207,6 +229,27 @@ def startup_event() -> None:
     except Exception:
         logger.exception("Failed to load ML model from %s", MODEL_PATH)
         model = None
+
+    # Start background keep-alive task to prevent Render free-tier cold starts
+    import asyncio
+    import threading
+    if os.getenv("RENDER"):
+        def _keep_alive_worker():
+            """Periodically pings own health endpoint to prevent Render spin-down."""
+            import urllib.request
+            port = int(os.environ.get("PORT", "8000"))
+            url = f"http://127.0.0.1:{port}/health"
+            while True:
+                try:
+                    _time.sleep(600)  # Every 10 minutes
+                    urllib.request.urlopen(url, timeout=5)
+                    logger.info("Keep-alive ping successful")
+                except Exception as e:
+                    logger.debug("Keep-alive ping: %s", e)
+        
+        t = threading.Thread(target=_keep_alive_worker, daemon=True)
+        t.start()
+        logger.info("Render keep-alive background task started (10-minute interval)")
 
 
 
@@ -395,6 +438,13 @@ def register_user(payload: RegisterRequest, db: Session = Depends(get_db)):
 @app.post("/auth/login", response_model=AuthResponse)
 def login_user(payload: LoginRequest, db: Session = Depends(get_db)):
     email_clean = payload.email.strip().lower()
+    # Rate limit: max 10 login attempts per email per 5 minutes
+    rate_key = f"login:{email_clean}"
+    if _rate_limiter.is_rate_limited(rate_key, max_requests=10, window_seconds=300):
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Too many login attempts. Please wait a few minutes before trying again."
+        )
     user = db.query(User).filter(func.lower(User.email) == email_clean).first()
     if not user:
         # Fallback in case of raw casing in database
@@ -452,6 +502,13 @@ class TestEmailResponse(BaseModel):
 @app.post("/forgot-password", response_model=MessageResponse)
 def forgot_password(payload: ForgotPasswordRequest, db: Session = Depends(get_db)):
     email_clean = payload.email.strip().lower()
+    # Rate limit: max 3 forgot-password requests per email per 5 minutes
+    rate_key = f"forgot:{email_clean}"
+    if _rate_limiter.is_rate_limited(rate_key, max_requests=3, window_seconds=300):
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Too many password reset requests. Please wait a few minutes before trying again."
+        )
     logger.info("Forgot password request received for email: %s", email_clean)
 
     user = db.query(User).filter(func.lower(User.email) == email_clean).first()
@@ -1917,7 +1974,6 @@ def reflect_journal(payload: JournalReflectRequest) -> JournalReflectResponse:
 
         prompt = f"Journal Title: {payload.title or 'Untitled'}\n\nJournal Content:\n{payload.content}"
         raw_text = _call_gemini_with_fallback(
-            api_key=api_key,
             system_instruction=JOURNAL_SYSTEM_PROMPT,
             prompt=prompt,
             history=None,
@@ -1952,8 +2008,29 @@ def reflect_journal(payload: JournalReflectRequest) -> JournalReflectResponse:
 
 
 @app.get("/health")
-def health():
-    return {"status": "ok", "model_loaded": model is not None}
+def health(db: Session = Depends(get_db)):
+    import time as _time
+    result = {
+        "status": "ok",
+        "model_loaded": model is not None,
+        "timestamp": datetime.utcnow().isoformat(),
+    }
+    # Quick DB connectivity check
+    try:
+        t0 = _time.time()
+        db.execute(text("SELECT 1"))
+        result["db_connected"] = True
+        result["db_latency_ms"] = round((_time.time() - t0) * 1000, 1)
+    except Exception as e:
+        result["db_connected"] = False
+        result["db_error"] = str(e)[:100]
+    # Email config status
+    try:
+        cfg = email_service.get_email_config()
+        result["email_configured"] = bool(cfg.get("smtp_host") and cfg.get("smtp_user") and cfg.get("smtp_password"))
+    except Exception:
+        result["email_configured"] = False
+    return result
 
 
 if __name__ == "__main__":

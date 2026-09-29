@@ -174,6 +174,59 @@ const MindCareAPI = (() => {
     return response.json();
   }
 
+  /**
+   * POST helper with configurable timeout for operations that may take longer
+   * (e.g. forgot-password which involves cold-start + DB + SMTP delivery).
+   */
+  async function postWithTimeout(path, body, timeoutMs) {
+    let response;
+    const isLocal = typeof window !== "undefined" && (window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost");
+    const controller = (typeof AbortController !== "undefined") ? new AbortController() : null;
+    const timeoutId = controller ? setTimeout(() => controller.abort(), timeoutMs || 45000) : null;
+
+    try {
+      response = await fetch(`${API_BASE_URL}${path}`, {
+        method: "POST",
+        headers: getAuthHeaders(true),
+        body: JSON.stringify(body),
+        signal: controller ? controller.signal : undefined,
+      });
+    } catch (networkError) {
+      if (timeoutId) clearTimeout(timeoutId);
+      const isTimeout = networkError && (networkError.name === "AbortError" || networkError.code === 20);
+      const err = new Error(isTimeout ? "timeout_error" : "network_error");
+      if (isTimeout) {
+        err.friendlyMessage = isLocal
+          ? "Request timed out waiting for local backend (http://127.0.0.1:8000). Please check server logs."
+          : "The server took too long to respond. The cloud service may still be waking up. Please try again in a moment.";
+      } else {
+        err.friendlyMessage = isLocal
+          ? "Unable to connect to the backend server. Please verify FastAPI is running on port 8000."
+          : "Unable to reach the MindCare cloud server. The service might be waking up or experiencing network connectivity issues. Please try again.";
+      }
+      throw err;
+    } finally {
+      if (timeoutId) clearTimeout(timeoutId);
+    }
+
+    if (response.status === 429) {
+      const err = new Error("rate_limited");
+      err.status = 429;
+      err.friendlyMessage = "Too many attempts. Please wait a few minutes before trying again.";
+      throw err;
+    }
+
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      const err = new Error("request_failed");
+      err.status = response.status;
+      err.friendlyMessage = errData.detail || "Something went wrong. Please try again.";
+      throw err;
+    }
+
+    return response.json();
+  }
+
 
   /**
    * Generic GET helper with authentication headers.
@@ -332,7 +385,8 @@ const MindCareAPI = (() => {
   }
 
   function forgotPassword(email) {
-    return post("/auth/forgot-password", { email });
+    // Forgot-password needs extra time: cold-start + DB + SMTP email delivery
+    return postWithTimeout("/auth/forgot-password", { email }, 90000);
   }
 
   function testEmail(email) {
@@ -737,8 +791,26 @@ const MindCareAPI = (() => {
     return response.blob();
   }
 
+  /**
+   * Quick health check to pre-warm the backend and verify connectivity.
+   * Returns health data or null on failure (never throws).
+   */
+  async function healthCheck() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/health`, {
+        method: "GET",
+        headers: { "Accept": "application/json" },
+      });
+      if (response.ok) return response.json();
+      return null;
+    } catch {
+      return null;
+    }
+  }
+
   return {
     API_BASE_URL,
+    healthCheck,
     getToken,
     hasToken: () => Boolean(getToken()),
     setToken,

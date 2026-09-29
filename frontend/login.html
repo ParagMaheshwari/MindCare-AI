@@ -244,6 +244,13 @@
     window.location.href = "dashboard.html";
   }
 
+  // Pre-warm the backend to reduce cold-start latency on first interaction
+  if (typeof MindCareAPI !== "undefined" && MindCareAPI.healthCheck) {
+    MindCareAPI.healthCheck().then(h => {
+      if (h) console.log("Backend pre-warm: OK", h);
+    });
+  }
+
   // ---------------------------------------------------------------------------
   // Remember Me pre-fill & Initial Focus
   // ---------------------------------------------------------------------------
@@ -537,8 +544,17 @@
     forgotSubmitBtn.innerHTML = `<span class="btn-spinner" aria-hidden="true"></span> <span>Sending…</span>`;
     forgotFeedback.style.display = "none";
 
+    // Cold-start reassurance for forgot-password (SMTP delivery can take longer)
+    const forgotColdStartTimer = setTimeout(() => {
+      if (!forgotSubmitBtn.disabled) return;
+      forgotFeedback.className = "forgot-feedback info";
+      forgotFeedback.innerHTML = `<span>⏳ <strong>Connecting to email server:</strong> Cloud services may take 15–30 seconds to wake up. Please wait…</span>`;
+      forgotFeedback.style.display = "block";
+    }, 3000);
+
     try {
       const res = await MindCareAPI.forgotPassword(val);
+      clearTimeout(forgotColdStartTimer);
 
       // Successful dispatch verified by backend
       forgotFeedback.style.display = "block";
@@ -558,6 +574,7 @@
       // Start 45s cooldown to prevent abuse and provide resend functionality
       startResendCountdown(45);
     } catch (err) {
+      clearTimeout(forgotColdStartTimer);
       stopResendCountdown();
       forgotFeedback.style.display = "block";
       forgotFeedback.style.background = "var(--coral-tint, rgba(239, 68, 68, 0.12))";
