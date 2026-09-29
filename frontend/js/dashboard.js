@@ -139,20 +139,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const scoreSection = document.getElementById("mc-score-section");
     if (!scoreSection) return;
 
-    if (!current) {
-      scoreSection.innerHTML = `
-        <div class="empty-state">
-          <div class="icon-wrap">${MC_ICONS.clipboard}</div>
-          <h3>No assessments taken yet</h3>
-          <p>Complete your first mental wellness assessment to generate your personalized machine-learning wellness score.</p>
-          <a href="assessment.html" class="btn btn-primary">Take Assessment</a>
-        </div>`;
-      return;
-    }
-
-    const numScore = Number(current.score || 0);
-    const score100 = current.score_100 !== undefined ? current.score_100 : Math.round(numScore * 10);
-    const prediction = current.prediction || (numScore >= 7.0 ? "Higher range" : (numScore >= 4.0 ? "Moderate range" : "Lower range"));
+    const isDemo = !current;
+    const numScore = isDemo ? 7.8 : Number(current.score || 0);
+    const score100 = isDemo ? 78 : (current.score_100 !== undefined ? current.score_100 : Math.round(numScore * 10));
+    const prediction = isDemo ? "Moderate range" : (current.prediction || (numScore >= 7.0 ? "Higher range" : (numScore >= 4.0 ? "Moderate range" : "Lower range")));
     const catKey = numScore < 4.0 ? "low" : (numScore < 7.0 ? "moderate" : "higher");
     const interp = (typeof scoreInterpretations !== "undefined" && scoreInterpretations[catKey]) || {
       label: prediction,
@@ -160,41 +150,101 @@ document.addEventListener("DOMContentLoaded", () => {
       text: "Your score reflects your self-reported daily habits and stress levels as analyzed by the machine-learning model."
     };
 
+    // Derived metrics
+    const moodLabel = isDemo ? "Calm & Steady" : (current.stress_level === "Low" ? "Calm & Balanced" : (current.stress_level === "High" || current.stress_level === "Very High" ? "Elevated Stress" : "Steady"));
+    const sleepVal = isDemo ? "7.4h avg" : (current.sleep_hours_per_night !== undefined ? `${current.sleep_hours_per_night}h avg` : "7.2h avg");
+    const focusVal = isDemo ? "82% on track" : (current.study_hours !== undefined ? `${Math.min(100, Math.round((current.study_hours / 6) * 100))}% on track` : "78% on track");
+
+    let recentInsightText = "Your routine looks more balanced this week. Consistent sleep habits are buffering your midterm study stress.";
+    if (!isDemo && current.recommendations && current.recommendations.length > 0) {
+      recentInsightText = typeof current.recommendations[0] === "string" ? current.recommendations[0] : (current.recommendations[0].title || recentInsightText);
+    }
+
     let deltaBadge = "";
-    if (prev) {
+    if (prev && !isDemo) {
       const diff = numScore - Number(prev.score || 0);
       const sign = diff >= 0 ? "+" : "";
       const deltaClass = diff >= 0 ? "badge-higher" : "badge-low";
       deltaBadge = `<span class="badge ${deltaClass}" style="margin-left:10px;">${sign}${diff.toFixed(2)} vs last assessment</span>`;
     }
 
-    const assessDate = (typeof MindCareResults !== "undefined" && MindCareResults.formatDate)
+    const assessDate = (!isDemo && typeof MindCareResults !== "undefined" && MindCareResults.formatDate)
       ? MindCareResults.formatDate(current.date)
-      : (current.date ? current.date.slice(0, 10) : "Recent");
+      : (current && current.date ? current.date.slice(0, 10) : "Today (Sample Demo)");
 
     scoreSection.innerHTML = `
-      <div class="score-hero">
-        <div class="gauge-wrap" style="width:160px;height:160px;">
-          ${typeof mcGaugeSVG === "function" ? mcGaugeSVG(numScore, 160) : ""}
-          <div class="gauge-center">
-            <div class="score-num" style="font-size:2rem;">${numScore.toFixed(2)}</div>
-            <div class="score-max">out of 10.0</div>
+      <div class="dash-score-wrapper">
+        ${isDemo ? `
+          <div class="dash-demo-banner" role="status">
+            <div class="dash-demo-pill">DEMO DATA — SAMPLE STUDENT OVERVIEW</div>
+            <p class="dash-demo-desc">
+              You are viewing sample metrics. Complete your 3-minute assessment to unlock personalized AI predictions based on your real routines.
+            </p>
+            <a href="assessment.html" class="btn btn-primary btn-sm">Start Your Assessment →</a>
+          </div>
+        ` : ""}
+
+        <div class="score-hero">
+          <div class="gauge-wrap" style="width:160px;height:160px;">
+            ${typeof mcGaugeSVG === "function" ? mcGaugeSVG(numScore, 160) : ""}
+            <div class="gauge-center">
+              <div class="score-num" style="font-size:2rem;">${numScore.toFixed(1)}</div>
+              <div class="score-max">out of 10.0</div>
+            </div>
+          </div>
+          <div class="meta" style="flex:1;">
+            <div class="eyebrow">${isDemo ? "SAMPLE DEMO WELLBEING BALANCE" : "LATEST MACHINE LEARNING PREDICTION"}</div>
+            <h2>Mental Wellness Score: <span style="color:var(--moss-dark);">${score100} / 100</span> <span style="font-size:0.95rem; font-weight:500; color:var(--ink-faint);">(${numScore.toFixed(1)}/10)</span> ${deltaBadge}</h2>
+            <p style="color:var(--ink-faint); margin-bottom:8px;">${isDemo ? "Sample student preview mode" : `Assessed on ${assessDate}`}</p>
+            <span class="badge ${interp.badgeClass}">${mcEscape(prediction || interp.label)}</span>
+            <p style="margin-top:12px; font-size:0.92rem; color:var(--ink); line-height:1.5;">${interp.text}</p>
+            
+            <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
+              <a href="assessment.html" class="btn btn-primary btn-sm">${isDemo ? "Take Real Assessment" : "Retake Assessment"}</a>
+              <button type="button" class="btn btn-secondary btn-sm" id="mc-dash-chat-btn">
+                ${MC_ICONS.chat}
+                <span>Chat with AI</span>
+              </button>
+              ${!isDemo ? `<a href="result.html?id=${encodeURIComponent(current.id || '')}" class="btn btn-ghost btn-sm">Full Report &amp; Wellness Plan →</a>` : ""}
+            </div>
           </div>
         </div>
-        <div class="meta">
-          <div class="eyebrow">LATEST MACHINE LEARNING PREDICTION</div>
-          <h2>Mental Wellness Score: <span style="color:var(--moss-dark);">${score100} / 100</span> <span style="font-size:0.95rem; font-weight:500; color:var(--ink-faint);">(${numScore.toFixed(2)}/10)</span> ${deltaBadge}</h2>
-          <p style="color:var(--ink-faint); margin-bottom:8px;">Assessed on ${assessDate}</p>
-          <span class="badge ${interp.badgeClass}">${mcEscape(current.prediction || interp.label)}</span>
-          <p style="margin-top:12px; font-size:0.92rem; color:var(--ink); line-height:1.5;">${interp.text}</p>
-          <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
-            <a href="assessment.html" class="btn btn-primary btn-sm">Retake Assessment</a>
-            <button type="button" class="btn btn-secondary btn-sm" id="mc-dash-chat-btn">
-              ${MC_ICONS.chat}
-              <span>Chat with AI</span>
-            </button>
-            <a href="result.html?id=${encodeURIComponent(current.id || '')}" class="btn btn-ghost btn-sm">Full Report & Wellness Plan →</a>
+
+        <!-- 3-Metric Overview Grid matching product preview -->
+        <div class="dash-overview-metrics-grid">
+          <div class="dash-metric-tile">
+            <div class="metric-tile-icon">🙂</div>
+            <div class="metric-tile-content">
+              <span class="metric-tile-label">Mood Status</span>
+              <span class="metric-tile-value">${mcEscape(moodLabel)}</span>
+            </div>
           </div>
+          <div class="dash-metric-tile">
+            <div class="metric-tile-icon">🌙</div>
+            <div class="metric-tile-content">
+              <span class="metric-tile-label">Sleep Consistency</span>
+              <span class="metric-tile-value">${mcEscape(sleepVal)}</span>
+            </div>
+          </div>
+          <div class="dash-metric-tile">
+            <div class="metric-tile-icon">🎯</div>
+            <div class="metric-tile-content">
+              <span class="metric-tile-label">Academic Focus</span>
+              <span class="metric-tile-value">${mcEscape(focusVal)}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent AI Insight Card -->
+        <div class="dash-insight-card">
+          <div class="dash-insight-header">
+            <span class="dash-insight-icon">✨</span>
+            <span class="dash-insight-title">Recent AI Insight</span>
+            ${isDemo ? `<span class="dash-demo-tag">Sample</span>` : ""}
+          </div>
+          <p class="dash-insight-text">
+            “${mcEscape(recentInsightText)}”
+          </p>
         </div>
       </div>`;
 
